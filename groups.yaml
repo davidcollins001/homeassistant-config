@@ -1,22 +1,28 @@
 
   gClimate:
-    - sensor.temperature
-    - sensor.adc_temp
-    - sensor.humidity
-    - sensor.pressure
-    - sensor.gas_resistance
-    - sensor.air_quality
-    - sensor.air_quality_2
-    - sensor.last_updated
+      name: gClimate
+      entities:
+          - sensor.temperature
+          - sensor.adc_temp
+          - sensor.humidity
+          - sensor.pressure
+          - sensor.gas_resistance
+          - sensor.air_quality
+          - sensor.air_quality_2
+          - sensor.last_updated
 
 
   gPlugs:
-      - switch.plug1
-      - switch.plug2
-      - switch.plug3
+        name: gPlugs
+        entities:
+            - switch.plug1
+            - switch.plug2
+            - switch.plug3
 
 
   gHeating:
-      - switch.heating_boost
-      - switch.heating_sched
-      - switch.heating_pcm
+      name: gHeating
+      entities:
+          - input_boolean.heating_boost
+          # - input_boolean.heating_pcm
+          - input_boolean.heating_sched

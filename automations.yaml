@@ -1,30 +1,17 @@
 
-# heating changed to on
-  - id: gHeating_changed_on
+# heating changed
+  - id: gHeating_changed
     mode: restart
     trigger:
       - platform: state
         entity_id: group.gHeating
-        to: "on"
     action:
       - service: input_number.set_value
         data:
           entity_id: input_number.heating_temp_set
-          value: "{{ states('input_number.heating_on_temp') | int }}"
-
-
-# heating changed to off
-  - id: gHeating_changed_off
-    mode: restart
-    trigger:
-      - platform: state
-        entity_id: switch.gHeating
-        to: "off"
-    action:
-      - service: input_number.set_value
-        data:
-          entity_id: input_number.heating_temp_set
-          value: "{{ states('input_number.heating_off_temp') | int }}"
+          value: >
+            {% set entity = "input_number.heating_{}_temp".format(states("group.gHeating")) %}
+            {{ states(entity) }}
 
 
 # boost switched on
@@ -49,7 +36,7 @@
       # - service: script.delay_off
     - service: input_number.set_value
       data:
-          entity_id: input_number.temp_set
+          entity_id: input_number.heating_temp_set
           value: "{{ states('input_number.heating_on_temp') | int }}"
     - delay:
         # minutes: "{{ states('input_number.heating_boost_timer') }} | int }}"
@@ -83,7 +70,7 @@
         to: "off"
     # condition:
       # - condition: state
-        # entity_id: switch.gheating
+        # entity_id: group.gheating
     action:
     - service: homeassistant.turn_off
       entity_id: switch.heating
@@ -127,7 +114,7 @@
     # mode: restart
     # trigger:
         # - platform: numeric_state
-          # entity_id: input_number.temp_set
+          # entity_id: input_number.heating_temp_set
           # # value_template: "{{ states('input_number.heating_on_temp') }}"
           # above: "{{ states('sensor.temperature') | int }}"
 
@@ -145,7 +132,7 @@
     # # mode: restart
     # # trigger:
         # # - platform: state
-          # # entity_id: input_number.temp_set
+          # # entity_id: input_number.heating_temp_set
           # # attribute: value
           # # # value_template: "{{ states('input_number.heating_on_temp') }}"
           # # # above: "{{ states('sensor.openweathermap_temperature') }}"

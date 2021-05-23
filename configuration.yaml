@@ -194,7 +194,7 @@ input_number:
 
 
 # number:
-  temp_set:
+  heating_temp_set:
     name: Heating Temperature
     # value: "{{ states(input_number.heating_off_temp) }}"
     min: 0
@@ -204,5 +204,9 @@ input_number:
 input_boolean:
   heating_boost:
     name: Heating Boost
+  heating_pcm:
+    name: Heating PCM
+  heating_sched:
+    name: Heating Scheduled
   test11:
     name: test 11

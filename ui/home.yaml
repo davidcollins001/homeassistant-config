@@ -22,7 +22,7 @@ cards:
   - type: entities
     title: Heating
     entities:
-          - input_number.temp_set
+          - input_number.heating_temp_set
           - entity: input_boolean.heating_boost
             name: Heating Boost
           - switch.heating_switch
@@ -40,10 +40,11 @@ cards:
     entities:
         - sun.sun
   - type: entities
-    title: Switch
+    title: Debug
     entities:
         - switch.test1
         - switch.test2
+        - group.gHeating
   - type: weather-forecast
     entity: weather.openweathermap
     show_forecast: true
