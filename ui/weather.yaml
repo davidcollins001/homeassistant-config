@@ -1,0 +1,25 @@
+title: Weather
+cards:
+  - type: entities
+    title: Forecast
+    entities:
+        - sensor.openweathermap_cloud_coverage
+        - sensor.openweathermap_condition
+        - sensor.openweathermap_forecast_condition
+        - sensor.openweathermap_forecast_precipitation
+        - sensor.openweathermap_forecast_pressure
+        - sensor.openweathermap_forecast_temperature
+        - sensor.openweathermap_forecast_temperature_low
+        - sensor.openweathermap_forecast_time
+        - sensor.openweathermap_forecast_wind_bearing
+        - sensor.openweathermap_forecast_wind_speed
+        - sensor.openweathermap_humidity
+        - sensor.openweathermap_pressure
+        - sensor.openweathermap_rain
+        - sensor.openweathermap_snow
+        - sensor.openweathermap_temperature
+        - sensor.openweathermap_weather
+        - sensor.openweathermap_weather_code
+        - sensor.openweathermap_wind_bearing
+        - sensor.openweathermap_wind_speed
+

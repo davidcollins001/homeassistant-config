@@ -1,0 +1,208 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# homeassistant:
+    # customize:
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+# scene: !include scenes.yaml
+
+
+device_tracker:
+    - platform: sky_hub
+      host: 192.168.1.254
+      new_device_defaults:
+        track_new_devices: true
+
+
+# scene:
+  # - name: Example Scene
+    # entities:
+      # input_number.example_number: 13
+
+
+lovelace:
+    mode: yaml
+    resources:
+        - url: /local/button-card.js
+          type: module
+
+    # # Add more dashboards
+    # dashboards:
+      # lovelace-generated: # Needs to contain a hyphen (-)
+        # mode: yaml
+        # filename: notexist.yaml
+        # title: Generated
+        # icon: mdi:tools
+        # show_in_sidebar: true
+        # require_admin: true
+      # lovelace-hidden:
+        # mode: yaml
+        # title: hidden
+        # show_in_sidebar: true
+        # filename: ui/new.yaml
+
+
+switch:
+  - platform: mqtt
+    state_topic: "stat/plugs/plug1/POWER"
+    command_topic: "cmnd/plugs/plug1/POWER"
+    name: plug1
+
+  - platform: mqtt
+    state_topic: "stat/plugs/plug2/POWER"
+    command_topic: "cmnd/plugs/plug2/POWER"
+    name: plug2
+
+  - platform: mqtt
+    state_topic: "stat/plugs/plug3/POWER"
+    command_topic: "cmnd/plugs/plug3/POWER"
+    name: plug3
+    retain: true
+
+
+  - platform: mqtt
+    # state_topic: "state/sensor/heating"
+    command_topic: "cmnd/sensor/heating"
+    name: Heating Switch
+    retain: true
+    payload_on: 1
+    payload_off: 0
+
+  - platform: template
+    switches:
+      heating:
+        friendly_name: hs
+        # value_template: >
+          # "{{ is_state('input_boolean.heating_boost', 'on') }}"
+        # value_template: >
+          # {% if is_states('input_boolean.heating_boost', 'on') and
+          #     states.sensor.temperature < states.input_number.heating_on_temp and
+          #     states.sensor.temperature' states('sensor.openweathermap_forecast_temperature'))
+          #     %}
+            # 1
+          # {% else %}
+            # 0
+          # {% endif %}
+        # value_template: "{{ is_state('input_boolean.heating_boost', 'on') }}"
+        value_template: "{{ is_state('switch.test2', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          target:
+            # entity_id: switch.heating_switch
+            entity_id: switch.test1
+        # turn_off:
+          # service: script.delay_off
+        turn_off:
+          service: switch.turn_off
+          target:
+            entity_id: switch.test1
+
+
+  - platform: mqtt
+    name: test1
+    command_topic: "stat/sensor/t1"
+
+  - platform: mqtt
+    name: test2
+    command_topic: "stat/sensor/t2"
+
+
+sensor:
+  - platform: mqtt
+    name: "Temperature"
+    state_topic: "state/sensor/794296394"
+    value_template: "{{ value_json.temperature }}"
+    unit_of_measurement: "°C"
+
+  - platform: mqtt
+    name: "ADC Temp"
+    state_topic: "state/sensor/794296394"
+    value_template: "{{ value_json.adc }}"
+    unit_of_measurement: "°C"
+
+  - platform: mqtt
+    name: "Humidity"
+    state_topic: "state/sensor/794296394"
+    value_template: "{{ value_json.humidity / 1000 | round }}"
+    unit_of_measurement: "%"
+
+  - platform: mqtt
+    name: "Pressure"
+    state_topic: "state/sensor/794296394"
+    value_template: "{{ value_json.pressure | float / 100 | int }}"
+    unit_of_measurement: "hPa"
+
+  - platform: mqtt
+    name: "Gas Resistance"
+    state_topic: "state/sensor/794296394"
+    value_template: "{{ value_json.gas_res }}"
+    unit_of_measurement: "ohm"
+
+  - platform: mqtt
+    name: "Air Quality"
+    state_topic: "state/sensor/794296394"
+    value_template: "{{ value_json.iaq }}"
+    unit_of_measurement: ""
+
+  - platform: mqtt
+    name: "Air Quality 2"
+    state_topic: "state/sensor/794296394"
+    value_template: "{{ value_json.iaq2 }}"
+    unit_of_measurement: " "
+
+  - platform: mqtt
+    name: "Last Updated"
+    state_topic: "state/sensor/794296394"
+    value_template: "{{ value_json.timestamp }}"
+    unit_of_measurement: "s"
+
+
+input_number:
+  heating_on_temp:
+    name: Heating On Temp
+    initial: 20
+    min: 5
+    max: 35
+
+  heating_off_temp:
+    name: Heating Off Temp
+    initial: 14
+    min: 5
+    max: 35
+
+  heating_boost_timer:
+    name: Heating Boost Timer
+    initial: 60
+    min: 30
+    max: 180
+
+  heating_duty_cycle:
+    name: Heating Duty Cycle
+    initial: 20
+    min: 10
+    max: 50
+
+  max_ext_temp:
+    name: Max External Temperature
+    initial: 12
+    min: 5
+    max: 20
+
+
+# number:
+  temp_set:
+    name: Heating Temperature
+    # value: "{{ states(input_number.heating_off_temp) }}"
+    min: 0
+    max: 100
+
+
+input_boolean:
+  heating_boost:
+    name: Heating Boost
+  test11:
+    name: test 11

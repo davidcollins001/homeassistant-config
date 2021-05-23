@@ -1,0 +1,7 @@
+title: Home
+icon: mdi:home
+views:
+    - !include ui/home.yaml
+    - !include ui/sky_hub.yaml
+    - !include ui/weather.yaml
+    - !include ui/settings.yaml

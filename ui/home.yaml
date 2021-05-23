@@ -1,0 +1,75 @@
+title: Home
+cards:
+  - type: entities
+    title: Living Room
+    entities:
+        - sensor.temperature
+        - sensor.adc_temp
+        - sensor.humidity
+        - sensor.pressure
+        - sensor.gas_resistance
+        - sensor.air_quality
+        - sensor.air_quality_2
+        - sensor.last_updated
+    show_header_toggle: true
+  - type: entities
+    title: Plugs
+    entities:
+        - switch.plug1
+        - switch.plug2
+        - switch.plug3
+    show_header_toggle: true
+  - type: entities
+    title: Heating
+    entities:
+          - input_number.temp_set
+          - entity: input_boolean.heating_boost
+            name: Heating Boost
+          - switch.heating_switch
+    show_header_toggle: true
+  - type: entities
+    title: Binary sensor
+    entities:
+        - binary_sensor.updater
+  - type: entities
+    title: Person
+    entities:
+        - person.david
+  - type: entities
+    title: Sun
+    entities:
+        - sun.sun
+  - type: entities
+    title: Switch
+    entities:
+        - switch.test1
+        - switch.test2
+  - type: weather-forecast
+    entity: weather.openweathermap
+    show_forecast: true
+
+  # # - type: vertical-stack
+    # title: Climate
+    # # cards:
+      # # - type: sensor
+        # # entity: sensor.temperature
+        # # name: Temperature
+        # # graph: line
+# #
+      # # - type: gauge
+        # # entity: sensor.humidity
+        # # name: Humidity
+# #
+      # # - type: gauge
+        # # entity: sensor.pressure
+        # # name: Pressure
+        # # max: 2000
+
+  - type: history-graph
+    title: Climate
+    hours_to_show: 3
+    entities:
+        - sensor.temperature
+        - sensor.humidity
+        - sensor.pressure
+        - sensor.air_quality_2

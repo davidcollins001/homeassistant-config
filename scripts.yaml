@@ -1,0 +1,9 @@
+# Example script integration containing script syntax
+delay_off:
+    sequence:
+        - alias: "wait"
+          delay: 5
+        - alias: "Switch boost off"
+          service: homeassistant.turn_off
+          target:
+              entity_id: switch.heating_switch

@@ -1,0 +1,10 @@
+title: Settings
+cards:
+  - type: entities
+    title: Settings
+    entities:
+        - input_number.heating_on_temp
+        - input_number.heating_off_temp
+        - input_number.heating_boost_timer
+        - input_number.heating_duty_cycle
+        - input_number.max_ext_temp

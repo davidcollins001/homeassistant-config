@@ -1,0 +1,13 @@
+title: Sky Hub
+cards:
+  - type: entities
+    title: Sky Hub
+    entities:
+        - sensor.sky_adsl_router_b_sent
+        - sensor.sky_adsl_router_packets_received
+        - sensor.sky_adsl_router_packets_sent
+        - sensor.sky_adsl_router_kib_s_received
+        - sensor.sky_adsl_router_kib_s_sent
+        - sensor.sky_adsl_router_packets_s_received
+        - sensor.sky_adsl_router_packets_s_sent
+        - sensor.sky_adsl_router_b_received
