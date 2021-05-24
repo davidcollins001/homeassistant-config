@@ -25,6 +25,7 @@ cards:
           - input_number.heating_temp_set
           - entity: input_boolean.heating_boost
             name: Heating Boost
+          - input_boolean.heating_pcm
           - switch.heating_switch
     show_header_toggle: true
   - type: entities
@@ -45,6 +46,8 @@ cards:
         - switch.test1
         - switch.test2
         - group.gHeating
+        - input_boolean.heating
+        - input_boolean.test11
   - type: weather-forecast
     entity: weather.openweathermap
     show_forecast: true

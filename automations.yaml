@@ -1,68 +1,77 @@
 
 # heating changed
-  - id: gHeating_changed
+  - id: heating_changed
     mode: restart
     trigger:
       - platform: state
-        entity_id: group.gHeating
+        entity_id: input_boolean.heating
     action:
       - service: input_number.set_value
         data:
           entity_id: input_number.heating_temp_set
           value: >
-            {% set entity = "input_number.heating_{}_temp".format(states("group.gHeating")) %}
-            {{ states(entity) }}
+            {% set temp_ent = "input_number.heating_{}_temp".format(states("input_boolean.heating")) %}
+            {{ states(temp_ent) }}
 
 
-# boost switched on
+# manual heating switched on
   - id: manual_on
     mode: restart
     trigger:
       - platform: state
-        entity_id: group.gHeating
+        entity_id: input_boolean.heating_boost
+        to: "on"
+      - platform: state
+        entity_id: input_boolean.heating_pcm
         to: "on"
     condition:
       - condition: state
-        entity_id: person.david
+        entity_id: group.gPresent
         state: home
-      - condition: numeric_state
-        entity_id: sensor.openweathermap_temperature
-        # below: "{{ states('input_number.max_ext_temp') | int }}"
-        below: 40
-      - condition: state
-        entity_id:  input_boolean.heating_boost # switch.heating_sched
-        state: "{{ 'off' if is_state('input_boolean.heating_boost', 'on) else 'on'}}"
+      - condition: template
+        value_template: >
+          {% set ext_temp = states('sensor.openweathermap_temperature') | int %}
+          {% set max_ext_temp = states('input_number.max_ext_temp') | int %}
+          {{ ext_temp < max_ext_temp }}
+      - condition: template
+        value_template: >
+          {% set members = expand(['group.gHeating']) | selectattr('state', 'eq', 'on') %}
+          {{ members | list | count | int < 2 }}
     action:
-      # - service: script.delay_off
-    - service: input_number.set_value
-      data:
-          entity_id: input_number.heating_temp_set
-          value: "{{ states('input_number.heating_on_temp') | int }}"
+    - service: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.heating
     - delay:
         # minutes: "{{ states('input_number.heating_boost_timer') }} | int }}"
-        minutes: "{{ 1 | int }}"
-    - service: homeassistant.turn_off
-      entity_id: switch.heating_switch
+        seconds: "{{ 10 | int }}"
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.heating
 
 
-# boost switched on
-  - id: manual_already_on
+# manual heating already on
+  - id: manual_reset
     mode: restart
     trigger:
       - platform: state
         entity_id: input_boolean.heating_boost
         to: "on"
+      - platform: state
+        entity_id: input_boolean.heating_pcm
+        to: "on"
     condition:
-      - condition: state
-        entity_id:  input_boolean.heating_boost # switch.heating_sched
-        state: "{{ states('switch.heating_boost') }}"
+      - condition: template
+        value_template: >
+          {% set members = expand(['group.gHeating']) | selectattr('state', 'eq', 'on') %}
+          {{ members | list | count | int > 1 }}
     action:
-      - service: homeassistant.turn_off
-        entity_id: input_boolean.heating_boost
+    - service: input_boolean.turn_off
+      target:
+        entity_id: "{{ trigger.entity_id }}"
 
 
-# boost switched off
-  - id: heating_boost_off
+# manual heating switched off
+  - id: manual_off
     mode: restart
     trigger:
       - platform: state
@@ -72,72 +81,72 @@
       # - condition: state
         # entity_id: group.gheating
     action:
-    - service: homeassistant.turn_off
-      entity_id: switch.heating
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.heating
 
 
-# temp is below `on_temp` + heating switch on
-  - id: heat_temp_set
-    mode: restart
-    trigger:
-        - platform: state
-          entity_id: input_number.heating_temp_set
-          to: "{{ states('input_number.heating_on_temp') | int }}"
-    condition:
-        - condition: or
-          conditions:
-              - condition: state
-                entity_id: switch.heating_switch
-                state: "on"
-              - condition: state
-                entity_id: input_boolean.heating_boost
-                state: "on"
-    action:
-    - service: homeassistant.turn_off
-      entity_id: switch.heating_switch
-
-
-# # temp is above `on_temp` + heating switch on
-  # - id: heat_off
+# # temp is below `on_temp` + heating switch on
+  # - id: heat_temp_set
     # mode: restart
     # trigger:
-        # - platform: numeric_state
-          # entity_id: sensor.temperature
-          # above: "{{ states('input_number.heating_on_temp') | int }}"
-    # action:
-    # - service: homeassistant.turn_off
-      # entity_id: switch.heating_switch
-
-
-# # heating temp set
-  # - id: temp_set_on
-    # mode: restart
-    # trigger:
-        # - platform: numeric_state
+        # - platform: state
           # entity_id: input_number.heating_temp_set
-          # # value_template: "{{ states('input_number.heating_on_temp') }}"
-          # above: "{{ states('sensor.temperature') | int }}"
-
+          # to: "{{ states('input_number.heating_on_temp') | int }}"
     # condition:
-      # - condition: state
-        # entity_id: switch.heating_switch
-        # state: "on"
-
+        # - condition: or
+          # conditions:
+              # - condition: state
+                # entity_id: switch.heating_switch
+                # state: "on"
+              # - condition: state
+                # entity_id: input_boolean.heating_boost
+                # state: "on"
     # action:
-    # - service: homeassistant.turn_on
+    # - service: input_boolean.turn_off
       # entity_id: switch.heating_switch
 
 
-  # # - id: temp_set_off
+# # # temp is above `on_temp` + heating switch on
+  # # - id: heat_off
     # # mode: restart
     # # trigger:
-        # # - platform: state
+        # # - platform: numeric_state
+          # # entity_id: sensor.temperature
+          # # above: "{{ states('input_number.heating_on_temp') | int }}"
+    # # action:
+    # # - service: input_boolean.turn_off
+      # # entity_id: switch.heating_switch
+
+
+# # # heating temp set
+  # # - id: temp_set_on
+    # # mode: restart
+    # # trigger:
+        # # - platform: numeric_state
           # # entity_id: input_number.heating_temp_set
-          # # attribute: value
           # # # value_template: "{{ states('input_number.heating_on_temp') }}"
-          # # # above: "{{ states('sensor.openweathermap_temperature') }}"
-          # # below: 18
+          # # above: "{{ states('sensor.temperature') | int }}"
+
+    # # condition:
+      # # - condition: state
+        # # entity_id: switch.heating_switch
+        # # state: "on"
 
     # # action:
-    # # - service: homeassistant.turn_off
+    # # - service: homeassistant.turn_on
       # # entity_id: switch.heating_switch
+
+
+  # # # - id: temp_set_off
+    # # # mode: restart
+    # # # trigger:
+        # # # - platform: state
+          # # # entity_id: input_number.heating_temp_set
+          # # # attribute: value
+          # # # # value_template: "{{ states('input_number.heating_on_temp') }}"
+          # # # # above: "{{ states('sensor.openweathermap_temperature') }}"
+          # # # below: 18
+
+    # # # action:
+    # # # - service: input_boolean.turn_off
+      # # # entity_id: switch.heating_switch

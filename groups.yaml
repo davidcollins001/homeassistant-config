@@ -24,5 +24,11 @@
       name: gHeating
       entities:
           - input_boolean.heating_boost
-          # - input_boolean.heating_pcm
+          - input_boolean.heating_pcm
           - input_boolean.heating_sched
+
+
+  gPresent:
+      name: gPresent
+      entities:
+          - person.david
