@@ -5,6 +5,9 @@ cards:
     entities:
         - input_number.heating_on_temp
         - input_number.heating_off_temp
-        - input_number.heating_boost_timer
-        - input_number.heating_duty_cycle
         - input_number.max_ext_temp
+        - input_number.heating_boost_timer
+        - input_number.heating_pwm_timer
+        - input_number.heating_pwm_duty_cycle
+        - input_number.heating_pwm_period
+        - input_boolean.heating_sched_enable

@@ -13,20 +13,23 @@ cards:
         - sensor.last_updated
     show_header_toggle: true
   - type: entities
-    title: Plugs
+    title: Lights
     entities:
-        - switch.plug1
-        - switch.plug2
-        - switch.plug3
+        # - switch.plug1
+        # - switch.plug2
+        - entity: switch.plug3
+          name: Living room lamp
     show_header_toggle: true
   - type: entities
     title: Heating
     entities:
-          - input_number.heating_temp_set
+          # - switch.heating_switch
+          - sensor.i_heating
           - entity: input_boolean.heating_boost
             name: Heating Boost
-          - input_boolean.heating_pcm
-          - switch.heating_switch
+          - input_boolean.heating_pwm
+          # - input_number.heating_temp_set
+          - sensor.i_heating_temp_set
     show_header_toggle: true
   - type: entities
     title: Binary sensor
@@ -35,7 +38,10 @@ cards:
   - type: entities
     title: Person
     entities:
+        - group.g_present
         - person.david
+        - person.sara
+        - person.luke
   - type: entities
     title: Sun
     entities:
@@ -45,9 +51,11 @@ cards:
     entities:
         - switch.test1
         - switch.test2
-        - group.gHeating
+        - group.g_heating
         - input_boolean.heating
         - input_boolean.test11
+        - input_number.wait
+        - sensor.i_debug
   - type: weather-forecast
     entity: weather.openweathermap
     show_forecast: true

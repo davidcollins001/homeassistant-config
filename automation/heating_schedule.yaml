@@ -1,0 +1,159 @@
+
+# time/day combination for heating schedule
+  - alias: heating_sched_weekday_am_on
+    mode: restart
+    trigger:
+      - platform: time
+        at: "7:00:00"
+    condition:
+      - condition: time
+        weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+    action:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.heating_sched_trigger
+
+# time/day combination for heating schedule
+  - alias: heating_sched_weekday_am_off
+    mode: restart
+    trigger:
+      - platform: time
+        at: "8:15:00"
+    condition:
+      - condition: time
+        weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+    action:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.heating_sched_trigger
+
+# time/day combination for heating schedule
+  - alias: heating_sched_weekend_am_on
+    mode: restart
+    trigger:
+      - platform: time
+        at: "8:30:00"
+    condition:
+      - condition: time
+        weekday:
+          - sat
+          - sun
+    action:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.heating_sched_trigger
+
+# time/day combination for heating schedule
+  - alias: heating_sched_weekend_am_off
+    mode: restart
+    trigger:
+      - platform: time
+        at: "10:00:00"
+    condition:
+      - condition: time
+        weekday:
+          - sat
+          - sun
+    action:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.heating_sched_trigger
+
+# time/day combination for heating schedule
+  - alias: heating_sched_weekday_pm_on
+    mode: restart
+    trigger:
+      - platform: time
+        at: "20:58:00"
+    condition:
+      - condition: time
+        weekday:
+          - sun
+          - mon
+          - tue
+          - wed
+          - thu
+    action:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.heating_sched_trigger
+
+# time/day combination for heating schedule
+  - alias: heating_sched_weekday_pm_off
+    mode: restart
+    trigger:
+      - platform: time
+        at: "22:00:00"
+    condition:
+      - condition: time
+        weekday:
+          - sun
+          - mon
+          - tue
+          - wed
+          - thu
+    action:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.heating_sched_trigger
+
+
+# generic scheduled heating action to turn heating on
+  - alias: heating_sched_on
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_boolean.heating_sched_trigger
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: group.g_present
+        state: home
+      - condition: state
+        entity_id: input_boolean.heating_sched_enable
+        state: "on"
+      - condition: template
+        value_template: >
+          {% set ext_temp = states("sensor.openweathermap_temperature") | int %}
+          {% set max_ext_temp = states("input_number.max_ext_temp") | int %}
+          {{ ext_temp < max_ext_temp }}
+    action:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.heating_sched
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.heating
+
+
+# generic scheduled heating action to turn heating off
+  - alias: heating_sched_off
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_boolean.heating_sched_trigger
+        to: "off"
+    condition:
+      - condition: state
+        entity_id: input_boolean.heating
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.heating_sched_enable
+        state: "on"
+    action:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.heating_sched
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.heating

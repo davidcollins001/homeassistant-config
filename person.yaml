@@ -1,0 +1,17 @@
+  # - name: "david"
+    # user_id: "f1e8f033c38d4bb99d532ca1f59cf205"
+    # device_trackers:
+      # - device_tracker.android_1f459967274325dc
+    # id: "david"
+  - name: "sara"
+    device_trackers:
+      - device_tracker.sarasapplewatch
+      - device_tracker.saras_phone
+    # user_id: null
+    id: "sara"
+  - name: "luke"
+    device_trackers:
+      - device_tracker.pixel_3a
+    # user_id: null
+    id: "luke"
+

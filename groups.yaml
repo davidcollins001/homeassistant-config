@@ -1,6 +1,6 @@
 
-  gClimate:
-      name: gClimate
+  g_climate:
+      name: Climate Group
       entities:
           - sensor.temperature
           - sensor.adc_temp
@@ -12,23 +12,26 @@
           - sensor.last_updated
 
 
-  gPlugs:
-        name: gPlugs
-        entities:
-            - switch.plug1
-            - switch.plug2
-            - switch.plug3
+  g_plugs:
+      name: Plugs Group
+      entities:
+          - switch.plug1
+          - switch.plug2
+          - switch.plug3
 
 
-  gHeating:
-      name: gHeating
+  g_heating:
+      name: Heating Group
       entities:
           - input_boolean.heating_boost
-          - input_boolean.heating_pcm
+          - input_boolean.heating_pwm
           - input_boolean.heating_sched
 
 
-  gPresent:
-      name: gPresent
+  g_present:
+      name: Present Group
       entities:
           - person.david
+          - person.sara
+          - person.luke
+      # - media_player.sony_bravia_tv

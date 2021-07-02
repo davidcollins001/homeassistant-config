@@ -1,34 +1,31 @@
 
-# Configure a default setup of Home Assistant (frontend, api, etc)
+# TODO:
+#       - start using this instead of openhab
+#       - influx
+
 default_config:
-
-# homeassistant:
-    # customize:
-
 group: !include groups.yaml
-automation: !include automations.yaml
-script: !include scripts.yaml
+automation: !include_dir_merge_list automation/
+# script: !include scripts.yaml
 # scene: !include scenes.yaml
 
+logger:
+  default: info
 
 device_tracker:
-    - platform: sky_hub
-      host: 192.168.1.254
-      new_device_defaults:
-        track_new_devices: true
+  - platform: sky_hub
+    host: 192.168.1.254
+    interval_seconds: 200
+    new_device_defaults:
+      track_new_devices: false
 
-
-# scene:
-  # - name: Example Scene
-    # entities:
-      # input_number.example_number: 13
-
+person: !include person.yaml
 
 lovelace:
     mode: yaml
     resources:
-        - url: /local/button-card.js
-          type: module
+      - url: /local/button-card.js
+        type: module
 
     # # Add more dashboards
     # dashboards:
@@ -45,6 +42,9 @@ lovelace:
         # show_in_sidebar: true
         # filename: ui/new.yaml
 
+# media_player:
+  # - platform: braviatv
+    # host: 192.168.1.24
 
 switch:
   - platform: mqtt
@@ -63,53 +63,15 @@ switch:
     name: plug3
     retain: true
 
-
+  # send singnal to switch boiler on/off
   - platform: mqtt
     # state_topic: "state/sensor/heating"
     command_topic: "cmnd/sensor/heating"
     name: Heating Switch
+    unique_id: heating_switch
     retain: true
     payload_on: 1
     payload_off: 0
-
-  - platform: template
-    switches:
-      heating:
-        friendly_name: hs
-        # value_template: >
-          # "{{ is_state('input_boolean.heating_boost', 'on') }}"
-        # value_template: >
-          # {% if is_states('input_boolean.heating_boost', 'on') and
-          #     states.sensor.temperature < states.input_number.heating_on_temp and
-          #     states.sensor.temperature' states('sensor.openweathermap_forecast_temperature'))
-          #     %}
-            # 1
-          # {% else %}
-            # 0
-          # {% endif %}
-        # value_template: "{{ is_state('input_boolean.heating_boost', 'on') }}"
-        value_template: "{{ is_state('switch.test2', 'on') }}"
-        turn_on:
-          service: switch.turn_on
-          target:
-            # entity_id: switch.heating_switch
-            entity_id: switch.test1
-        # turn_off:
-          # service: script.delay_off
-        turn_off:
-          service: switch.turn_off
-          target:
-            entity_id: switch.test1
-
-
-  - platform: mqtt
-    name: test1
-    command_topic: "stat/sensor/t1"
-
-  - platform: mqtt
-    name: test2
-    command_topic: "stat/sensor/t2"
-
 
 sensor:
   - platform: mqtt
@@ -121,7 +83,7 @@ sensor:
   - platform: mqtt
     name: "ADC Temp"
     state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.adc }}"
+    value_template: "{{ value_json.adc_temp }}"
     unit_of_measurement: "°C"
 
   - platform: mqtt
@@ -160,55 +122,123 @@ sensor:
     value_template: "{{ value_json.timestamp }}"
     unit_of_measurement: "s"
 
+  # sensors used for displaying input values to prevent changing in ui
+  - platform: template
+    sensors:
+      i_heating_temp_set:
+        friendly_name: Heating Temp Set
+        value_template: '{{ states("input_number.heating_temp_set") }}'
+        # unit: ""  # degrees
+      i_heating:
+        friendly_name: Heating
+        value_template: '{{ states("group.g_heating") }}'
 
 input_number:
   heating_on_temp:
-    name: Heating On Temp
+    name: Heating On Temp (C)
     initial: 20
     min: 5
     max: 35
 
   heating_off_temp:
-    name: Heating Off Temp
+    name: Heating Off Temp (C)
     initial: 14
     min: 5
     max: 35
 
-  heating_boost_timer:
-    name: Heating Boost Timer
-    initial: 60
-    min: 30
-    max: 180
-
-  heating_duty_cycle:
-    name: Heating Duty Cycle
-    initial: 20
-    min: 10
-    max: 50
-
   max_ext_temp:
-    name: Max External Temperature
+    name: Max External Temperature (C)
     initial: 12
     min: 5
     max: 20
 
-
-# number:
   heating_temp_set:
-    name: Heating Temperature
+    name: Heating Temperature (C)
     # value: "{{ states(input_number.heating_off_temp) }}"
     min: 0
     max: 100
 
+  heating_boost_timer:
+    name: Heating Boost Timer (min)
+    initial: 60
+    min: 30
+    max: 180
+
+  heating_pwm_timer:
+    name: Heating PWM Timer (min)
+    initial: 240
+    min: 100
+    max: 400
+
+  heating_pwm_duty_cycle:
+    name: Heating PWM Duty Cycle (%)
+    # unit: percent
+    initial: 20
+    min: 10
+    max: 50
+
+  heating_pwm_period:
+    name: Heating PWM Period (min)
+    initial: 30
+    min: 0
+    max: 60
 
 input_boolean:
+  # track if heating is on
   heating:
     name: Heating
+  # track heating manually switched on
   heating_boost:
     name: Heating Boost
-  heating_pcm:
-    name: Heating PCM
+  heating_pwm:
+    name: Heating PWM
+  # track heating switched on by schedule
   heating_sched:
     name: Heating Scheduled
-  test11:
-    name: test 11
+  heating_sched_enable:
+    name: Heating Scheduled Enabled
+  # track heating time/day trigger to abstract schedule rules
+  heating_sched_trigger:
+    name: Heating Sched Trigger
+
+
+############################### DEBUG ENTITIES ################################
+
+input_text:
+  debug_text:
+    initial: "-"
+
+input_boolean test_b:
+  name: test 11
+
+input_number wait:
+    name: wait
+    min: 100
+    max: 2000
+
+sensor i_debug:
+  platform: template
+  sensors:
+    i_debug:
+      friendly_name: debug text
+      value_template: >
+        {{ states('input_text.debug_text') }}
+        # {% set entity = 'input_boolean.heating_boost' %}
+        # {% set ent_str = entity.replace("boolean", "number") + "_timer" %}
+        # {{ states(ent_str) | int }}
+        # {% set ent_str = entity.replace("boolean", "number") %}
+        # {{ states(entity) | int }}
+
+    # {% set entity = "input_number.{}_timer".format("heating_boost") %}
+    # {{ states(entity) | int }}
+
+switch test_s:
+  platform: mqtt
+  name: test1
+  command_topic: "stat/sensor/t1"
+
+switch test2:
+  - platform: mqtt
+    name: test2
+    unique_id: test2
+    command_topic: "stat/sensor/t2"

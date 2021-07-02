@@ -1,0 +1,267 @@
+
+# heating changed
+  - alias: manual_heating_changed
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_boolean.heating
+    action:
+      - service: input_number.set_value
+        data:
+          entity_id: input_number.heating_temp_set
+          value: >
+            {% set state = states("input_boolean.heating") %}
+            {% set temp_ent = "input_number.heating_{}_temp".format(state) %}
+            {{ states(temp_ent) }}
+
+
+# manual heating switched on
+# NOTE: this runs in parallel with the pwm version, if pwm was used, so that
+#       pwm switch gets switched off when timer expires
+  - alias: manual_heating_on
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_boolean.heating_boost
+        to: "on"
+      - platform: state
+        entity_id: input_boolean.heating_pwm
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: group.g_present
+        state: home
+      - condition: template
+        value_template: >
+          {% set ext_temp = states("sensor.openweathermap_temperature") | int %}
+          {% set max_ext_temp = states("input_number.max_ext_temp") | int %}
+          {{ ext_temp < max_ext_temp }}
+      - condition: template
+        value_template: >
+          {% set members = expand(["group.g_heating"]) | selectattr("state", "eq", "on") %}
+          {{ members | list | count | int == 1 }}
+    action:
+    - service: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.heating
+    - delay:
+        minutes: >
+          {% set entity = trigger.entity_id %}
+          {% set ent_str = entity | replace("boolean", "number") + "_timer" %}
+          {{ states(ent_str) | int }}
+    - service: input_boolean.turn_off
+      target:
+        entity_id: "{{ trigger.entity_id }}"
+
+
+# TODO: use counted loop and merg with above in script??
+# heating pwm - gets started/ended by manual_heating_on
+  - alias: manual_heating_pwm_on
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_boolean.heating_pwm
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: group.g_present
+        state: home
+      - condition: template
+        value_template: >
+          {% set ext_temp = states("sensor.openweathermap_temperature") | int %}
+          {% set max_ext_temp = states("input_number.max_ext_temp") | int %}
+          {{ ext_temp < max_ext_temp }}
+      - condition: template
+        value_template: >
+          {% set members = expand(["group.g_heating"]) | selectattr("state", "eq", "on") %}
+          {{ members | list | count | int == 1 }}
+    action:
+      repeat:
+          while: "{{ states('input_boolean.heating_pwm') == 'on' }}"
+          sequence:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.heating
+          - delay:
+              minutes: >
+                {% set period = states("input_number.heating_pwm_period") | int %}
+                {% set duty_cycle = states("input_number.heating_pwm_duty_cycle") | int %}
+                {{ period * duty_cycle / 100}}
+          - service: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.heating
+          - delay:
+              minutes: >
+                {% set period = states("input_number.heating_pwm_period") | int %}
+                {% set duty_cycle = states("input_number.heating_pwm_duty_cycle") | int %}
+                {{ period * (100 - duty_cycle) / 100}}
+
+
+# manual heating already on and another switched on
+  - alias: heating_reset
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_boolean.heating_boost
+        to: "on"
+      - platform: state
+        entity_id: input_boolean.heating_pwm
+        to: "on"
+    condition:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: group.g_present
+          state: away
+        - condition: template
+          value_template: >
+            {% set ext_temp = states("sensor.openweathermap_temperature") | int %}
+            {% set max_ext_temp = states("input_number.max_ext_temp") | int %}
+            {{ ext_temp >= max_ext_temp }}
+        - condition: template
+          value_template: >
+            {% set members = expand(['group.g_heating']) | selectattr('state', 'eq', 'on') %}
+            {{ members | list | count | int > 1 }}
+    action:
+    - service: input_boolean.turn_off
+      target:
+        entity_id: "{{ trigger.entity_id }}"
+
+
+# manual heating switched off
+  - alias: manual_heating_off
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_boolean.heating_boost
+        to: "off"
+      - platform: state
+        entity_id: input_boolean.heating_pwm
+        to: "off"
+    condition:
+      - condition: template
+        value_template: >
+          {% set members = expand(["group.g_heating"]) | selectattr("state", "eq", "on") %}
+          {{ members | list | count | int == 0 }}
+    action:
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.heating
+
+
+# temp is below `on_temp` + heating switch on
+  - alias: heating_temp_set
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_number.heating_temp_set
+    action:
+      - service_template: >
+          {% set temp = states("sensor.temperature") %}
+          {% set temp_set = states("input_number.heating_temp_set") %}
+          {% if temp > temp_set %}
+              switch.turn_off
+          {% elif temp < temp_set %}
+              switch.turn_on
+          {% endif %}
+        entity_id: switch.heating_switch
+
+
+# temp sensor changed
+  - alias: sensor_temp_changed
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: sensor.temperature
+    condition:
+      - condition: state
+        entity_id: group.g_heating
+        state: "on"
+    action:
+      - choose:
+        - conditions: >
+            {% set current = states("sensor.temperature") %}
+            {% set target = states("input_boolean.heating_temp_set") %}
+            {% set heating_switch = states("input_boolean.heating_switch") %}
+            {{ heating_switch == "on" and current > target }}
+          sequence:
+            - service: switch.turn_off
+              target:
+                entity_id: switch.heating_switch
+        - conditions: >
+            {% set current = states("sensor.temperature") %}
+            {% set target = states("input_boolean.heating_temp_set") %}
+            {% set heating_switch = states("input_boolean.heating_switch") %}
+            {{ heating_switch == "off" and current < target }}
+          sequence:
+          - service: switch.turn_on
+            target:
+              entity_id: switch.heating_switch
+
+
+# presence rules
+  - alias: heating_presence
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: group.g_present
+    condition:
+      - condition: state
+        entity_id: input_boolean.heating
+        state: "on"
+    action:
+      - service: switch.turn_on
+        target:
+          entity_id: input_boolean.heating
+      - service_template: >
+          {% set presence = states("group.g_present") %}
+          {% if presence == "off" %}
+              switch.turn_off
+          {% else %}
+              switch.turn_on
+          {% endif %}
+        # TODO: test this
+        # {% set presence = states("group.g_present") %}
+        # {{ "switch.turn_{}".format(presence) }}
+        entity_id: switch.heating_switch
+
+
+############################### DEBUG ACTIONS ###############################
+
+  - alias: debug-1
+    mode: restart
+    trigger:
+        - platform: state
+          entity_id: switch.test2
+          to: "on"
+    variables:
+      _current: '{{ states("sensor.temperature") }}'
+      _target: '{{ states("input_boolean.heating_temp_set") | int }}'
+    # condition:
+      # - condition: template
+        # value_template: >
+          # {% set current = states("sensor.temperature") %}
+          # {% set target = states("input_boolean.heating_temp_set") %}
+          # {{ current > target }}
+    action:
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.debug_text
+        data:
+          value: >
+            {% set current = _current %}
+            {% set target = _target %}
+            {{ current < target }}
+
+  - alias: debug-2
+    mode: restart
+    trigger:
+        - platform: state
+          entity_id: switch.test2
+          to: "off"
+    action:
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.debug_text
+        data:
+          value: x

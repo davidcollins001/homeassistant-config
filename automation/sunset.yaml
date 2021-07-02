@@ -1,0 +1,29 @@
+
+# presence rules
+  - alias: sunset_lamp
+    mode: restart
+    trigger:
+      - platform: sun
+        event: sunset
+        offset: "-00:20:00"
+    condition:
+      - condition: state
+        entity_id: group.g_present
+        state: home
+    action:
+      - service: switch.turn_on
+        target:
+          entity_id: switch.plug3
+
+
+# presence rules
+  - alias: sunset_lamp_off
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: group.g_present
+        to: "off"
+    action:
+      - service: switch.turn_off
+        target:
+          entity_id: switch.plug3
