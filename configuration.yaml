@@ -2,7 +2,13 @@
 # TODO:
 #       - start using this instead of openhab
 #       - influx
+#           https://community.home-assistant.io/t/home-assistant-community-add-on-influxdb/54491
 #       - duck dns
+#       - phillips hue
+#           https://www.home-assistant.io/integrations/hue/
+#           https://stackoverflow.com/questions/65948825/cant-send-command-to-ble-device-philips-hue-bulb-connection-drops
+#           https://github.com/walter5138/hue_ble_bash
+
 
 default_config:
 group: !include groups.yaml
@@ -104,7 +110,7 @@ sensor:
     name: "794296394_gas_resistance"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.gas_res }}"
-    unit_of_measurement: "ohm"
+    unit_of_measurement: "Ohm"
 
   - platform: mqtt
     name: "794296394_air_quality"
