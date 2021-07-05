@@ -54,7 +54,6 @@
         entity_id: "{{ trigger.entity_id }}"
 
 
-# TODO: use counted loop and merg with above in script??
 # heating pwm - gets started/ended by manual_heating_on
   - alias: manual_heating_pwm_on
     mode: restart
@@ -75,6 +74,11 @@
         value_template: >
           {% set members = expand(["group.g_heating"]) | selectattr("state", "eq", "on") %}
           {{ members | list | count | int == 1 }}
+    variables:
+      period: '{{ states("input_number.heating_pwm_period") | int }}'
+      duty_cycle: '{{ states("input_number.heating_pwm_duty_cycle") | int }}'
+      on_cycle: '{{ period * duty_cycle / 100}}'
+      off_cycle: '{{ period * (100 - duty_cycle) / 100}}'
     action:
       repeat:
           while: "{{ states('input_boolean.heating_pwm') == 'on' }}"
@@ -83,18 +87,12 @@
             target:
               entity_id: input_boolean.heating
           - delay:
-              minutes: >
-                {% set period = states("input_number.heating_pwm_period") | int %}
-                {% set duty_cycle = states("input_number.heating_pwm_duty_cycle") | int %}
-                {{ period * duty_cycle / 100}}
+              minutes: '{{ on_cycle }}'
           - service: input_boolean.turn_off
             target:
               entity_id: input_boolean.heating
           - delay:
-              minutes: >
-                {% set period = states("input_number.heating_pwm_period") | int %}
-                {% set duty_cycle = states("input_number.heating_pwm_duty_cycle") | int %}
-                {{ period * (100 - duty_cycle) / 100}}
+              minutes: '{{ off_cycle }}'
 
 
 # manual heating already on and another switched on
@@ -235,8 +233,9 @@
           entity_id: switch.test2
           to: "on"
     variables:
-      _current: '{{ states("sensor.temperature") }}'
+      _current: '{{ states("sensor.temperature") | int }}'
       _target: '{{ states("input_boolean.heating_temp_set") | int }}'
+      _active: '{{ _current < _target }}'
     # condition:
       # - condition: template
         # value_template: >
@@ -248,10 +247,11 @@
         target:
           entity_id: input_text.debug_text
         data:
-          value: >
-            {% set current = _current %}
-            {% set target = _target %}
-            {{ current < target }}
+          # value: >
+            # {% set current = _current %}
+            # {% set target = _target %}
+            # {{ current < target }}
+          value: '{{ _active }}'
 
   - alias: debug-2
     mode: restart

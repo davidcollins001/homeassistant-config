@@ -2,6 +2,7 @@
 # TODO:
 #       - start using this instead of openhab
 #       - influx
+#       - duck dns
 
 default_config:
 group: !include groups.yaml
@@ -75,52 +76,52 @@ switch:
 
 sensor:
   - platform: mqtt
-    name: "Temperature"
+    # name: "Temperature"
+    name: "794296394_temperature"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.temperature }}"
     unit_of_measurement: "°C"
 
   - platform: mqtt
-    name: "ADC Temp"
+    name: "794296394_adc_temperature"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.adc_temp }}"
     unit_of_measurement: "°C"
 
   - platform: mqtt
-    name: "Humidity"
+    name: "794296394_humidity"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.humidity / 1000 | round }}"
     unit_of_measurement: "%"
 
   - platform: mqtt
-    name: "Pressure"
+    name: "794296394_pressure"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.pressure | float / 100 | int }}"
     unit_of_measurement: "hPa"
 
   - platform: mqtt
-    name: "Gas Resistance"
+    name: "794296394_gas_resistance"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.gas_res }}"
     unit_of_measurement: "ohm"
 
   - platform: mqtt
-    name: "Air Quality"
+    name: "794296394_air_quality"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.iaq }}"
     unit_of_measurement: ""
 
   - platform: mqtt
-    name: "Air Quality 2"
+    name: "794296394_air_quality_2"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.iaq2 }}"
     unit_of_measurement: " "
 
   - platform: mqtt
-    name: "Last Updated"
+    name: "794296394_last_updated"
     state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.timestamp }}"
-    unit_of_measurement: "s"
+    value_template: "{{ value_json.timestamp | timestamp_custom('%d/%m/%y %H:%M:%S') }}"
 
   # sensors used for displaying input values to prevent changing in ui
   - platform: template

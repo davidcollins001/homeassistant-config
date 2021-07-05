@@ -3,15 +3,14 @@
     # device_trackers:
       # - device_tracker.android_1f459967274325dc
     # id: "david"
-  - name: "sara"
+  - name: "Sara"
     device_trackers:
       - device_tracker.sarasapplewatch
       - device_tracker.saras_phone
     # user_id: null
     id: "sara"
-  - name: "luke"
+  - name: "Luke"
     device_trackers:
       - device_tracker.pixel_3a
     # user_id: null
     id: "luke"
-

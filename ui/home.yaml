@@ -3,14 +3,22 @@ cards:
   - type: entities
     title: Living Room
     entities:
-        - sensor.temperature
-        - sensor.adc_temp
-        - sensor.humidity
-        - sensor.pressure
-        - sensor.gas_resistance
-        - sensor.air_quality
-        - sensor.air_quality_2
-        - sensor.last_updated
+        - entity: sensor.794296394_temperature
+          name: Temperature
+        - entity: sensor.794296394_adc_temperature
+          name: ADC Temperature
+        - entity: sensor.794296394_humidity
+          name: Humidity
+        - entity: sensor.794296394_pressure
+          name: Pressure
+        - entity: sensor.794296394_gas_resistance
+          name: Gas Resistance
+        - entity: sensor.794296394_air_quality
+          name: Air Quality
+        - entity: sensor.794296394_air_quality_2
+          name: Air Quality 2
+        - entity: sensor.794296394_last_updated
+          name: Last Updated
     show_header_toggle: true
   - type: entities
     title: Lights
@@ -25,8 +33,7 @@ cards:
     entities:
           # - switch.heating_switch
           - sensor.i_heating
-          - entity: input_boolean.heating_boost
-            name: Heating Boost
+          - input_boolean.heating_boost
           - input_boolean.heating_pwm
           # - input_number.heating_temp_set
           - sensor.i_heating_temp_set
@@ -81,7 +88,11 @@ cards:
     title: Climate
     hours_to_show: 3
     entities:
-        - sensor.temperature
-        - sensor.humidity
-        - sensor.pressure
-        - sensor.air_quality_2
+        - entity: sensor.794296394_temperature
+          name: Temperature
+        - entity: sensor.794296394_humidity
+          name: Humidity
+        - entity: sensor.794296394_pressure
+          name: Pressure
+        - entity: sensor.794296394_air_quality_2
+          name: Air Quality
