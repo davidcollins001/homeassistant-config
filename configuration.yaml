@@ -9,6 +9,8 @@
 #           https://stackoverflow.com/questions/65948825/cant-send-command-to-ble-device-philips-hue-bulb-connection-drops
 #           https://github.com/walter5138/hue_ble_bash
 
+homeassistant:
+    time_zone: Europe/London
 
 default_config:
 group: !include groups.yaml
@@ -27,6 +29,35 @@ device_tracker:
       track_new_devices: false
 
 person: !include person.yaml
+
+influxdb:
+    api_version: 1
+    ssl: false
+    host: 192.168.1.99
+    port: 8086
+    username: openhab
+    password: openhab
+    database: openhab_db
+    # exclude:
+    # entity_globs: '*'
+    include:
+        entities:
+            - switch.heating_switch
+            - input_number.heating_temp_set
+              # TODO: should include via group.g_heating
+            - switch.heating_boost
+            - switch.heating_sched
+            - switch.heating_pwm
+
+            - group.g_present
+            - sensor.794296394_temperature
+        entity_globs:
+            - switch.plug*
+            - sensor.794296394_*
+    # domains:
+      # - group.g_plugs
+      # - switch
+
 
 lovelace:
     mode: yaml
@@ -82,47 +113,65 @@ switch:
 
 sensor:
   - platform: mqtt
-    # name: "Temperature"
     name: "794296394_temperature"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.temperature }}"
     unit_of_measurement: "°C"
+    device_class: temperature
+    force_update: true
+    # unique_id: "794296394_temperature"
+    device:
+        identifiers: "794296394"
+        name: "jeenode zero 794296394"
 
   - platform: mqtt
     name: "794296394_adc_temperature"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.adc_temp }}"
     unit_of_measurement: "°C"
+    device_class: temperature
+    force_update: true
+    # unique_id: "794296394_adc_temperature"
+    # device:
+        # identifiers: "794296394"
+        # name: "794296394"
 
   - platform: mqtt
     name: "794296394_humidity"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.humidity / 1000 | round }}"
     unit_of_measurement: "%"
+    device_class: humidity
+    force_update: true
 
   - platform: mqtt
     name: "794296394_pressure"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.pressure | float / 100 | int }}"
     unit_of_measurement: "hPa"
+    device_class: pressure
+    force_update: true
 
   - platform: mqtt
     name: "794296394_gas_resistance"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.gas_res }}"
     unit_of_measurement: "Ohm"
+    force_update: true
 
   - platform: mqtt
     name: "794296394_air_quality"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.iaq }}"
     unit_of_measurement: ""
+    force_update: true
 
   - platform: mqtt
     name: "794296394_air_quality_2"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.iaq2 }}"
-    unit_of_measurement: " "
+    unit_of_measurement: ""
+    force_update: true
 
   - platform: mqtt
     name: "794296394_last_updated"
@@ -139,6 +188,9 @@ sensor:
       i_heating:
         friendly_name: Heating
         value_template: '{{ states("group.g_heating") }}'
+      heating_temperature:
+        friendly_name: Temperature
+        value_template: '{{ states("sensor.794296394_temperature") }}'
 
 input_number:
   heating_on_temp:
