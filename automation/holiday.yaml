@@ -1,0 +1,44 @@
+
+# holiday mode
+  - alias: holiday_mode_on
+    mode: restart
+    trigger:
+      - platform: sun
+        event: sunset
+      # - platform: sun
+        # event: sunrise
+    condition:
+      - condition: state
+        entity_id: input_boolean.holiday_mode
+        state: "on"
+    action:
+      - delay:
+          minutes: "00:{{ range(20) | random }}:00"
+      - service: switch.turn_on
+        entity_id: switch.plug3
+
+
+# holiday mode
+  - alias: holiday_mode_off
+    mode: restart
+    trigger:
+      - platform: time
+        at: "22:03:00"
+    condition:
+      - condition: time
+        weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+          - sat
+          - sun
+      - condition: state
+        entity_id: input_boolean.holiday_mode
+        state: "on"
+    action:
+      - delay:
+          minutes: "00:{{ range(20) | random }}:00"
+      - service: switch.turn_off
+        entity_id: switch.plug3

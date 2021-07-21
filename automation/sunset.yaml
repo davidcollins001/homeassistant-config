@@ -22,6 +22,7 @@
     trigger:
       - platform: state
         entity_id: group.g_present
+        from: "on"
         to: "off"
     action:
       - service: switch.turn_off

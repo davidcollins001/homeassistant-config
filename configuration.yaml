@@ -30,6 +30,7 @@ device_tracker:
 
 person: !include person.yaml
 
+# https://www.dummylabs.com/post/2019-01-13-influxdb-part1/
 influxdb:
     api_version: 1
     ssl: false
@@ -192,6 +193,7 @@ sensor:
         friendly_name: Temperature
         value_template: '{{ states("sensor.794296394_temperature") }}'
 
+
 input_number:
   heating_on_temp:
     name: Heating On Temp (C)
@@ -242,6 +244,7 @@ input_number:
     min: 0
     max: 60
 
+
 input_boolean:
   # track if heating is on
   heating:
@@ -259,6 +262,9 @@ input_boolean:
   # track heating time/day trigger to abstract schedule rules
   heating_sched_trigger:
     name: Heating Sched Trigger
+  # enable holiday mode
+  holiday_mode:
+    name: Holiday Mode
 
 
 ############################### DEBUG ENTITIES ################################
