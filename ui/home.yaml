@@ -60,6 +60,7 @@ cards:
         - switch.test2
         - group.g_heating
         - input_boolean.heating
+        - switch.heating_switch
         - input_boolean.test11
         - input_number.wait
         - sensor.i_debug
