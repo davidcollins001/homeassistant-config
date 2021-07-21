@@ -1,0 +1,10 @@
+title: Plugs
+cards:
+  - type: entities
+    title: Plugs
+    entities:
+        - switch.plug1
+        - switch.plug2
+        - switch.plug3
+    show_header_toggle: false
+
