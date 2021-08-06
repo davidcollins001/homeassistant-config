@@ -77,3 +77,12 @@ cards:
           name: Pressure
         - entity: sensor.794296394_air_quality_2
           name: Air Quality
+
+  - type: history-graph
+    title: Heating
+    hours_to_show: 3
+    entities:
+        - entity: switch.heating_switch
+          name: Heating
+        - entity: group.g_present
+          name: Present

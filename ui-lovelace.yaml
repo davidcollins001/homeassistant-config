@@ -6,3 +6,4 @@ views:
     - !include ui/weather.yaml
     - !include ui/plugs.yaml
     - !include ui/settings.yaml
+    - !include ui/sysinfo.yaml

@@ -1,0 +1,11 @@
+title: System info
+cards:
+  - type: history-graph
+    title: System info
+    hours_to_show: 6
+    entities:
+        - entity: sensor.processor_use_percent
+        - entity: sensor.memory_use_percent
+        - entity: sensor.load_1m
+        - entity: sensor.load_5m
+        - entity: sensor.load_15m

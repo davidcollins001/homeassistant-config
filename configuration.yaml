@@ -193,6 +193,14 @@ sensor:
         friendly_name: Temperature
         value_template: '{{ states("sensor.794296394_temperature") }}'
 
+  - platform: systemmonitor
+    resources:
+      - type: processor_use
+      - type: memory_use_percent
+      - type: load_1m
+      - type: load_5m
+      - type: load_15m
+
 
 input_number:
   heating_on_temp:
