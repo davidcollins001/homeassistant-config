@@ -1,0 +1,16 @@
+title: TV
+cards:
+  - type: media-control
+    entity: media_player.sony_bravia_tv
+
+  - type: entities
+    title: TV
+    entities:
+        - media_player.sony_bravia_tv
+        # - input_select.tv_source
+    show_header_toggle: false
+
+# visible:
+    # # - user: David
+    # # - user: Sara ??
+    # - user: f566f23f959541a7b8060b9a6d842e93

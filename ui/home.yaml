@@ -7,7 +7,12 @@ cards:
         # - switch.plug2
         - entity: switch.plug3
           name: Living room lamp
-    show_header_toggle: true
+    show_header_toggle: false
+  - type: entities
+    title: Switch Off
+    entities:
+        - input_boolean.switch_off_lr
+    show_header_toggle: false
   - type: entities
     title: Heating
     entities:
@@ -17,7 +22,7 @@ cards:
           - input_boolean.heating_pwm
           # - input_number.heating_temp_set
           - sensor.i_heating_temp_set
-    show_header_toggle: true
+    show_header_toggle: false
   - type: entities
     title: Binary sensor
     entities:

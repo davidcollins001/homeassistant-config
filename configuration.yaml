@@ -81,9 +81,9 @@ lovelace:
         # show_in_sidebar: true
         # filename: ui/new.yaml
 
-# media_player:
-  # - platform: braviatv
-    # host: 192.168.1.24
+media_player:
+  - platform: braviatv
+    host: 192.168.1.24
 
 switch:
   - platform: mqtt
@@ -273,6 +273,9 @@ input_boolean:
   # enable holiday mode
   holiday_mode:
     name: Holiday Mode
+
+  switch_off_lr:
+    name:  Switch Off
 
 
 ############################### DEBUG ENTITIES ################################

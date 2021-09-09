@@ -1,0 +1,21 @@
+
+# switch off lamp and TV
+  - alias: switch_off_lr
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_boolean.switch_off_lr
+        from: "off"
+        to: "on"
+    action:
+      - service: switch.turn_off
+        target:
+            entity_id: switch.plug3
+      - service: media_player.turn_off
+        target:
+            entity_id: media_player.sony_bravia_tv
+      - delay:
+          seconds: 2
+      - service: input_boolean.turn_off
+        target:
+            entity_id: input_boolean.switch_off_lr
