@@ -8,3 +8,4 @@ views:
     - !include ui/plugs.yaml
     - !include ui/sysinfo.yaml
     - !include ui/settings.yaml
+    - !include ui/debug.yaml

@@ -6,6 +6,7 @@ cards:
     entities:
         - entity: sensor.processor_use_percent
         - entity: sensor.memory_use_percent
+        - entity: sensor.swap_use_percent
         - entity: sensor.load_1m
         - entity: sensor.load_5m
         - entity: sensor.load_15m

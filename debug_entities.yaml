@@ -1,0 +1,42 @@
+
+############################### DEBUG ENTITIES ################################
+
+input_text:
+  debug_text:
+    initial: "-"
+
+input_boolean test_b:
+  name: test 11
+
+input_number wait:
+    name: wait
+    min: 100
+    max: 2000
+
+sensor i_debug:
+  platform: template
+  sensors:
+    i_debug:
+      friendly_name: debug text
+      value_template: >
+        {{ states('input_text.debug_text') }}
+        # {% set entity = 'input_boolean.heating_boost' %}
+        # {% set ent_str = entity.replace("boolean", "number") + "_timer" %}
+        # {{ states(ent_str) | int }}
+        # {% set ent_str = entity.replace("boolean", "number") %}
+        # {{ states(entity) | int }}
+
+    # {% set entity = "input_number.{}_timer".format("heating_boost") %}
+    # {{ states(entity) | int }}
+
+switch test_s:
+  platform: mqtt
+  name: test1
+  command_topic: "stat/sensor/t1"
+
+switch test2:
+  - platform: mqtt
+    name: test2
+    unique_id: test2
+    command_topic: "stat/sensor/t2"
+

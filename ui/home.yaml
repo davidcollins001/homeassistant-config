@@ -38,37 +38,9 @@ cards:
     title: Sun
     entities:
         - sun.sun
-  - type: entities
-    title: Debug
-    entities:
-        - switch.test1
-        - switch.test2
-        - group.g_heating
-        - input_boolean.heating
-        - switch.heating_switch
-        - input_boolean.test11
-        - input_number.wait
-        - sensor.i_debug
   - type: weather-forecast
     entity: weather.openweathermap
     show_forecast: true
-
-  # # - type: vertical-stack
-    # title: Climate
-    # # cards:
-      # # - type: sensor
-        # # entity: sensor.temperature
-        # # name: Temperature
-        # # graph: line
-# #
-      # # - type: gauge
-        # # entity: sensor.humidity
-        # # name: Humidity
-# #
-      # # - type: gauge
-        # # entity: sensor.pressure
-        # # name: Pressure
-        # # max: 2000
 
   - type: history-graph
     title: Climate
