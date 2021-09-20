@@ -10,9 +10,14 @@
 #           https://github.com/walter5138/hue_ble_bash
 
 homeassistant:
+    name: Home
+    unit_system: metric
     time_zone: Europe/London
 
 default_config:
+zeroconf:
+ssdp:
+
 group: !include groups.yaml
 automation: !include_dir_merge_list automation/
 # script: !include scripts.yaml
@@ -25,10 +30,15 @@ device_tracker:
   - platform: sky_hub
     host: 192.168.1.254
     interval_seconds: 200
+    consider_home: 300
     new_device_defaults:
       track_new_devices: false
 
 person: !include person.yaml
+
+mqtt:
+    broker: homeassistant
+    port: 1883
 
 # https://www.dummylabs.com/post/2019-01-13-influxdb-part1/
 influxdb:
