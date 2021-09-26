@@ -1,0 +1,11 @@
+[Unit]
+Description=Monitor load average and restart openhab
+Requires=load_avg.service
+
+[Timer]
+OnBootSec=60min
+OnUnitActiveSec=20m
+Unit=load_avg.service
+
+[Install]
+WantedBy=timers.target

@@ -16,6 +16,7 @@ build/obj
 /other/
 .storage
 .HA_VERSION
+__pycache__
 
 home-assistant.log*
 home-assistant_v2.db*

@@ -1,0 +1,16 @@
+[Unit]
+Description=Monitor load average and restart openhab
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 -u load_avg.py -c 15 -s 15 -v
+User=ghost
+Group=ghost
+WorkingDirectory=/home/ghost/homeassistant/conf/system/sbin
+StandardOutput=syslog
+StandardError=syslog
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+[Unit]
+Description=Home Assistant
+After=network.target
+
+[Service]
+Type=simple
+# User=homeassistant
+User=ghost
+WorkingDirectory=/home/ghost/homeassistant
+#ExecStart=/srv/homeassistant/bin/hass -v -c "/home/homeassistant/.homeassistant"
+ExecStart=/home/ghost/homeassistant/conf/system/sbin/homeassistant.sh
+
+[Install]
+WantedBy=multi-user.target

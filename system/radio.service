@@ -1,0 +1,16 @@
+[Unit]
+Description=RFM69 radio instance
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 -u radio.py -m
+User=ghost
+Group=ghost
+Restart=on-failure
+WorkingDirectory=/home/ghost/homeassistant/conf/system/sbin
+StandardOutput=syslog
+StandardError=syslog
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
