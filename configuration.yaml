@@ -71,9 +71,18 @@ homeassistant:
       trusted_networks:
         - 192.168.1.0/24
         # - fd00::/8
+        # - fe80::/8
+      allow_bypass_login: true
       trusted_users:
+          # - 192.168.1.0/24: f566f23f959541a7b8060b9a6d842e93
         192.168.1.0/24:
+          # David
           - f566f23f959541a7b8060b9a6d842e93
+          # Luke
+          - dcff045ad0ac4aed8b4ba261fc679118
+          # Sara
+          -  ebe476cf675d4efc8dbcd66bae1a9114
+    - type: homeassistant
 
 group: !include groups.yaml
 automation: !include_dir_merge_list automation/

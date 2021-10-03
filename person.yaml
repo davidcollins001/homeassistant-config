@@ -7,10 +7,10 @@
     device_trackers:
       - device_tracker.sarasapplewatch
       - device_tracker.saras_phone
-    # user_id: null
+    user_id: ebe476cf675d4efc8dbcd66bae1a9114
     id: "sara"
   - name: "Luke"
     device_trackers:
       - device_tracker.pixel_3a
-    # user_id: null
+    user_id: dcff045ad0ac4aed8b4ba261fc679118
     id: "luke"
