@@ -24,6 +24,30 @@
 #   pip:
 #       - telebot
 
+# Configure a default setup of Home Assistant (frontend, api, etc)
+#default_config:
+
+# Individual options represented by default_config
+#cloud:
+#logbook:
+#map:
+#ssdp:
+#zeroconf:
+
+config:
+frontend:
+history:
+recorder:
+  commit_interval: 30
+  purge_keep_days: 2
+input_datetime:
+input_select:
+mobile_app:
+sun:
+system_health:
+updater:
+zone:
+
 homeassistant:
   name: Home
   unit_system: metric
@@ -50,12 +74,6 @@ homeassistant:
       trusted_users:
         192.168.1.0/24:
           - f566f23f959541a7b8060b9a6d842e93
-          # - Luke
-          # - Sara
-
-default_config:
-zeroconf:
-ssdp:
 
 group: !include groups.yaml
 automation: !include_dir_merge_list automation/
