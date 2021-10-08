@@ -144,11 +144,12 @@ influxdb:
       # - group.g_plugs
       # - switch
 
-
 lovelace:
     mode: yaml
     resources:
       - url: /local/button-card.js
+        type: module
+      - url: /local/tv-card.js?v=1
         type: module
 
     # # Add more dashboards
@@ -361,6 +362,12 @@ input_boolean:
 
   switch_off_lr:
     name:  Switch Off
+
+  netflix:
+    name:  Netflix
+
+  youtube:
+    name:  YouTube
 
 
 ############################### DEBUG ENTITIES ################################
