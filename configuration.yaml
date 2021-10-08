@@ -219,9 +219,9 @@ sensor:
     device_class: temperature
     force_update: true
     # unique_id: "794296394_adc_temperature"
-    # device:
-        # identifiers: "794296394"
-        # name: "794296394"
+    device:
+        identifiers: "794296394"
+        name: "794296394"
 
   - platform: mqtt
     name: "794296394_humidity"
@@ -230,6 +230,9 @@ sensor:
     unit_of_measurement: "%"
     device_class: humidity
     force_update: true
+    device:
+        identifiers: "794296394"
+        name: "794296394"
 
   - platform: mqtt
     name: "794296394_pressure"
@@ -238,6 +241,9 @@ sensor:
     unit_of_measurement: "hPa"
     device_class: pressure
     force_update: true
+    device:
+        identifiers: "794296394"
+        name: "794296394"
 
   - platform: mqtt
     name: "794296394_gas_resistance"
@@ -245,25 +251,39 @@ sensor:
     value_template: "{{ value_json.gas_res }}"
     unit_of_measurement: "Ohm"
     force_update: true
+    device:
+        identifiers: "794296394"
+        name: "794296394"
 
   - platform: mqtt
     name: "794296394_air_quality"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.iaq }}"
-    unit_of_measurement: ""
+    unit_of_measurement: "."
+    device_class: aqi
     force_update: true
+    device:
+        identifiers: "794296394"
+        name: "794296394"
 
   - platform: mqtt
     name: "794296394_air_quality_2"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.iaq2 }}"
-    unit_of_measurement: ""
+    unit_of_measurement: "."
+    device_class: aqi
     force_update: true
+    device:
+        identifiers: "794296394"
+        name: "794296394"
 
   - platform: mqtt
     name: "794296394_last_updated"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.timestamp | timestamp_custom('%d/%m/%y %H:%M:%S') }}"
+    device:
+        identifiers: "794296394"
+        name: "794296394"
 
   # sensors used for displaying input values to prevent changing in ui
   - platform: template

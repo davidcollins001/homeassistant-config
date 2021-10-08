@@ -31,6 +31,5 @@ cards:
         # # max: 2000
 
 visible:
-    # - user: David
-    # - user: Sara ??
+    # David
     - user: f566f23f959541a7b8060b9a6d842e93

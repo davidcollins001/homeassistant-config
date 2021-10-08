@@ -22,8 +22,8 @@
     trigger:
       - platform: state
         entity_id: group.g_present
-        from: "on"
-        to: "off"
+        from: "home"
+        to: "not_home"
     action:
       - service: switch.turn_off
         target:

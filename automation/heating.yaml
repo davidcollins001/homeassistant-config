@@ -22,12 +22,9 @@
     mode: restart
     trigger:
       - platform: state
-        entity_id: input_boolean.heating_boost
-        from: "off"
-        to: "on"
-        for: "00:00:4"
-      - platform: state
-        entity_id: input_boolean.heating_pwm
+        entity_id:
+          - input_boolean.heating_boost
+          - input_boolean.heating_pwm
         from: "off"
         to: "on"
         for: "00:00:4"
@@ -108,12 +105,9 @@
     mode: restart
     trigger:
       - platform: state
-        entity_id: input_boolean.heating_boost
-        from: "off"
-        to: "on"
-        for: "00:00:5"
-      - platform: state
-        entity_id: input_boolean.heating_pwm
+        entity_id:
+            - input_boolean.heating_boost
+            - input_boolean.heating_pwm
         from: "off"
         to: "on"
         for: "00:00:5"
@@ -122,7 +116,7 @@
         conditions:
         - condition: state
           entity_id: group.g_present
-          state: away
+          state: not_home
         - condition: template
           value_template: >
             {% set members = expand(['group.g_heating']) | selectattr('state', 'eq', 'on') %}
@@ -148,11 +142,9 @@
     mode: restart
     trigger:
       - platform: state
-        entity_id: input_boolean.heating_boost
-        from: "on"
-        to: "off"
-      - platform: state
-        entity_id: input_boolean.heating_pwm
+        entity_id:
+            - input_boolean.heating_boost
+            - input_boolean.heating_pwm
         from: "on"
         to: "off"
     condition:
@@ -221,13 +213,13 @@
 
 
 # presence rules
-  - alias: heating_presence_away
+  - alias: heating_presence_not_home
     mode: restart
     trigger:
       - platform: state
         entity_id: group.g_present
         from: "home"
-        to: "away"
+        to: "not_home"
     condition:
       - condition: state
         entity_id: group.g_heating
@@ -244,7 +236,7 @@
     trigger:
       - platform: state
         entity_id: group.g_present
-        from: "away"
+        from: "not_home"
         to: "home"
     condition:
       - condition: state
