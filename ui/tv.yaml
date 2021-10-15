@@ -19,6 +19,11 @@ cards:
         show_state: true
         entity: input_boolean.youtube
 
+      - type: entities
+        show_state: true
+        entities:
+          - input_boolean.fix_youtube
+
   - type: custom:tv-card
     entity: media_player.sony_bravia_tv
     name: Remote

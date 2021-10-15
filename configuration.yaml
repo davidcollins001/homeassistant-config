@@ -13,6 +13,9 @@
 #           https://www.home-assistant.io/integrations/media_extractor/
 #       - nicer sysinfo
 #           https://community.home-assistant.io/t/history-graph-with-min-and-max-horizontal-lines/119677/5
+#       - group for light + TV
+#       - config examples
+#           https://github.com/geekofweek/homeassistant
 
 # dependencies:
 #   python-3.10 compile/install
@@ -167,9 +170,13 @@ lovelace:
         # show_in_sidebar: true
         # filename: ui/new.yaml
 
-media_player:
-  - platform: braviatv
-    host: 192.168.1.24
+# media_player:
+  # - platform: braviatv
+    # host: 192.168.1.24
+samsungtv:
+  # ue40mu6120
+  - host: 192.168.1.7
+
 
 switch:
   - platform: mqtt
@@ -388,6 +395,8 @@ input_boolean:
 
   youtube:
     name:  YouTube
+  fix_youtube:
+    name: Fix YouTube
 
 
 ############################### DEBUG ENTITIES ################################

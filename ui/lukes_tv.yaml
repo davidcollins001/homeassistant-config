@@ -1,0 +1,14 @@
+title: Luke's TV
+cards:
+  - type: media-control
+    entity: media_player.samsungtv_71eff2ce_bb7f_4302_94ce_4ceb17447b67
+
+  - type: entities
+    title: TV
+    entities:
+        - media_player.samsungtv_71eff2ce_bb7f_4302_94ce_4ceb17447b67
+        # - input_select.tv_source
+    show_header_toggle: false
+
+# visible:
+    # - user: luke

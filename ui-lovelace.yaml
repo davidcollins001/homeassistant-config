@@ -5,6 +5,7 @@ views:
     - !include ui/sensors.yaml
     - !include ui/weather.yaml
     - !include ui/tv.yaml
+    - !include ui/lukes_tv.yaml
     - !include ui/plugs.yaml
     - !include ui/sysinfo.yaml
     - !include ui/settings.yaml

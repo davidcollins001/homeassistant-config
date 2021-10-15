@@ -1,3 +1,4 @@
+# https://www.home-assistant.io/integrations/braviatv/
 
 # switch to netflix or youtube
   - alias: netflix_youtube
@@ -40,6 +41,45 @@
               entity_id: remote.sony_bravia_tv
             data:
               command: Confirm
-          - service: input_boolean.turn_off
-            target:
-              entity_id: input_boolean.netflix
+      - service: input_boolean.turn_off
+        target:
+          entity_id: "{{ trigger.entity_id }}"
+
+# press button needed to recover from a youtube crash
+  - alias: fix_youtube
+    trigger:
+      - platform: state
+        entity_id:
+          - input_boolean.fix_youtube
+        from: "off"
+        to: "on"
+    action:
+      - service: remote.send_command
+        target:
+          entity_id: remote.sony_bravia_tv
+        data:
+          command: Return
+      - delay:
+          seconds: 1
+      - service: remote.send_command
+        target:
+          entity_id: remote.sony_bravia_tv
+        data:
+          command: Confirm
+      - delay:
+          seconds: 20
+      - service: remote.send_command
+        target:
+          entity_id: remote.sony_bravia_tv
+        data:
+          command: Confirm
+      - delay:
+          seconds: 1
+      - service: remote.send_command
+        target:
+          entity_id: remote.sony_bravia_tv
+        data:
+          command: Confirm
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.fix_youtube
