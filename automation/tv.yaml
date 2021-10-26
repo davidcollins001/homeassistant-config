@@ -60,14 +60,14 @@
         data:
           command: Return
       - delay:
-          seconds: 1
+          seconds: 2
       - service: remote.send_command
         target:
           entity_id: remote.sony_bravia_tv
         data:
           command: Confirm
       - delay:
-          seconds: 20
+          seconds: 25
       - service: remote.send_command
         target:
           entity_id: remote.sony_bravia_tv
