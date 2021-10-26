@@ -81,13 +81,9 @@ homeassistant:
   name: Home
   unit_system: metric
   time_zone: Europe/London
+  latitude: !secret home_latitude
+  longitude: !secret home_longitude
 
-  # auth_providers:
-    # - type: homeassistant
-  # name: !secret home_name
-  # latitude: !secret home_latitude
-  # longitude: !secret home_longitude
-  # elevation: !secret home_elevation
   # external_url: !secret external_url
   # internal_url: !secret internal_url
   # packages: !include_dir_named packages

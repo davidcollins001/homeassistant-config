@@ -11,10 +11,8 @@ build/obj
 .metadata
 .settings
 
-/tags
-/jet/jet
-/other/
 .storage
+secrets.yaml
 .HA_VERSION
 __pycache__
 
