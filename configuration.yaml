@@ -43,6 +43,28 @@ history:
 recorder:
   commit_interval: 30
   purge_keep_days: 2
+  # include:
+    # domains:
+      # - switch
+      # - sensor
+      # - binary_sensor
+  exclude:
+    entity_globs:
+      - holiday_mode
+      - sensor.last_boot
+      - sensor.pixel_*
+      - sensor.sm_*
+    domains:
+      - automation
+      - binary_sensor
+      - input_number
+      - input_select
+      - input_text
+        # - input_boolean
+      - sun
+      - person
+      - media_player
+      - remote
 input_datetime:
 input_select:
 mobile_app:
