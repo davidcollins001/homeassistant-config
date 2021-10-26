@@ -23,3 +23,11 @@ cards:
         - sensor.openweathermap_wind_bearing
         - sensor.openweathermap_wind_speed
 
+  - type: history-graph
+    title: Climate
+    hours_to_show: 24
+    entities:
+        - entity: sensor.openweathermap_temperature
+          name: Temperature
+        - entity: sensor.openweathermap_rain
+          name: Rain
