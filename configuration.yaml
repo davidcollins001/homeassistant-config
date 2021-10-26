@@ -119,7 +119,7 @@ automation: !include_dir_merge_list automation/
 # scene: !include scenes.yaml
 
 logger:
-  default: error  # debug
+  default: warning  # debug
 
 device_tracker:
   - platform: sky_hub
@@ -131,6 +131,7 @@ device_tracker:
 
 person: !include person.yaml
 
+
 # http:
   # # api_password: !secret http:password
   # use_x_forwarded_for: true
@@ -140,9 +141,11 @@ person: !include person.yaml
   # ip_ban_enabled: true
   # login_attempts_threshold: 5
 
+
 mqtt:
     broker: homeassistant
     port: 1883
+
 
 # https://www.dummylabs.com/post/2019-01-13-influxdb-part1/
 influxdb:
@@ -165,13 +168,13 @@ influxdb:
             - switch.heating_pwm
 
             - group.g_present
-            - sensor.794296394_temperature
         entity_globs:
             - switch.plug*
             - sensor.794296394_*
     # domains:
       # - group.g_plugs
       # - switch
+
 
 lovelace:
     mode: yaml
@@ -196,12 +199,20 @@ lovelace:
         # show_in_sidebar: true
         # filename: ui/new.yaml
 
+
+# setup via ui
 # media_player:
   # - platform: braviatv
     # host: 192.168.1.24
 samsungtv:
   # ue40mu6120
   - host: 192.168.1.7
+
+
+# setup via ui
+# weather:
+  # - platform: openweathermap
+    # api_key: !secret openweathermap_key
 
 
 switch:
@@ -230,6 +241,7 @@ switch:
     retain: true
     payload_on: 1
     payload_off: 0
+
 
 sensor:
   - platform: mqtt
@@ -336,6 +348,7 @@ sensor:
     resources:
       - type: processor_use
       - type: memory_use_percent
+      - type: swap_use_percent
       - type: load_1m
       - type: load_5m
       - type: load_15m
