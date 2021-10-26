@@ -56,7 +56,7 @@
 
 
 # heating pwm - gets started/ended by manual_heating_on
-  - alias: manual_heating_pwm_on
+  - alias: manual_heating_pwm_switch
     mode: restart
     trigger:
       - platform: state
@@ -213,6 +213,8 @@
 
 
 # presence rules
+# NOTE: this doesn't switch off the input_boolean in case someone comes back, in
+#       which case the heating will still be enabled
   - alias: heating_presence_not_home
     mode: restart
     trigger:
