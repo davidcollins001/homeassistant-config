@@ -49,23 +49,27 @@ config:
 frontend:
 history:
 recorder:
-  commit_interval: 30
+  # commit_interval: 30
+  commit_interval: 10
   purge_keep_days: 2
-  include:
-    entity_globs:
-      - sensor.openweathermap_temperature
-      - sensor.openweathermap_rain
+  # include:
+    # entity_globs:
+      # - sensor.openweathermap_temperature
+      # - sensor.openweathermap_rain
     # domains:
+      # - group
       # - switch
       # - sensor
-      # - binary_sensor
+      # - input_boolean
+      # # - binary_sensor
   exclude:
     entity_globs:
-      - holiday_mode
+      - input_boolean.holiday_mode
       - sensor.last_boot
       - sensor.openweathermap_*
       - sensor.pixel_*
       - sensor.sm_*
+      - sensor.uptime*
     domains:
       - automation
       - binary_sensor
