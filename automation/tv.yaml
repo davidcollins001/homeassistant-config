@@ -11,25 +11,27 @@
         from: "off"
         to: "on"
     action:
-      - choose:
-        # switch tv on if it's not already on
-        - conditions: "{{ states('media_player.sony_bravia_tv') == 'off' }}"
+      - repeat:
+          while: "{{ states('media_player.sony_bravia_tv') == 'off' }}"
           sequence:
             - service: media_player.turn_on
               target:
                 entity_id: media_player.sony_bravia_tv
             - delay:
-                seconds: 7
+                seconds: 1
+      # - repeat:
+          # while: "{{ state_attr('media.player.sony_bravia_tv', 'source') != None }}"
+          # sequence:
       - service: media_player.select_source
         target:
           entity_id: media_player.sony_bravia_tv
         data:
-            source: >
-              {% if trigger.entity_id == 'input_boolean.netflix' %}
-                Netflix
-              {% elif trigger.entity_id == 'input_boolean.youtube' %}
-                YouTube
-              {% endif %}
+          source: >
+            {% set source = {'input_boolean.netflix': 'Netflix',
+                             'input_boolean.youtube': 'YouTube'} %}
+            {{ source[trigger.entity_id] }}
+      - delay:
+          seconds: 1
       - choose:
         # wait and select user profile for netflix
         - conditions: "{{ trigger.entity_id == 'input_boolean.netflix' }}"
