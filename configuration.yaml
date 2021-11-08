@@ -16,6 +16,8 @@
 #       - group for light + TV
 #       - config examples
 #           https://github.com/geekofweek/homeassistant
+#       - upgrade
+#           python -m pip install --upgrade homeassistant
 
 # BACKUP:
 #   create backup:
@@ -50,8 +52,8 @@ frontend:
 history:
 recorder:
   # commit_interval: 30
-  commit_interval: 10
-  purge_keep_days: 2
+  commit_interval: 60
+  purge_keep_days: 3
   # include:
     # entity_globs:
       # - sensor.openweathermap_temperature
@@ -465,13 +467,15 @@ sensor i_debug:
   sensors:
     i_debug:
       friendly_name: debug text
-      value_template: >
-        {{ states('input_text.debug_text') }}
+      # value_template: >
+        # {{ states('input_text.debug_text') }}
         # {% set entity = 'input_boolean.heating_boost' %}
         # {% set ent_str = entity.replace("boolean", "number") + "_timer" %}
         # {{ states(ent_str) | int }}
         # {% set ent_str = entity.replace("boolean", "number") %}
         # {{ states(entity) | int }}
+      value_template: >
+        {{ state_attr('media.player.sony_bravia_tv', 'source') }}
 
     # {% set entity = "input_number.{}_timer".format("heating_boost") %}
     # {{ states(entity) | int }}

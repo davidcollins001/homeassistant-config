@@ -44,7 +44,7 @@ cards:
 
   - type: history-graph
     title: Climate
-    hours_to_show: 3
+    hours_to_show: 24
     entities:
         - entity: sensor.794296394_temperature
           name: Temperature
@@ -57,7 +57,7 @@ cards:
 
   - type: history-graph
     title: Heating
-    hours_to_show: 3
+    hours_to_show: 24
     entities:
         - entity: switch.heating_switch
           name: Heating

@@ -2,7 +2,7 @@ title: System info
 cards:
   - type: history-graph
     title: System info
-    hours_to_show: 6
+    hours_to_show: 24
     entities:
         - entity: sensor.processor_use_percent
         - entity: sensor.memory_use_percent
