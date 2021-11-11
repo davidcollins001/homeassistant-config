@@ -1,18 +1,25 @@
 title: Home
+path: home
 cards:
-  - type: entities
-    title: Lights
-    entities:
-        # - switch.plug1
-        # - switch.plug2
-        - entity: switch.plug3
-          name: Living room lamp
+  - type: horizontal-stack
+    # title: TV
     show_header_toggle: false
-  - type: entities
-    title: Switch Off
-    entities:
-        - input_boolean.switch_off_lr
-    show_header_toggle: false
+    cards:
+      - type: button
+        entity: switch.plug3
+        name: Living room
+        icon: 'hass:floor-lamp'
+        icon_height: 50px
+        tap_action:
+            action: toggle
+      - type: button
+        entity: input_boolean.switch_off_lr
+        name: Switch off
+        icon: 'hass:television-off'
+        icon_height: 50px
+        tap_action:
+            action: toggle
+
   - type: entities
     title: Heating
     entities:
@@ -23,10 +30,7 @@ cards:
           # - input_number.heating_temp_set
           - sensor.i_heating_temp_set
     show_header_toggle: false
-  - type: entities
-    title: Binary sensor
-    entities:
-        - binary_sensor.updater
+
   - type: entities
     title: Person
     entities:
@@ -34,10 +38,12 @@ cards:
         - person.david
         - person.sara
         - person.luke
+
   - type: entities
     title: Sun
     entities:
         - sun.sun
+
   - type: weather-forecast
     entity: weather.openweathermap
     show_forecast: true

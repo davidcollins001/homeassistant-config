@@ -1,4 +1,6 @@
 title: TV
+path: tv
+# icon: mdi:television
 cards:
   - type: vertical-stack
     # title: TV
@@ -7,22 +9,27 @@ cards:
       - type: media-control
         entity: media_player.sony_bravia_tv
 
-      - type: button
-        name: Netflix
-        icon: mdi:netflix
-        show_state: true
-        entity: input_boolean.netflix
+      - type: horizontal-stack
+        # title: TV
+        show_header_toggle: false
+        cards:
+          - type: button
+            name: Netflix
+            icon: mdi:netflix
+            show_state: true
+            entity: input_boolean.netflix
 
-      - type: button
-        name: YouTube
-        icon: mdi:youtube
-        show_state: true
-        entity: input_boolean.youtube
+          - type: button
+            name: YouTube
+            icon: mdi:youtube
+            show_state: true
+            entity: input_boolean.youtube
 
       - type: entities
         show_state: true
         entities:
           - input_boolean.fix_youtube
+
 
   - type: custom:tv-card
     entity: media_player.sony_bravia_tv

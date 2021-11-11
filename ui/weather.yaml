@@ -1,4 +1,5 @@
 title: Weather
+path: weather
 cards:
   - type: entities
     title: Forecast

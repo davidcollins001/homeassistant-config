@@ -194,15 +194,18 @@ lovelace:
       - url: /local/tv-card.js?v=1
         type: module
 
-    # # Add more dashboards
-    # dashboards:
-      # lovelace-generated: # Needs to contain a hyphen (-)
-        # mode: yaml
-        # filename: notexist.yaml
-        # title: Generated
-        # icon: mdi:tools
-        # show_in_sidebar: true
-        # require_admin: true
+    # Add more dashboards
+    dashboards:
+      lovelace-system:
+        mode: yaml
+        filename: ui-system.yaml
+        title: System
+        icon: mdi:tools
+        show_in_sidebar: true
+        require_admin: true
+        icon: mdi:tools
+        show_in_sidebar: true
+        require_admin: true
       # lovelace-hidden:
         # mode: yaml
         # title: hidden
@@ -362,6 +365,28 @@ sensor:
       - type: load_1m
       - type: load_5m
       - type: load_15m
+      - type: last_boot
+
+  - platform: uptime
+    scan_interval: 600
+
+  - platform: template
+    sensors:
+      uptime_ha:
+        friendly_name: HA Uptime
+        value_template: >
+          {{ "%0.1f" | format(
+            (as_timestamp(now()) - as_timestamp(states('sensor.uptime')))
+            / 3600 / 24) }}
+
+  - platform: template
+    sensors:
+      uptime_sys:
+        friendly_name: Uptime
+        value_template: >
+          {{ "%0.1f" | format(
+             (as_timestamp(now()) - as_timestamp(states('sensor.last_boot')))
+             / 3600 / 24) }}
 
 
 input_number:

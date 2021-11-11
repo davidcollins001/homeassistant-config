@@ -1,5 +1,24 @@
 title: System info
+path: sysinfo
 cards:
+  - type: entities
+    title: Binary sensor
+    entities:
+        - binary_sensor.updater
+
+  - type: horizontal-stack
+    show_header_toggle: false
+    cards:
+      - type: entity
+        entity: sensor.uptime_ha
+        name: HA Uptime
+        unit: days
+
+      - type: entity
+        entity: sensor.uptime_sys
+        name: System uptime
+        unit: days
+
   - type: history-graph
     title: System info
     hours_to_show: 24
