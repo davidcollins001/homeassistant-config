@@ -11,7 +11,9 @@ cards:
         - input_boolean.test11
         - input_number.wait
         - sensor.i_debug
-
+  - type: light
+    name: Light
+    entity: light.bulb_1
 
   # # - type: vertical-stack
     # title: Climate

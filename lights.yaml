@@ -1,0 +1,35 @@
+# platform - light.mqtt, light
+  - platform: mqtt
+    name: "Bulb 1"
+    unique_id: bulb_1
+    command_topic: "cmnd/lights/bulb1/POWER"
+    on_command_type: "brightness"
+    state_topic: "stat/lights/bulb1/RESULT"
+    state_value_template: "{{ value_json.POWER }}"
+    # availability_topic: "stat/lights/bulb1/LWT"
+    brightness_command_topic: "cmnd/lights/bulb1/Dimmer"
+    brightness_state_topic: "stat/lights/bulb1/RESULT"
+    brightness_value_template: >
+      {% if value_json.Dimmer is defined %}
+        {{ value_json.Dimmer }}
+      {% endif %}
+    brightness_scale: 100
+    white_value_command_topic: "cmnd/lights/bulb1/white"
+    white_value_state_topic: "stat/lights/bulb1/RESULT"
+    white_value_template: >
+      {% if value_json.White is defined %}
+        {{ value_json.White }}
+      {% endif %}
+    white_value_scale: 100
+    rgb_command_topic: "cmnd/lights/bulb1/Color"
+    rgb_state_topic: "stat/lights/bulb1/RESULT"
+        # {{ value_json.Color.rsplit(',', 2)[0] }}
+    rgb_value_template: >
+      {% if value_json.Color is defined %}
+        {% set red = (value_json.Color.split(",")[0] | round(0)) %}
+        {% set green = (value_json.Color.split(",")[1] | round(0)) %}
+        {% set blue = (value_json.Color.split(",")[2] | round(0)) %}
+        {% set white = (value_json.Color.split(",")[3] | round(0)) %}
+        {{ red + white }},{{ green + white }},{{ blue + white }}
+      {% endif %}
+    # " - close parens for syntax coloring

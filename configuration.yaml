@@ -389,6 +389,9 @@ sensor:
              / 3600 / 24) }}
 
 
+light: !include lights.yaml
+
+
 input_number:
   heating_on_temp:
     name: Heating On Temp (C)
