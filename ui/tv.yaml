@@ -16,20 +16,18 @@ cards:
           - type: button
             name: Netflix
             icon: mdi:netflix
-            show_state: true
             entity: input_boolean.netflix
 
           - type: button
             name: YouTube
             icon: mdi:youtube
-            show_state: true
             entity: input_boolean.youtube
 
-      - type: entities
-        show_state: true
-        entities:
-          - input_boolean.fix_youtube
-
+      - type: button
+        name: Fix YouTube
+        icon: mdi:tools
+        icon_height: 50px
+        entity: input_boolean.fix_youtube
 
   - type: custom:tv-card
     entity: media_player.sony_bravia_tv

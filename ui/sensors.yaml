@@ -1,24 +1,31 @@
 title: Sensors
 path: sensors
 cards:
-  - type: entities
-    title: Living Room
-    entities:
-        - entity: sensor.794296394_temperature
-          name: Temperature
-        - entity: sensor.794296394_adc_temperature
-          name: ADC Temperature
-        - entity: sensor.794296394_humidity
-          name: Humidity
-        - entity: sensor.794296394_pressure
-          name: Pressure
-        - entity: sensor.794296394_gas_resistance
-          name: Gas Resistance
-        - entity: sensor.794296394_air_quality
-          name: Air Quality
-        - entity: sensor.794296394_air_quality_2
-          name: Air Quality 2
-        - entity: sensor.794296394_last_updated
-          name: Last Updated
-    show_header_toggle: true
+  - type: vertical-stack
+    cards:
+      - type: glance
+        title: Living Room
+        # title: "{{ input_text.s_794296394 }}"
+        entities:
+            - entity: sensor.794296394_temperature
+              name: Temperature
+            # - entity: sensor.794296394_adc_temperature
+              # name: ADC Temperature
+            - entity: sensor.794296394_humidity
+              name: Humidity
+            - entity: sensor.794296394_pressure
+              name: Pressure
+            - entity: sensor.794296394_gas_resistance
+              name: Gas Resistance
+            - entity: sensor.794296394_air_quality
+              name: Air Quality
+            - entity: sensor.794296394_air_quality_2
+              name: Air Quality 2
+        columns: 4
+        show_header_toggle: true
+      - type: entities
+        entities:
+          - entity: sensor.794296394_last_updated
+            name: Last Updated
+        show_header_toggle: false
 
