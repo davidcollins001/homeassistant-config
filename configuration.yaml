@@ -17,7 +17,9 @@
 #       - config examples
 #           https://github.com/geekofweek/homeassistant
 #       - upgrade
-#           python -m pip install --upgrade homeassistant
+#           python -m pip install --upgrade homeassistant homeassistant-cli
+#               check following is merge
+#               https://github.com/home-assistant-ecosystem/home-assistant-cli/issues/332
 
 # BACKUP:
 #   create backup:
@@ -47,6 +49,7 @@
 #ssdp:
 #zeroconf:
 
+api:
 config:
 frontend:
 history:
@@ -122,7 +125,8 @@ automation: !include_dir_merge_list automation/
 # scene: !include scenes.yaml
 
 logger:
-  default: warning  # debug
+  # default: debug
+  default: warning
 
 device_tracker:
   - platform: sky_hub
