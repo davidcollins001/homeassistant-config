@@ -53,32 +53,7 @@ api:
 config:
 frontend:
 history:
-recorder:
-  commit_interval: 60
-  purge_keep_days: 3
-  include:
-    entities:
-      - sensor.openweathermap_temperature
-      - sensor.openweathermap_rain
-  exclude:
-    entities:
-      - input_boolean.holiday_mode
-      - sensor.last_boot
-    entity_globs:
-      - sensor.openweathermap_*
-      - sensor.pixel_*
-      - sensor.sm_*
-      - sensor.uptime*
-    domains:
-      - automation
-      - binary_sensor
-      - input_number
-      - input_select
-      - input_text
-      - person
-      - media_player
-      - remote
-      - sun
+recorder: !include recorder.yaml
 input_datetime:
 input_select:
 mobile_app:
