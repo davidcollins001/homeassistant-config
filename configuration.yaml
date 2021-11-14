@@ -349,6 +349,9 @@ sensor:
       heating_temperature:
         friendly_name: Temperature
         value_template: '{{ states("sensor.794296394_temperature") }}'
+      sensor_794296394:
+        value_template: 'Living Room'
+
 
   - platform: systemmonitor
     resources:

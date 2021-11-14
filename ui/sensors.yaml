@@ -3,9 +3,11 @@ path: sensors
 cards:
   - type: vertical-stack
     cards:
+      - type: entity
+        entity: sensor.sensor_794296394
       - type: glance
-        title: Living Room
-        # title: "{{ input_text.s_794296394 }}"
+        # title: Living Room
+        # title: "{{ sensor.sensor_794296394 }}"
         entities:
             - entity: sensor.794296394_temperature
               name: Temperature
@@ -28,4 +30,3 @@ cards:
           - entity: sensor.794296394_last_updated
             name: Last Updated
         show_header_toggle: false
-
