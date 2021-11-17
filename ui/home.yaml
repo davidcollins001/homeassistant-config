@@ -20,16 +20,32 @@ cards:
         tap_action:
             action: toggle
 
-  - type: entities
-    title: Heating
-    entities:
-          # - switch.heating_switch
-          - sensor.i_heating
-          - input_boolean.heating_boost
-          - input_boolean.heating_pwm
-          # - input_number.heating_temp_set
-          - sensor.i_heating_temp_set
+  - type: vertical-stack
     show_header_toggle: false
+    cards:
+    - type: entities
+      title: Heating
+      entities:
+            - sensor.i_heating
+            - sensor.i_heating_temp_set
+      show_header_toggle: false
+
+    - type: horizontal-stack
+      show_header_toggle: false
+      cards:
+          - type: button
+            entity: input_boolean.heating_boost
+            icon: 'mdi:radiator'
+            icon_height: 50px
+            tap_action:
+                action: toggle
+          - type: button
+            entity: input_boolean.heating_pwm
+            name: Heating Low
+            icon: 'mdi:radiator-disabled'
+            icon_height: 50px
+            tap_action:
+                action: toggle
 
   - type: entities
     title: Person
