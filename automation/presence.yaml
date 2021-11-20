@@ -1,0 +1,32 @@
+
+# # presence rules
+  # - alias: not_home
+    # mode: restart
+    # trigger:
+      # - platform: state
+        # entity_id: group.g_present
+        # from: "home"
+        # to: "not_home"
+    # action:
+      # - service: switch.turn_off
+        # target:
+          # entity_id: switch.plug3
+
+
+# presence rules
+  - alias: home
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: group.g_present
+        from: "not_home"
+        to:  "home"
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: below_horizon
+    action:
+      - service: switch.turn_on
+        target:
+          entity_id: switch.plug3
+

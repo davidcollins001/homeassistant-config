@@ -1,5 +1,5 @@
 
-# presence rules
+# switch lamp on at sunset
   - alias: sunset_lamp
     mode: restart
     trigger:
@@ -12,19 +12,5 @@
         state: home
     action:
       - service: switch.turn_on
-        target:
-          entity_id: switch.plug3
-
-
-# presence rules
-  - alias: sunset_lamp_off
-    mode: restart
-    trigger:
-      - platform: state
-        entity_id: group.g_present
-        from: "home"
-        to: "not_home"
-    action:
-      - service: switch.turn_off
         target:
           entity_id: switch.plug3
