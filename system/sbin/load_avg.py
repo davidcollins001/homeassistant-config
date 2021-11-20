@@ -4,9 +4,8 @@ import argparse
 import logging
 from subprocess import check_output
 
-# max load average to restart openhab
+# max load average to restart service
 CRITICAL_LOAD = 20
-# SERVICES = ("openhab.service", "radio.service")
 SERVICES = ("radio.service",)
 
 logger = logging.getLogger("load_avg")
@@ -26,7 +25,7 @@ def setup_logger():
 
 def parse_args(args=sys.argv):
     parser = argparse.ArgumentParser(
-        description="Monitor load average and resart openhab"
+        description="Monitor load average and restart service"
     )
     parser.add_argument('-c', '--critical-load', type=int, default=CRITICAL_LOAD,
                         help="critical load which passing causes a service restart")
@@ -42,10 +41,10 @@ def parse_args(args=sys.argv):
     return args
 
 
-def restart_openhab(services, verbose=False):
+def restart_service(services, verbose=False):
     for service in services:
         if verbose:
-            logger.info("restarting openhab")
+            logger.info("restarting service")
         check_output(("sudo", "systemctl", "restart", service))
 
 
@@ -59,7 +58,7 @@ def main(args=sys.argv):
 
     # 1, 5 or 15 min load average
     if avg[args.stat] > args.critical_load:
-        restart_openhab(SERVICES, args.verbose)
+        restart_service(SERVICES, args.verbose)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 [Unit]
-Description=Monitor load average and restart openhab
+Description=Monitor load average and restart service
 Requires=load_avg.service
 
 [Timer]
