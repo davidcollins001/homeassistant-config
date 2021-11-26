@@ -29,3 +29,4 @@ cards:
         - entity: sensor.load_1m
         - entity: sensor.load_5m
         - entity: sensor.load_15m
+        - entity: sensor.home_assistant_v2_db

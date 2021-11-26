@@ -73,8 +73,9 @@ homeassistant:
   # internal_url: !secret internal_url
   # packages: !include_dir_named packages
   # customize: !include customize.yaml
-  # customize_domain: { }
-  # customize_glob: { }
+
+  allowlist_external_dirs:
+    - /home/ghost/homeassistant/conf
 
   auth_providers:
     - type: trusted_networks
@@ -362,6 +363,11 @@ sensor:
           {{ "%0.1f" | format(
              (as_timestamp(now()) - as_timestamp(states('sensor.last_boot')))
              / 3600 / 24) }}
+
+  - platform: filesize
+    file_paths:
+      - /home/ghost/homeassistant/conf/home-assistant_v2.db
+
 
 
 light: !include lights.yaml
