@@ -8,8 +8,6 @@ User=ghost
 Group=ghost
 Restart=on-failure
 WorkingDirectory=/home/ghost/homeassistant/conf/system/sbin
-StandardOutput=syslog
-StandardError=syslog
 Restart=always
 
 [Install]
