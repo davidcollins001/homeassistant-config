@@ -20,6 +20,8 @@
 #           python -m pip install --upgrade homeassistant homeassistant-cli
 #               check following is merge
 #               https://github.com/home-assistant-ecosystem/home-assistant-cli/issues/332
+#       - on battery
+#           794296394 - 2021-11-20T15:38
 
 # BACKUP:
 #   create backup:
@@ -31,6 +33,7 @@
 
 # dependencies:
 #   python-3.10 compile/install
+#   git
 #   apt:
 #       - mosquitto-clients, mosquitto, python3-rpi.gpio, python3-spidev,
 #       - python3-paho-mqtt, letsencrypt
@@ -382,7 +385,7 @@ input_number:
 
   heating_off_temp:
     name: Heating Off Temp (C)
-    initial: 14
+    initial: 10
     min: 5
     max: 35
 

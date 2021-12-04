@@ -166,7 +166,7 @@
         entity_id: input_number.heating_temp_set
     action:
       - service_template: >
-          {% set current = states("sensor.heating_temperature") | float %}
+          {% set current = states("sensor.heating_temperature") | float(0) %}
           {% set target = states("input_number.heating_temp_set") | int %}
           {% if current > target %}
               switch.turn_off

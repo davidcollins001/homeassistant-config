@@ -70,42 +70,42 @@
           entity_id: input_boolean.heating_sched_trigger
 
 # time/day combination for heating schedule
-  - alias: heating_sched_weekday_pm_on
-    mode: restart
-    trigger:
-      - platform: time
-        at: "20:58:00"
-    condition:
-      - condition: time
-        weekday:
-          - sun
-          - mon
-          - tue
-          - wed
-          - thu
-    action:
-      - service: input_boolean.turn_on
-        target:
-          entity_id: input_boolean.heating_sched_trigger
+  # - alias: heating_sched_weekday_pm_on
+    # mode: restart
+    # trigger:
+      # - platform: time
+        # at: "20:58:00"
+    # condition:
+      # - condition: time
+        # weekday:
+          # - sun
+          # - mon
+          # - tue
+          # - wed
+          # - thu
+    # action:
+      # - service: input_boolean.turn_on
+        # target:
+          # entity_id: input_boolean.heating_sched_trigger
 
 # time/day combination for heating schedule
-  - alias: heating_sched_weekday_pm_off
-    mode: restart
-    trigger:
-      - platform: time
-        at: "22:00:00"
-    condition:
-      - condition: time
-        weekday:
-          - sun
-          - mon
-          - tue
-          - wed
-          - thu
-    action:
-      - service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.heating_sched_trigger
+  # - alias: heating_sched_weekday_pm_off
+    # mode: restart
+    # trigger:
+      # - platform: time
+        # at: "22:00:00"
+    # condition:
+      # - condition: time
+        # weekday:
+          # - sun
+          # - mon
+          # - tue
+          # - wed
+          # - thu
+    # action:
+      # - service: input_boolean.turn_off
+        # target:
+          # entity_id: input_boolean.heating_sched_trigger
 
 
 # generic scheduled heating action to turn heating on

@@ -9,10 +9,14 @@
       - input_boolean.holiday_mode
       - sensor.last_boot
     entity_globs:
+      - device_tracker.*
+      - sensor.i_*
       - sensor.openweathermap_*
       - sensor.pixel_*
+      - sensor.saras_*
       - sensor.sm_*
       - sensor.uptime*
+      - sensor.*last_updated
     domains:
       - automation
       - binary_sensor
