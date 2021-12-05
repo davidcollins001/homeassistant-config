@@ -21,7 +21,7 @@ import setup_log  # noqa
 logger = logging.getLogger("radio")
 # logger.setLevel(logging.INFO)
 # logger.setLevel(logging.DEBUG)
-logger.setLevel(logging.ERROR)
+logger.setLevel(logging.WARNING)
 
 RF_FREQ = 86926
 BOILER_FREQ = 86826
@@ -144,7 +144,7 @@ def manager():
     radio = radio_setup(RF_FREQ)
     cmd_queue = queue.SimpleQueue()
     client = boiler_setup(radio, boiler_queue, cmd_queue)
-    # radio_reinit(radio)
+    radio_reinit(radio)
 
     # drop bogus messages
     logger.debug(f">> {radio.driver.recv()}")

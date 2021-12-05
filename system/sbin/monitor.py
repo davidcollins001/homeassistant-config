@@ -27,12 +27,15 @@ TIMEOUT = 4 * 15 * MINS
 WAITERS = {}
 
 
-def alert(queue=None):
-    message = f"ALERT: no messages for {TIMEOUT} for \"{queue}\""
+def alert(queue=None, bot_token=BOT_TOKEN, chat_id=CHAT_ID):
+    message = f"ALERT: no messages for {TIMEOUT//60} mins for \"{queue}\""
     logger.info(f"{message}")
     set_timer(queue)
-    bot = telebot.TeleBot(BOT_TOKEN, parse_mode=None)
-    bot.send_message(CHAT_ID, message)
+    bot = telebot.TeleBot(bot_token)
+    bot.config['api_key'] =bot_token
+    res = bot.send_message(chat_id, message)
+    if not res['ok']:
+        logger.error(res['error'])
 
 
 def set_timer(queue):
