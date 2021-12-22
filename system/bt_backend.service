@@ -1,0 +1,14 @@
+[Unit]
+Description=Bluetooth backend
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 -u bt_backend.py -m
+User=ghost
+Group=ghost
+Restart=on-failure
+WorkingDirectory=/home/ghost/homeassistant/conf/system/sbin
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

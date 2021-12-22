@@ -12,6 +12,9 @@ cards:
         icon_height: 50px
         tap_action:
             action: toggle
+      - type: light
+        name: LED lamp
+        entity: light.floor_lamp
       - type: button
         entity: input_boolean.switch_off_lr
         name: Switch off

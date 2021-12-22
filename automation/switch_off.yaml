@@ -15,6 +15,9 @@
       - service: switch.turn_off
         target:
             entity_id: switch.plug3
+      - service: light.turn_off
+        target:
+            entity_id: light.floor_lamp
       - service: media_player.turn_off
         target:
             entity_id: media_player.sony_bravia_tv

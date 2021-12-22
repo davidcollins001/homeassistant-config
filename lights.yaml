@@ -33,3 +33,15 @@
         {{ red + white }},{{ green + white }},{{ blue + white }}
       {% endif %}
     # " - close parens for syntax coloring
+
+  - platform: mqtt
+    name: "Floor lamp"
+    unique_id: floor_lamp
+    icon: hass:floor-lamp
+    command_topic: "cmnd/lights/floor_lamp/POWER"
+    on_command_type: "first"
+    brightness_command_topic: "cmnd/lights/floor_lamp/Dimmer"
+    brightness_scale: 100
+    white_value_command_topic: "cmnd/lights/floor_lamp/white"
+    white_value_scale: 100
+    rgb_command_topic: "cmnd/lights/floor_lamp/Color"
