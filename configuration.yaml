@@ -32,15 +32,14 @@
 #       git clone `bundle` repo
 
 # dependencies:
-#   python-3.10 compile/install
-#   git
 #   apt:
 #       - mosquitto-clients, mosquitto, python3-rpi.gpio, python3-spidev,
-#       - python3-paho-mqtt, letsencrypt
+#       - python3-paho-mqtt, python3-dbus, letsencrypt, libsqlite3-dev, git
 #       - nginx (reverse proxy)
 #           https://iotechonline.com/home-assistant-access-with-nginx-proxy-and-lets-encrypt/?cn-reloaded=1
+#   python-3.10 (compile/install)
 #   pip:
-#       - telebot
+#       - telebot, gatt-python
 
 # Configure a default setup of Home Assistant (frontend, api, etc)
 #default_config:
@@ -168,6 +167,8 @@ lovelace:
       - url: /local/button-card.js
         type: module
       - url: /local/tv-card.js?v=1
+        type: module
+      - url: /local/hass-hue-icons.js
         type: module
 
     # Add more dashboards

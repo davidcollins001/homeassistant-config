@@ -8,13 +8,14 @@ cards:
       - type: button
         entity: switch.plug3
         name: Living room
-        icon: 'hass:floor-lamp'
+        icon: hue:floor-shade
         icon_height: 50px
         tap_action:
             action: toggle
       - type: light
         name: LED lamp
-        entity: light.floor_lamp
+        entity: light.led_strip
+        icon: hue:signe-gradient-table
       - type: button
         entity: input_boolean.switch_off_lr
         name: Switch off
@@ -22,6 +23,10 @@ cards:
         icon_height: 50px
         tap_action:
             action: toggle
+      - type: light
+        name: Hue
+        entity: light.hue_lamp_1
+        icon: hue:bulb-candle
 
   - type: vertical-stack
     show_header_toggle: false

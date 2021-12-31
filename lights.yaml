@@ -35,13 +35,27 @@
     # " - close parens for syntax coloring
 
   - platform: mqtt
-    name: "Floor lamp"
-    unique_id: floor_lamp
+    name: "Led strip"
+    unique_id: led_strip
     icon: hass:floor-lamp
-    command_topic: "cmnd/lights/floor_lamp/POWER"
+    optimistic: true
+    command_topic: "cmnd/lights/led_strip/POWER"
     on_command_type: "first"
-    brightness_command_topic: "cmnd/lights/floor_lamp/Dimmer"
+    brightness_command_topic: "cmnd/lights/led_strip/Dimmer"
     brightness_scale: 100
-    white_value_command_topic: "cmnd/lights/floor_lamp/white"
+    white_value_command_topic: "cmnd/lights/led_strip/white"
     white_value_scale: 100
-    rgb_command_topic: "cmnd/lights/floor_lamp/Color"
+    rgb_command_topic: "cmnd/lights/led_strip/Color"
+    payload_on: 1
+    payload_off: 0
+
+  - platform: mqtt
+    name: "Hue lamp 1"
+    unique_id: hue_lamp_1
+    optimistic: true
+    command_topic: "cmnd/lights/hue_lamp_1/POWER"
+    on_command_type: "first"
+    brightness_command_topic: "cmnd/lights/hue_lamp_1/Dimmer"
+    brightness_scale: 255
+    payload_on: 1
+    payload_off: 0
