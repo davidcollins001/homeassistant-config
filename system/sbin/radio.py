@@ -74,7 +74,7 @@ def boiler_setup(radio, queue, cmd_queue):
     client.connect("homeassistant", 1883, 60)
     logger.info(f"connected to {queue}")
 
-    # block and processes network traffic, callbacks and reconnecting
+    # block and process network traffic, callbacks and reconnecting
     # client.loop_forever()
     client.loop_start()
     # client.loop_stop()

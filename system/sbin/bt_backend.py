@@ -1,34 +1,17 @@
-# bt light service - 0000fff3-0000-1000-8000-00805f9b34fbo
-
-# # Device 21:04:77:64:04:AA MELK-OA20
-
-# [MELK-OA20:/service000c/char000d]#
-# > bluetoothctl
-# > connect "21:04:77:64:04:AA"
-# > menu gatt
-# > select-attribute fff3
-# # color - G,B,R - 4,5,6 (index)
-# > write "0x7e 0x07 0x05 0x03 0xff 0x0 0xff 0x16 0xef"
-
-#~$ sudo gatttool -i hci0 -b 21:04:77:64:04:AA --char-write -a 0xfff3 -n 0x7e0705030000ff16ef
-# red   # write "0x7e0705030000ff16ef"
-# blue  # write "0x7e07050300ff0016ef"
-# green # write "0x7e070503ff000016ef"
-# off   # write "0x7e07050300000016ef"
-
 import sys
 import time
 import argparse
-import gattlib
+import gatt
 import logging
+import datetime as dt
 import paho.mqtt.client as mqtt
 
 import setup_log  # noqa
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("bt_backend")
 logger.setLevel(logging.WARN)
 
-DEFAULT_CMD_QUEUE = 'cmnd/lights/floor_lamp'
+DEFAULT_CMD_QUEUE = 'cmnd/lights/#'
 
 
 def use_socket(mac, port):
@@ -39,145 +22,194 @@ def use_socket(mac, port):
     s.send(bytes(text, 'UTF-8'))
 
 
-def discover(dev="hci0"):
-    # need to be root
-    d=gattlib.DiscoveryService(dev)
-    from pprint import pprint as pp
-    pp(d.discover(5))
+class Manager(gatt.DeviceManager):
+    def device_discovered(self, device):
+        if "Hue Lamp" in device.alias():
+            if not device.is_connected():
+                logging.info(f"{dt.datetime.now()} [{device.mac_address}] "
+                             f"reconnect: {device.alias()}")
+                device.connect()
+
+class BTDevice(gatt.Device):
+    def __init__(self, mac_address, manager, uuids=None, auto_reconnect=False,
+                 **kwargs):
+        super().__init__(mac_address=mac_address, manager=manager, **kwargs)
+        self.auto_reconnect = auto_reconnect
+        self.uuids = uuids or self.UUIDS
+        self.control = {}
+
+    def connect_failed(self, error):
+        super().connect_failed(error)
+        logger.error(f"[self.mac_address] Connection failed: {error}")
+
+    def services_resolved(self):
+        super().services_resolved()
+
+        for service in self.services:
+            for characteristic in service.characteristics:
+                cmd_uuid = self.uuids.get(characteristic.uuid)
+                if cmd_uuid:
+                    self.control[cmd_uuid] = characteristic
+                    # TODO: needed to make write commands work
+                    characteristic.read_value()
 
 
-def characteristics(r):
-    from pprint import pprint as pp
-    pp(r.discover_characteristics())
+class HueDevice(BTDevice):
+    UUIDS = {"932c32bd-0002-47a2-835a-a8d455b859dd": "power",
+             "932c32bd-0003-47a2-835a-a8d455b859dd": "dimmer"}
 
-
-def send_data(r, uuid, data):
-    handle = _get_handle(r, uuid)
-
-    # write_cmd() has argument error: Boost.Python.ArgumentError
-    r.write_by_handle(handle, data)
-
-
-def _get_full_uuid(r, part_uuid):
-    while True:
+    def update(self, command, message):
+        p = int(message.payload)
+        cmds = {'POWER': self.power,
+                'Dimmer': self.dimmer}
         try:
-            uuid = [desc['uuid'] for desc in r.discover_descriptors()
-                    if part_uuid.upper() in desc['uuid'].upper()]
-            if not uuid:
-                raise ValueError(f"uuid containing {part_uuid} not found")
-            return uuid[0]
-        except gattlib.BTIOException:
-            print("failed to connect, wait and retry")
-            time.sleep(2)
+            cmds.get(command)(p)
+        except Exception as e:
+            logger.exception(f"failed to process data: {p}: {e}")
+
+    def power(self, state):
+        self.control['power'].write_value([state])
+
+    def dimmer(self, state):
+        msg = "Invalid dimmer value: {state} must be > 0 and < 255"
+        assert (state > 0) and (state < 255), msg
+        self.control['dimmer'].write_value([state])
 
 
-def _get_handle(r, uuid):
-    cs = r.discover_characteristics()
-    # return [c for c in cs if c['uuid'] == uuid][0]['value_handle']
-    return [c for c in cs if uuid in c['uuid']][0]['value_handle']
+class LedStripDevice(BTDevice):
+    UUIDS = {"0000fff3-0000-1000-8000-00805f9b34fb": "command"}
+
+    def write_value(self, data):
+        self.control["command"].write_value(data)
+
+    def update(self, command, message):
+        if command == 'POWER':
+            p = int(message.payload)
+            data = [0x7E, 4, 4, p, 0, p, 0xFF, 0, 0xEF]
+        elif command == 'Dimmer':
+            p = int(message.payload)
+            data = [0x7E, 4, 1, p, 1, 0xFF, 0xFF, 0, 0xEF]
+        elif command == 'white':
+            # TODO: this probably isn't white - maybe brightness?
+            # read color (or 0xFF) multiply color by brightness
+            # r, g, b = message.payload.decode().split(',')
+            p = int(message.payload)
+            if p:
+                logger.warning(f"what should be done with white {p}")
+                data = [0x7E, 7, 5, 3, p * 0xFF, p * 0xFF, p * 0xFF, 16, 0xEF]
+            else:
+                return
+        elif command == 'Color':
+            r, g, b = message.payload.decode().split(',')
+            data = [0x7E, 7, 5, 3, int(g), int(b), int(r), 16, 0xEF]
+        elif command == 'command':
+            # pass data through to bt device
+            data = list(map(lambda n: int(n), message.payload))
+
+        try:
+            self.write_value(data)
+        except Exception as e:
+            logger.exception(f"failed to process data: {data}: {e}")
 
 
-def update_lamp(req, message, c):
-    import json
-    if 'POWER' in message.topic:
-        state = {b'ON': 1, b'OFF': 0}
-        p = state[message.payload]
-        data = [0x7E, 4, 4, p, 0, p, 0xFF, 0, 0xEF]
-    elif 'Dimmer' in message.topic:
-        b = int(message.payload)
-        data = [0x7E, 4, 1, b, 1, 0xFF, 0xFF, 0, 0xEF]
-    elif 'white' in message.topic:
-        data = [0x7E, 7, 5, 3, 0xFF, 0xFF, 0xFF, 16, 0xEF]
-    elif 'Color' in message.topic:
-        r, g, b = message.payload.decode().split(',')
-        data = [0x7E, 7, 5, 3, int(g), int(b), int(r), 16, 0xEF]
-
-    logger.info(f"payload: {data}")
-    try:
-        send_data(req, uuid, bytes(data))
-    except Exception as e:
-        logger.error(f"failed to process data: {data}: {e}")
+def dispatch_message(devices, message, c):
+    logger.info(f"received payload on {message.topic}: {message.payload}")
+    *base_topic, device, command = message.topic.split('/')
+    req = devices.get(device)
+    # ignore mqtt messages for other lights
+    if req:
+        req.update(command, message)
 
 
-def manager(mac, uuid, queue=DEFAULT_CMD_QUEUE):
-    client = mqtt.Client()
+def manager(devices, device="hci0", queue=DEFAULT_CMD_QUEUE):
+    # dev_man = gatt.DeviceManager(device)
+    dev_man = Manager(device)
 
-    req = gattlib.GATTRequester(mac)
+    # connect to led floor lamp
+    led = LedStripDevice(macs['led_strip'], dev_man, auto_reconnect=True)
+    led.connect()
 
-    # get full uuid - assume a full uuid contains '-' separating values
-    if '-' not in uuid:
-        uuid = _get_full_uuid(req, uuid)
+    # connect to hue lamp
+    hue = HueDevice(macs['hue_lamp_1'], dev_man, auto_reconnect=True)
+    hue.connect()
+
+    devices = {'led_strip': led,
+               'hue_lamp_1': hue}
 
     # on reconnect subscriptions will be renewed
-    client.on_connect = lambda c, d, f, rc: c.subscribe(f"{queue}/+")
-    client.on_message = lambda c, d, m: update_lamp(req, m, c)
-
+    client = mqtt.Client()
+    client.on_connect = lambda c, d, f, rc: c.subscribe(queue)
+    client.on_message = lambda c, d, m: dispatch_message(devices, m, c)
     client.connect("homeassistant", 1883, 60)
     logger.info(f"connected to {queue}")
 
-    # block and processes network traffic, callbacks and reconnecting
-    client.loop_forever()
-    # client.loop_start()
+    # block and process network traffic, callbacks and reconnecting
+    # client.loop_forever()
+    client.loop_start()
     # client.loop_stop()
+
+    # watch for broadcast to reconnect if necessary
+    dev_man.start_discovery()
+    dev_man.run()
 
     return client
 
 
 def parse_args(args=sys.argv):
-    parser = argparse.ArgumentParser(description='Floor light')
-    # group = parser.add_mutually_exclusive_group()
-    parser.add_argument('-p', '--power', type=int, help='Switch on/off')
-    parser.add_argument('-c', '--color', help='RGB hex color "RRGGBB"')
-    parser.add_argument('-C', '--color2', type=int, help='color, brightness?')
-    parser.add_argument('-b', '--brightness', type=int,
-                        help='Light brightness, [0-100]')
-    parser.add_argument('-s', '--sequence', type=int, help='pin sequence')
-    parser.add_argument('-w', '--warmth', type=lambda x: map(int, x.split(',')),
-                        help='RGB hex color "RRGGBB"')
+    parser = argparse.ArgumentParser(description='Bluetooth agent')
     parser.add_argument('-m', '--manager', action='store_true',
                         help='Start bluetooth backend')
+    parser.add_argument('-c', '--command', action='store_true',
+                        help='Send test commands to led strip')
 
     args = parser.parse_args()
     return args
 
 
-if __name__ == "__main__":
-    args = parse_args()
+def _test_command():
+    # TODO: test data;
+    # (126, 4, 4, (240|224|16|0), 3, (1|0), -1, 0, -17)
+    # for f in '\x04\x04\xf0\x03\x01\xff\x00'
+    #           '\x04\x04\xf0\x03\x00\xff\x00'
+    #           '\x04\x04\xe0\x03\x01\xff\x00'
+    #           '\x04\x04\xe0\x03\x00\xff\x00'
+    #           '\x04\x04\x10\x03\x01\xff\x00'
+    #           '\x04\x04\x10\x03\x00\xff\x00'
+    #           '\x04\x04\x00\x03\x01\xff\x00'
+    #           '\x04\x04\x00\x03\x00\xff\x00' ; do
+    #   echo $f; echo -ne $f | mosquitto_pub -h homeassistant -t \
+            #       cmnd/lights/led_strip/command -s; sleep 60; done
 
-    mac = "21:04:77:64:04:AA"
-    uuid = 'fff3'
-    queue= DEFAULT_CMD_QUEUE
+    # pin_seq = [6, 0x81, (s >> 16 & 0xFF), (s >> 8 & 0xFF), (s & 0xFF), 255, 0]
+    # brightness/mode
+    b, mode = 1, 1
+    mr_mo = [4, 1, b, mode, 0xFF, 0xFF, 0]
+    # speed
+    s = 0x10
+    speed = [4, 2, s, 255, 255, 255, 0]
 
-    if args.manager:
-        manager(mac, uuid, queue)
-    elif args.power is not None:
-        p = args.power
-        data = [0x7E, 4, 4, p, 0, p, 0xFF, 0, 0xEF]
-    elif args.color:
-        color = args.color
-        r, g, b = [color[i:i+2] for i in range(0, len(color), 2)]
-        data = [0x7E, 7, 5, 3, int(g, 16), int(b, 16), int(r, 16), 16, 0xEF]
-    elif args.brightness:
-        b = args.brightness
-        data = [0x7E, 4, 1, b, 1, 0xFF, 0xFF, 0, 0xEF]
-    elif args.warmth:
-         w, c = args.warmth
-         data = [0x7E, 6, 5, 2, w, c, 0xFF, 16, 0xEF,]
-    elif args.color2:
-        c = args.color2
-        data = 0x7E, 5, 5, 1, c, 0xFF, 0xFF, 16, 0xEF,
-    elif args.sequence:
-        # 66051
-        s1 = (args.sequence >> 16 & 0xFF)
-        s2 = (args.sequence >> 8 & 0xFF)
-        s3 = (args.sequence & 0xFF)
-        data = [0x7F, 6, 0x81, s1, s2, s3, 0xFF, 0, 0xEF]
-
-    # pp(r.discover_characteristics())
-    # data = [0x7e, 0x04, 0x04, 224, 0x3,  0x1, 0xff, 0x0, 0xef]
+     # s = intent.getIntExtra("wl.extra.bluetoothle.timing.hour.minute.second", 0);
+     # m = intent.getIntExtra("wl.extra.bluetoothle.timing.mode", 0);
+     # w = intent.getIntExtra("wl.extra.bluetoothle.timing.weeks", 0);
+     # data = [8; 0x82; int(g); int(b); int(r); m; w]
 
     client = mqtt.Client()
     client.connect("homeassistant", 1883, 60)
     logger.info(f"connected to {queue}")
+    client.publish("cmnd/lights/led_strip/command", data)
 
-    client.publish(queue, bytes(data))
+
+if __name__ == "__main__":
+    args = parse_args()
+
+    # hue mac = "CE:96:CB:60:81:74"
+    # led mac = "FC:4F:22:91:4D:23",
+    macs = {"led_strip": "21:04:77:64:04:AA",
+            "hue_lamp_1": "CB:80:F1:7D:0A:34"}
+    queue= DEFAULT_CMD_QUEUE
+
+    if args.manager:
+        manager(macs, queue=queue)
+    elif args.command is not None:
+        p = args.power
+        _test_command()
