@@ -127,6 +127,31 @@ device_tracker:
       track_new_devices: false
 
 
+utility_meter:
+  hourly_electricity:
+    source: sensor.electric_cost_today
+    cycle: hourly
+  daily_electricity:
+    source: sensor.electric_cost_today
+    cycle: daily
+  monthly_electricity:
+    source: sensor.electric_cost_today
+    cycle: monthly
+  annual_electricity:
+    source: sensor.electric_consumption_year
+    cycle: yearly
+  hourly_gas:
+    source: sensor.gas_cost_today
+    cycle: hourly
+  daily_gas:
+    source: sensor.gas_cost_today
+    cycle: daily
+  monthly_gas:
+    source: sensor.gas_cost_today
+    cycle: monthly
+  annual_gas:
+    source: sensor.gas_consumption_year
+    cycle: yearly
 
 
 mqtt:
