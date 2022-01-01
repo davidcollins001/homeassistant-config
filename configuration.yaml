@@ -175,19 +175,18 @@ lovelace:
     dashboards:
       lovelace-system:
         mode: yaml
-        filename: ui-system.yaml
+        filename: ui/ui-system.yaml
         title: System
         icon: mdi:tools
         show_in_sidebar: true
         require_admin: true
+      lovelace-debug: # Needs to contain a hyphen (-)
+        mode: yaml
+        filename: ui/ui-debug.yaml
+        title: Debug
         icon: mdi:tools
         show_in_sidebar: true
         require_admin: true
-      # lovelace-hidden:
-        # mode: yaml
-        # title: hidden
-        # show_in_sidebar: true
-        # filename: ui/new.yaml
 
 
 # setup via ui

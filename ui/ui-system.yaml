@@ -1,0 +1,5 @@
+title: System
+icon: mdi:tools
+views:
+    - !include settings.yaml
+    - !include sysinfo.yaml
