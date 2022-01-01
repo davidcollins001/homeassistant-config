@@ -20,8 +20,9 @@
 #           python -m pip install --upgrade homeassistant homeassistant-cli
 #               check following is merge
 #               https://github.com/home-assistant-ecosystem/home-assistant-cli/issues/332
-#       - on battery
-#           794296394 - 2021-11-20T15:38
+#       - on battery - 794296394
+#           480mAh - 2021-11-20T15:38 -> 2021-12-20T16:57
+#           400mAh - 2021-12-20T18:43 ->
 
 # BACKUP:
 #   create backup:
@@ -34,11 +35,11 @@
 # dependencies:
 #   apt:
 #       - mosquitto-clients, mosquitto, python3-rpi.gpio, python3-spidev,
-#       - python3-paho-mqtt, python3-dbus, letsencrypt, libsqlite3-dev, git
+#       - python3-paho-mqtt, python3-dbus, python3-gi, letsencrypt, libsqlite3-dev, git
 #       - nginx (reverse proxy)
 #           https://iotechonline.com/home-assistant-access-with-nginx-proxy-and-lets-encrypt/?cn-reloaded=1
 #   python-3.10 (compile/install)
-#   pip:
+#   pip venv:
 #       - telebot, gatt-python
 
 # Configure a default setup of Home Assistant (frontend, api, etc)
@@ -53,9 +54,9 @@
 
 api:
 config:
+energy:
 frontend:
 history:
-recorder: !include recorder.yaml
 input_datetime:
 input_select:
 mobile_app:
@@ -87,7 +88,6 @@ homeassistant:
         # - fe80::/8
       allow_bypass_login: true
       trusted_users:
-          # - 192.168.1.0/24: f566f23f959541a7b8060b9a6d842e93
         192.168.1.0/24:
           # David
           - f566f23f959541a7b8060b9a6d842e93
@@ -97,13 +97,25 @@ homeassistant:
           -  ebe476cf675d4efc8dbcd66bae1a9114
     - type: homeassistant
 
-group: !include groups.yaml
+# http:
+  # # api_password: !secret http:password
+  # use_x_forwarded_for: true
+  # trusted_proxies:
+    # - 127.0.0.1
+    # # - 192.168.1.80
+  # ip_ban_enabled: true
+  # login_attempts_threshold: 5
+
 automation: !include_dir_merge_list automation/
+group: !include groups.yaml
+light: !include lights.yaml
+lovelace: !include ui/lovelace.yaml
+person: !include person.yaml
+recorder: !include recorder.yaml
 # script: !include scripts.yaml
 # scene: !include scenes.yaml
 
 logger:
-  # default: debug
   default: warning
 
 device_tracker:
@@ -114,17 +126,7 @@ device_tracker:
     new_device_defaults:
       track_new_devices: false
 
-person: !include person.yaml
 
-
-# http:
-  # # api_password: !secret http:password
-  # use_x_forwarded_for: true
-  # trusted_proxies:
-    # - 127.0.0.1
-    # # - 192.168.1.80
-  # ip_ban_enabled: true
-  # login_attempts_threshold: 5
 
 
 mqtt:
@@ -159,9 +161,6 @@ influxdb:
     # domains:
       # - group.g_plugs
       # - switch
-
-
-lovelace: !include ui/lovelace.yaml
 
 
 # setup via ui
@@ -345,10 +344,6 @@ sensor:
   - platform: filesize
     file_paths:
       - /home/ghost/homeassistant/conf/home-assistant_v2.db
-
-
-
-light: !include lights.yaml
 
 
 input_number:
