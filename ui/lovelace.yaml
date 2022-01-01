@@ -1,0 +1,32 @@
+
+    mode: yaml
+    resources:
+      - url: /local/button-card.js
+        type: module
+      - url: /local/tv-card.js?v=1
+        type: module
+      - url: /local/hass-hue-icons.js
+        type: module
+
+    # Add more dashboards
+    dashboards:
+      lovelace-home:
+        mode: yaml
+        filename: ui/ui-home.yaml
+        title: Home
+        icon: mdi:home
+        show_in_sidebar: true
+      lovelace-system:
+        mode: yaml
+        filename: ui/ui-system.yaml
+        title: System
+        icon: mdi:cog
+        show_in_sidebar: true
+        require_admin: true
+      lovelace-debug: # Needs to contain a hyphen (-)
+        mode: yaml
+        filename: ui/ui-debug.yaml
+        title: Debug
+        icon: mdi:tools
+        show_in_sidebar: true
+        require_admin: true

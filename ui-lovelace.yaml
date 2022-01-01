@@ -1,9 +1,0 @@
-title: Home
-icon: mdi:home
-views:
-    - !include ui/home.yaml
-    - !include ui/sensors.yaml
-    - !include ui/weather.yaml
-    - !include ui/tv.yaml
-    - !include ui/lukes_tv.yaml
-    - !include ui/plugs.yaml

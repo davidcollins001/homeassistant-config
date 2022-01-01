@@ -13,7 +13,7 @@ cards:
         tap_action:
             action: toggle
       - type: light
-        name: LED lamp
+        name: Corner lamp
         entity: light.led_strip
         icon: hue:signe-gradient-table
       - type: light
