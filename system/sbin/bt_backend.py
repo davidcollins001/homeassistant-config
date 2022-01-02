@@ -80,7 +80,13 @@ class LedStripDevice(BTDevice):
     UUIDS = {"0000fff3-0000-1000-8000-00805f9b34fb": "command"}
 
     def write_value(self, data):
-        self.control["command"].write_value(data)
+        try:
+            self.control["command"].write_value(data)
+        except KeyError:
+            logger.error("failed to write, reconnecting")
+            self.connect()
+            # self.write_value(data)
+            self.control["command"].write_value(data)
 
     def update(self, command, message):
         if command == 'POWER':
@@ -90,18 +96,17 @@ class LedStripDevice(BTDevice):
             p = int(message.payload)
             data = [0x7E, 4, 1, p, 1, 0xFF, 0xFF, 0, 0xEF]
         elif command == 'white':
-            # TODO: this probably isn't white - maybe brightness?
-            # read color (or 0xFF) multiply color by brightness
-            # r, g, b = message.payload.decode().split(',')
             p = int(message.payload)
-            if p:
-                logger.warning(f"what should be done with white {p}")
-                data = [0x7E, 7, 5, 3, p * 0xFF, p * 0xFF, p * 0xFF, 16, 0xEF]
-            else:
-                return
+            # data = [0x7E, 5, 5, 1, p, 0xFF, 0xFF, 16, 0xEF]
+            # This sets white, but breaks other things
+            return
         elif command == 'Color':
             r, g, b = message.payload.decode().split(',')
             data = [0x7E, 7, 5, 3, int(g), int(b), int(r), 16, 0xEF]
+        elif command == 'effect':
+            # payload matches `effect_list` in light definition
+            p = int(message.payload)
+            data = [0x7E, 5, 3, p, 6, 0xFF, 0xFF, 0, 0xEF]
         elif command == 'command':
             # pass data through to bt device
             data = list(map(lambda n: int(n), message.payload))
