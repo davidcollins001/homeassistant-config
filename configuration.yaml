@@ -231,6 +231,11 @@ switch:
     payload_off: 0
 
 
+binary_sensor:
+  - platform: workday
+    country: UK
+
+
 sensor:
   - platform: mqtt
     name: "794296394_temperature"

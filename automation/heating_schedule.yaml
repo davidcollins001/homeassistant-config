@@ -6,13 +6,9 @@
       - platform: time
         at: "7:00:00"
     condition:
-      - condition: time
-        weekday:
-          - mon
-          - tue
-          - wed
-          - thu
-          - fri
+      - condition: state
+        entity_id: binary_sensor.workday_sensor
+        state: "on"
     action:
       - service: input_boolean.turn_on
         target:
@@ -25,13 +21,9 @@
       - platform: time
         at: "8:15:00"
     condition:
-      - condition: time
-        weekday:
-          - mon
-          - tue
-          - wed
-          - thu
-          - fri
+      - condition: state
+        entity_id: binary_sensor.workday_sensor
+        state: "on"
     action:
       - service: input_boolean.turn_off
         target:
@@ -44,10 +36,9 @@
       - platform: time
         at: "8:30:00"
     condition:
-      - condition: time
-        weekday:
-          - sat
-          - sun
+      - condition: state
+        entity_id: binary_sensor.workday_sensor
+        state: "off"
     action:
       - service: input_boolean.turn_on
         target:
@@ -60,10 +51,9 @@
       - platform: time
         at: "10:00:00"
     condition:
-      - condition: time
-        weekday:
-          - sat
-          - sun
+      - condition: state
+        entity_id: binary_sensor.workday_sensor
+        state: "off"
     action:
       - service: input_boolean.turn_off
         target:
