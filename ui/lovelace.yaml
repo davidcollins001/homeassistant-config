@@ -16,13 +16,21 @@
         title: Home
         icon: mdi:home
         show_in_sidebar: true
-      lovelace-system:
+      lovelace-monitor:
         mode: yaml
-        filename: ui/ui-system.yaml
-        title: System
+        filename: ui/ui-monitor.yaml
+        title: Monitor
+        icon: mdi:chart-areaspline
+        show_in_sidebar: true
+        require_admin: true
+      lovelace-settings:
+        mode: yaml
+        filename: ui/ui-settings.yaml
+        title: Settings
         icon: mdi:cog
         show_in_sidebar: true
         require_admin: true
+
       lovelace-debug: # Needs to contain a hyphen (-)
         mode: yaml
         filename: ui/ui-debug.yaml

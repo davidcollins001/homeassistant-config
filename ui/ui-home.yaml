@@ -1,6 +1,5 @@
 
 title: Home
-icon: mdi:home
 views:
     - !include home.yaml
     - !include sensors.yaml
