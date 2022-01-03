@@ -132,13 +132,6 @@
       - platform: state
         entity_id: input_boolean.heating_sched_trigger
         to: "off"
-    condition:
-      - condition: state
-        entity_id: input_boolean.heating
-        state: "on"
-      - condition: state
-        entity_id: input_boolean.heating_sched_enable
-        state: "on"
     action:
       - service: input_boolean.turn_off
         target:
