@@ -27,8 +27,8 @@
 # BACKUP:
 #   create backup:
 #       backup_file=/tmp/hass_`date +"%FT%T"`.bundle
-#       git bundle create backup_file
-#       scp backup_file 192.168.1.99:backup/hass-backup
+#       git bundle create <backup_file> <branch>
+#       scp backup_file <user>@<host>:backup/hass-backup
 #   recreate from bundle
 #       git clone `bundle` repo
 
@@ -40,7 +40,7 @@
 #           https://iotechonline.com/home-assistant-access-with-nginx-proxy-and-lets-encrypt/?cn-reloaded=1
 #   python-3.10 (compile/install)
 #   pip venv:
-#       - telebot, gatt-python
+#       - telebot, gatt-python (git repo)
 
 # Configure a default setup of Home Assistant (frontend, api, etc)
 #default_config:
@@ -72,10 +72,10 @@ homeassistant:
   latitude: !secret home_latitude
   longitude: !secret home_longitude
 
+  # customize: !include customize.yaml
   # external_url: !secret external_url
   # internal_url: !secret internal_url
-  # packages: !include_dir_named packages
-  # customize: !include customize.yaml
+  packages: !include_dir_named packages/
 
   allowlist_external_dirs:
     - /home/ghost/homeassistant/conf
@@ -189,15 +189,6 @@ influxdb:
 
 
 # setup via ui
-# media_player:
-  # - platform: braviatv
-    # host: 192.168.1.24
-samsungtv:
-  # ue40mu6120
-  - host: 192.168.1.7
-
-
-# setup via ui
 # weather:
   # - platform: openweathermap
     # api_key: !secret openweathermap_key
@@ -219,16 +210,6 @@ switch:
     command_topic: "cmnd/plugs/plug3/POWER"
     name: plug3
     retain: true
-
-  # send singnal to switch boiler on/off
-  - platform: mqtt
-    # state_topic: "state/sensor/heating"
-    command_topic: "cmnd/sensor/heating"
-    name: Heating Switch
-    unique_id: heating_switch
-    retain: true
-    payload_on: 1
-    payload_off: 0
 
 
 binary_sensor:
@@ -323,23 +304,6 @@ sensor:
         identifiers: "794296394"
         name: "794296394"
 
-  # sensors used for displaying input values to prevent changing in ui
-  - platform: template
-    sensors:
-      i_heating_temp_set:
-        friendly_name: Heating Temp Set
-        value_template: '{{ states("input_number.heating_temp_set") }}'
-        # unit: ""  # degrees
-      i_heating:
-        friendly_name: Heating
-        value_template: '{{ states("group.g_heating") }}'
-      heating_temperature:
-        friendly_name: Temperature
-        value_template: '{{ states("sensor.794296394_temperature") }}'
-      sensor_794296394:
-        value_template: 'Living Room'
-
-
   - platform: systemmonitor
     resources:
       - type: processor_use
@@ -376,129 +340,10 @@ sensor:
       - /home/ghost/homeassistant/conf/home-assistant_v2.db
 
 
-input_number:
-  heating_on_temp:
-    name: Heating On Temp (C)
-    initial: 20
-    min: 5
-    max: 35
-
-  heating_off_temp:
-    name: Heating Off Temp (C)
-    initial: 10
-    min: 5
-    max: 35
-
-  max_ext_temp:
-    name: Max External Temperature (C)
-    initial: 12
-    min: 5
-    max: 20
-
-  heating_temp_set:
-    name: Heating Temperature (C)
-    # value: "{{ states(input_number.heating_off_temp) }}"
-    min: 0
-    max: 100
-
-  heating_boost_timer:
-    name: Heating Boost Timer (min)
-    initial: 60
-    min: 30
-    max: 180
-
-  heating_pwm_timer:
-    name: Heating PWM Timer (min)
-    initial: 240
-    min: 100
-    max: 400
-
-  heating_pwm_duty_cycle:
-    name: Heating PWM Duty Cycle (%)
-    # unit: percent
-    initial: 20
-    min: 10
-    max: 50
-
-  heating_pwm_period:
-    name: Heating PWM Period (min)
-    initial: 30
-    min: 0
-    max: 60
-
-
 input_boolean:
-  # track if heating is on
-  heating:
-    name: Heating
-  # track heating manually switched on
-  heating_boost:
-    name: Heating Boost
-  heating_pwm:
-    name: Heating PWM
-  # track heating switched on by schedule
-  heating_sched:
-    name: Heating Scheduled
-  heating_sched_enable:
-    name: Heating Scheduled Enabled
-  # track heating time/day trigger to abstract schedule rules
-  heating_sched_trigger:
-    name: Heating Sched Trigger
   # enable holiday mode
   holiday_mode:
     name: Holiday Mode
 
   switch_off_lr:
     name:  Switch Off
-
-  netflix:
-    name:  Netflix
-
-  youtube:
-    name:  YouTube
-  fix_youtube:
-    name: Fix YouTube
-
-
-############################### DEBUG ENTITIES ################################
-
-input_text:
-  debug_text:
-    initial: "-"
-
-input_boolean test_b:
-  name: test 11
-
-input_number wait:
-    name: wait
-    min: 100
-    max: 2000
-
-sensor i_debug:
-  platform: template
-  sensors:
-    i_debug:
-      friendly_name: debug text
-      # value_template: >
-        # {{ states('input_text.debug_text') }}
-        # {% set entity = 'input_boolean.heating_boost' %}
-        # {% set ent_str = entity.replace("boolean", "number") + "_timer" %}
-        # {{ states(ent_str) | int }}
-        # {% set ent_str = entity.replace("boolean", "number") %}
-        # {{ states(entity) | int }}
-      value_template: >
-        {{ state_attr('media.player.sony_bravia_tv', 'source') }}
-
-    # {% set entity = "input_number.{}_timer".format("heating_boost") %}
-    # {{ states(entity) | int }}
-
-switch test_s:
-  platform: mqtt
-  name: test1
-  command_topic: "stat/sensor/t1"
-
-switch test2:
-  - platform: mqtt
-    name: test2
-    unique_id: test2
-    command_topic: "stat/sensor/t2"

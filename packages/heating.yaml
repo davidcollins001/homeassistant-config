@@ -1,0 +1,100 @@
+
+switch:
+  # send singnal to switch boiler on/off
+  - platform: mqtt
+    # state_topic: "state/sensor/heating"
+    command_topic: "cmnd/sensor/heating"
+    name: Heating Switch
+    unique_id: heating_switch
+    retain: true
+    payload_on: 1
+    payload_off: 0
+
+
+sensor:
+  # sensors used for displaying input values to prevent changing in ui
+  - platform: template
+    sensors:
+      i_heating_temp_set:
+        friendly_name: Heating Temp Set
+        value_template: '{{ states("input_number.heating_temp_set") }}'
+        # unit: ""  # degrees
+      i_heating:
+        friendly_name: Heating
+        value_template: '{{ states("group.g_heating") }}'
+      # abstract sensors to sensor location
+      heating_temperature:
+        friendly_name: Temperature
+        value_template: '{{ states("sensor.794296394_temperature") }}'
+      sensor_794296394:
+        value_template: 'Living Room'
+
+
+input_number:
+  heating_on_temp:
+    name: Heating On Temp (C)
+    initial: 20
+    min: 5
+    max: 35
+
+  heating_off_temp:
+    name: Heating Off Temp (C)
+    initial: 10
+    min: 5
+    max: 35
+
+  max_ext_temp:
+    name: Max External Temperature (C)
+    initial: 12
+    min: 5
+    max: 20
+
+  heating_temp_set:
+    name: Heating Temperature (C)
+    # value: "{{ states(input_number.heating_off_temp) }}"
+    min: 0
+    max: 100
+
+  heating_boost_timer:
+    name: Heating Boost Timer (min)
+    initial: 60
+    min: 30
+    max: 180
+
+  heating_pwm_timer:
+    name: Heating PWM Timer (min)
+    initial: 240
+    min: 100
+    max: 400
+
+  heating_pwm_duty_cycle:
+    name: Heating PWM Duty Cycle (%)
+    # unit: percent
+    initial: 20
+    min: 10
+    max: 50
+
+  heating_pwm_period:
+    name: Heating PWM Period (min)
+    initial: 30
+    min: 0
+    max: 60
+
+
+input_boolean:
+  # track if heating is on
+  heating:
+    name: Heating
+  # track heating manually switched on
+  heating_boost:
+    name: Heating Boost
+  heating_pwm:
+    name: Heating PWM
+  # track heating switched on by schedule
+  heating_sched:
+    name: Heating Scheduled
+  heating_sched_enable:
+    name: Heating Scheduled Enabled
+  # track heating time/day trigger to abstract schedule rules
+  heating_sched_trigger:
+    name: Heating Sched Trigger

@@ -1,0 +1,24 @@
+
+
+# media_player:
+  # # setup via ui
+  # - platform: braviatv
+    # host: 192.168.1.24
+  # - platform: samsungtv
+  # ue40mu6120
+    # host: 192.168.1.7
+    # name: Luke's TV
+    # turn_on_action:
+      # service: wake_on_lan.send_magic_packet
+      # data:
+        # mac: 64:1c:b0:7e:84:ce
+
+
+input_boolean:
+  netflix:
+    name:  Netflix
+
+  youtube:
+    name:  YouTube
+  fix_youtube:
+    name: Fix YouTube
