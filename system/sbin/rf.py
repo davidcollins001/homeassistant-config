@@ -64,8 +64,9 @@ class Packet(object):
         if len(data) > 4:
             self.to = data[0]
             self.addr = data[1]
-            # self.flags = data[2]
-            self.seq = data[2]
+            self.no_ack = bool(data[2] & 0x80)
+            self.flags = data[2] >> 4
+            self.seq = int(data[2]) & 0xF
             self.data = data[3:]
 
 
@@ -218,7 +219,6 @@ class RFM69(object):
         try:
             irq2 = self.read_reg(regs.RF_IRQ2)
             m = {regs.RF_M_TX: 'tx', regs.RF_M_RX: 'rx'}
-            self.error = f"{m[self.mode]} {irq2:b}"
         except Exception as e:
             m = {regs.RF_M_TX: 'tx', regs.RF_M_RX: 'rx'}
             self.error = f"{self.mode} {e}"
@@ -226,7 +226,6 @@ class RFM69(object):
         # message has been fully sent
         if self.mode == regs.RF_M_TX:
             # get the interrupt cause
-            irq2 = self.read_reg(regs.RF_IRQ2)
             if irq2 & regs.RF_IRQ2_SENT:
                 self.set_idle_mode()
                 self._tx_good += 1
@@ -239,7 +238,6 @@ class RFM69(object):
         # wait for PAYLOADREADY, not CRCOK - PAYLOADREADY occurs after AES decryption
         elif self.mode == regs.RF_M_RX:
             # get the interrupt cause
-            irq2 = self.read_reg(regs.RF_IRQ2)
             if irq2 & regs.RF_IRQ2_RECVD:
                 # complete message has been received with good CRC
                 # self._rssi = - (self.read_reg(regs.RF_RSSI) >> 1)
@@ -392,10 +390,11 @@ class DataGram(object):
     def payload(self):
         return self.driver.payload
 
-    def build_payload(self, addr, data=None, seq=None):
+    def build_payload(self, addr, data=None, flags=None, seq=None):
         if seq is None:
             seq = self.seq = (self.seq + 1) % 0xFF
-        _data = [addr, self.driver.nodeid, seq]
+        flags = flags or 0
+        _data = [addr, self.driver.nodeid, (flags < 4) | seq]
         _data += (data or [])
         return [len(_data)] + _data
 
@@ -422,7 +421,8 @@ class DataGram(object):
 
         # received message ack it
         try:
-            self.ack(self.payload.addr)
+            if not self.payload.no_ack:
+                self.ack(self.payload.addr)
         except Exception as e:
             logger.error(e)
         return True
@@ -434,8 +434,8 @@ class DataGram(object):
         if self.driver.payload_ready.qsize():
             return addr == self.payload.addr and self.seq == self.payload.seq
 
-    def send_to(self, addr, data):
-        _data = self.build_payload(addr, data)
+    def send_to(self, addr, data, flags=None):
+        _data = self.build_payload(addr, data, flags)
 
         for attempt in range(self.retries):
             self.driver.can_send.wait()

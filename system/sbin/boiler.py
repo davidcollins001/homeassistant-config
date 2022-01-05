@@ -9,9 +9,10 @@ import setup_log  # noqa
 
 import rf
 
-logger = logging.getLogger("radio")
+logger = logging.getLogger("boiler")
 # logger.setLevel(logging.INFO)
-logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARNING)
 
 
 BOILER_PKT_GAP = 30e-3
