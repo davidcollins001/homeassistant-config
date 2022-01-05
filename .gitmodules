@@ -1,0 +1,6 @@
+[submodule "external/ha-hildebrandglow-dcc"]
+	path = external/ha-hildebrandglow-dcc
+	url = https://github.com/HandyHat/ha-hildebrandglow-dcc
+[submodule "external/hass-hue-icons"]
+	path = external/hass-hue-icons
+	url = https://github.com/arallsopp/hass-hue-icons
