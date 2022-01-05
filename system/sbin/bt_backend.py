@@ -62,10 +62,7 @@ class HueDevice(BTDevice):
         p = int(message.payload)
         cmds = {'POWER': self.power,
                 'Dimmer': self.dimmer}
-        try:
-            cmds.get(command)(p)
-        except Exception as e:
-            logger.exception(f"failed to process data: {p}: {e}")
+        cmds.get(command)(p)
 
     def power(self, state):
         self.control['power'].write_value([state])
@@ -80,13 +77,7 @@ class LedStripDevice(BTDevice):
     UUIDS = {"0000fff3-0000-1000-8000-00805f9b34fb": "command"}
 
     def write_value(self, data):
-        try:
-            self.control["command"].write_value(data)
-        except KeyError:
-            logger.error("failed to write, reconnecting")
-            self.connect()
-            # self.write_value(data)
-            self.control["command"].write_value(data)
+        self.control["command"].write_value(data)
 
     def update(self, command, message):
         if command == 'POWER':
@@ -123,7 +114,15 @@ def dispatch_message(devices, message, c):
     req = devices.get(device)
     # ignore mqtt messages for other lights
     if req:
-        req.update(command, message)
+        try:
+            req.update(command, message)
+        except KeyError:
+            logger.error("failed to write, reconnecting")
+            self.connect()
+            # self.write_value(data)
+            req.update(command, message)
+        except Exception as e:
+            logger.exception(f"failed to process data: {p}: {e}")
 
 
 def manager(devices, device="hci0", queue=DEFAULT_CMD_QUEUE):
@@ -133,10 +132,12 @@ def manager(devices, device="hci0", queue=DEFAULT_CMD_QUEUE):
     # connect to led floor lamp
     led = LedStripDevice(macs['led_strip'], dev_man, auto_reconnect=True)
     led.connect()
+    logger.info(f"connected to led strip device")
 
     # connect to hue lamp
     hue = HueDevice(macs['hue_lamp_1'], dev_man, auto_reconnect=True)
     hue.connect()
+    logger.info(f"connected to hue device")
 
     devices = {'led_strip': led,
                'hue_lamp_1': hue}
