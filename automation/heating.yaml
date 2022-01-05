@@ -5,6 +5,11 @@
     trigger:
       - platform: state
         entity_id: input_boolean.heating
+    condition:
+      # # prevent heating coming on if away, but leave enabled on return
+      # - condition: state
+        # entity_id: group.g_present
+        # state: home
     action:
       - service: input_number.set_value
         data:
@@ -215,6 +220,7 @@
 # presence rules
 # NOTE: this doesn't switch off the input_boolean in case someone comes back, in
 #       which case the heating will still be enabled
+# TODO: heating pwm doesn't work when person leaves, so switch it off
   - alias: heating_presence_not_home
     mode: restart
     trigger:
@@ -230,6 +236,7 @@
       - service: input_boolean.turn_off
         target:
           entity_id: input_boolean.heating
+          entity_id: input_boolean.heating_pwm
 
 
 # presence rules

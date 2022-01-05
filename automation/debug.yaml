@@ -1,7 +1,4 @@
 
-
-############################### DEBUG ACTIONS ###############################
-
   - alias: debug-1
     mode: restart
     trigger:
@@ -10,13 +7,13 @@
           to: "on"
     variables:
       _current: '{{ states("sensor.temperature") | int }}'
-      _target: '{{ states("input_boolean.heating_temp_set") | int }}'
+      _target: '{{ states("input_number.heating_temp_set") | int }}'
       _active: '{{ _current < _target }}'
     # condition:
       # - condition: template
         # value_template: >
           # {% set current = states("sensor.temperature") %}
-          # {% set target = states("input_boolean.heating_temp_set") %}
+          # {% set target = states("input_number.heating_temp_set") %}
           # {{ current > target }}
     action:
       - service: input_text.set_value
