@@ -68,8 +68,8 @@ class HueDevice(BTDevice):
         self.control['power'].write_value([state])
 
     def dimmer(self, state):
-        msg = "Invalid dimmer value: {state} must be > 0 and < 255"
-        assert (state > 0) and (state < 255), msg
+        msg = f"Invalid dimmer value: {state} must be > 0 and < 256"
+        assert (state > 0) and (state < 256), msg
         self.control['dimmer'].write_value([state])
 
 
@@ -117,8 +117,8 @@ def dispatch_message(devices, message, c):
         try:
             req.update(command, message)
         except KeyError:
-            logger.error("failed to write, reconnecting")
-            self.connect()
+            logger.error("failed to write, reconnecting: {command}")
+            req.connect()
             # self.write_value(data)
             req.update(command, message)
         except Exception as e:
@@ -130,17 +130,23 @@ def manager(devices, device="hci0", queue=DEFAULT_CMD_QUEUE):
     dev_man = Manager(device)
 
     # connect to led floor lamp
-    led = LedStripDevice(macs['led_strip'], dev_man, auto_reconnect=True)
+    led = LedStripDevice(devices['led_strip'], dev_man, auto_reconnect=True)
     led.connect()
     logger.info(f"connected to led strip device")
 
     # connect to hue lamp
-    hue = HueDevice(macs['hue_lamp_1'], dev_man, auto_reconnect=True)
-    hue.connect()
-    logger.info(f"connected to hue device")
+    hue1 = HueDevice(devices['hue_lamp_1'], dev_man, auto_reconnect=True)
+    hue1.connect()
+    logger.info(f"connected to hue 1 device")
+
+    # connect to hue lamp
+    hue2 = HueDevice(devices['hue_lamp_2'], dev_man, auto_reconnect=True)
+    hue2.connect()
+    logger.info(f"connected to hue 2 device")
 
     devices = {'led_strip': led,
-               'hue_lamp_1': hue}
+               'hue_lamp_1': hue1,
+               'hue_lamp_2': hue2}
 
     # on reconnect subscriptions will be renewed
     client = mqtt.Client()
@@ -211,7 +217,8 @@ if __name__ == "__main__":
     # hue mac = "CE:96:CB:60:81:74"
     # led mac = "FC:4F:22:91:4D:23",
     macs = {"led_strip": "21:04:77:64:04:AA",
-            "hue_lamp_1": "CB:80:F1:7D:0A:34"}
+            "hue_lamp_1": "CB:80:F1:7D:0A:34",
+            "hue_lamp_2": "D1:DC:DF:EA:C4:D3"}
     queue= DEFAULT_CMD_QUEUE
 
     if args.manager:

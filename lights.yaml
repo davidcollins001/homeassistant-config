@@ -334,6 +334,17 @@
     command_topic: "cmnd/lights/hue_lamp_1/POWER"
     on_command_type: "first"
     brightness_command_topic: "cmnd/lights/hue_lamp_1/Dimmer"
-    brightness_scale: 255
+    brightness_scale: 254
+    payload_on: 1
+    payload_off: 0
+
+  - platform: mqtt
+    name: "Hue lamp 2"
+    unique_id: hue_lamp_2
+    optimistic: true
+    command_topic: "cmnd/lights/hue_lamp_2/POWER"
+    on_command_type: "first"
+    brightness_command_topic: "cmnd/lights/hue_lamp_2/Dimmer"
+    brightness_scale: 254
     payload_on: 1
     payload_off: 0

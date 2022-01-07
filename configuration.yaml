@@ -40,7 +40,7 @@
 #           https://iotechonline.com/home-assistant-access-with-nginx-proxy-and-lets-encrypt/?cn-reloaded=1
 #   python-3.10 (compile/install)
 #   pip venv:
-#       - telebot, gatt-python (git repo)
+#       - telebot, gatt
 
 # Configure a default setup of Home Assistant (frontend, api, etc)
 #default_config:
