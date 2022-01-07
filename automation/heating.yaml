@@ -235,8 +235,9 @@
     action:
       - service: input_boolean.turn_off
         target:
-          entity_id: input_boolean.heating
-          entity_id: input_boolean.heating_pwm
+          entity_id:
+            - input_boolean.heating
+            - input_boolean.heating_pwm
 
 
 # presence rules

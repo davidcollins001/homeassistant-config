@@ -12,20 +12,23 @@
         from: "off"
         to: "on"
     action:
-      - service: switch.turn_off
+      - service: homeassistant.turn_off
         target:
-            entity_id: switch.plug3
-      - service: light.turn_off
-        target:
-            entity_id: light.led_strip
-      - service: light.turn_off
-        target:
-            entity_id: light.hue_lamp_1
-      - service: media_player.turn_off
-        target:
-            entity_id: media_player.sony_bravia_tv
+            entity_id: group.g_living_room
       - delay:
           seconds: 1
-      - service: input_boolean.turn_off
+      - service: homeassistant.turn_off
         target:
             entity_id: input_boolean.switch_off_lr
+
+      # switch hall light on for 5 mins
+      - service: homeassistant.turn_on
+        target:
+            entity_id:
+              - light.hue_lamp_1
+      - delay:
+          seconds: 300
+      - service: homeassistant.turn_off
+        target:
+            entity_id:
+              - light.hue_lamp_1

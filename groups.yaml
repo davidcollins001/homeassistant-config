@@ -35,3 +35,10 @@
           - person.sara
           - person.luke
       # - media_player.sony_bravia_tv
+
+  g_living_room:
+      name: Living room Group
+      entities:
+          - light.led_strip
+          - switch.plug3
+          - media_player.sony_bravia_tv
