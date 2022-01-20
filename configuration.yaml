@@ -4,10 +4,6 @@
 #       - influx
 #           https://community.home-assistant.io/t/home-assistant-community-add-on-influxdb/54491
 #       - duck dns
-#       - phillips hue
-#           https://www.home-assistant.io/integrations/hue/
-#           https://stackoverflow.com/questions/65948825/cant-send-command-to-ble-device-philips-hue-bulb-connection-drops
-#           https://github.com/walter5138/hue_ble_bash
 #       - youtube
 #           https://community.home-assistant.io/t/play-youtube-on-smart-tv/101407/43
 #           https://www.home-assistant.io/integrations/media_extractor/
