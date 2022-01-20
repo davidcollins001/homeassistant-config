@@ -1,17 +1,4 @@
 
-  g_climate:
-      name: Climate Group
-      entities:
-          - sensor.temperature
-          - sensor.adc_temp
-          - sensor.humidity
-          - sensor.pressure
-          - sensor.gas_resistance
-          - sensor.air_quality
-          - sensor.air_quality_2
-          - sensor.last_updated
-
-
   g_plugs:
       name: Plugs Group
       entities:
@@ -20,21 +7,12 @@
           - switch.plug3
 
 
-  g_heating:
-      name: Heating Group
-      entities:
-          - input_boolean.heating_boost
-          - input_boolean.heating_pwm
-          - input_boolean.heating_sched
-
-
   g_present:
       name: Present Group
       entities:
           - person.david
           - person.sara
           - person.luke
-      # - media_player.sony_bravia_tv
 
   g_living_room:
       name: Living room Group

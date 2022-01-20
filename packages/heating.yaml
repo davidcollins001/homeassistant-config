@@ -30,6 +30,15 @@ sensor:
         value_template: 'Living Room'
 
 
+group:
+  g_heating:
+      name: Heating Group
+      entities:
+          - input_boolean.heating_boost
+          - input_boolean.heating_pwm
+          - input_boolean.heating_sched
+
+
 input_number:
   heating_on_temp:
     name: Heating On Temp (C)
