@@ -22,6 +22,5 @@
           - media_player.sony_bravia_tv
 
   hallway_light:
-    name: Hallway
-    entities:
-      - light.hue_lamp_1
+    name: hallway light
+    entities: light.hue_lamp_1

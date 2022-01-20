@@ -14,7 +14,8 @@ logger.setLevel(logging.INFO)
 
 MINS = 60
 MONITOR_QUEUES = [
-    "state/sensor/794296394"
+    "state/sensor/794296394",
+    # "state/sensor/1985242708"
 ]
 # Viper bot
 # BOT_TOKEN = ""

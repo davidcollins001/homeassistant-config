@@ -30,3 +30,23 @@ cards:
           - entity: sensor.794296394_last_updated
             name: Last Updated
         show_header_toggle: false
+
+  - type: vertical-stack
+    cards:
+      - type: entity
+        entity: sensor.sensor_1985242708
+      - type: glance
+        # title: Living Room
+        # title: "{{ sensor.sensor_794296394 }}"
+        entities:
+            - entity: sensor.1985242708_temperature
+              name: Temperature
+            - entity: sensor.1985242708_humidity
+              name: Humidity
+        # columns: 4
+        show_header_toggle: true
+      - type: entities
+        entities:
+          - entity: sensor.1985242708_last_updated
+            name: Last Updated
+        show_header_toggle: false

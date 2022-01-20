@@ -106,29 +106,36 @@ def boiler_cmd(radio, cmd):
 def publish(client, payload):
     def sensor_794296394(raw_data):
         sensor_queue = "state/sensor/794296394"
-        bme680_keys = ['hwid', 'iaq2', 'iaq', 'adc_temp', 'temperature',
+        sensor_keys = ['hwid', 'iaq2', 'iaq', 'adc_temp', 'temperature',
                        'pressure', 'humidity', 'gas_res']
         # publish temp
-        data = dict(zip(bme680_keys, raw_data))
+        data = dict(zip(sensor_keys, raw_data))
         data['temperature'] /= 100
         data['timestamp'] = int(time.time())
         client.publish(sensor_queue, json.dumps(data))
         # client.publish(sensor_queue, data['temperature'] / 100)
 
-    sensor = {
-        794296394: sensor_794296394,
-    }
+    def sensor_1985242708(raw_data):
+        sensor_queue = "state/sensor/1985242708"
+        sensor_keys = ['hwid', 'temperature', 'humidity']
+        # publish temp
+        data = dict(zip(sensor_keys, raw_data))
+        data['temperature'] /= 100
+        data['timestamp'] = int(time.time())
+        client.publish(sensor_queue, json.dumps(data))
+        # client.publish(sensor_queue, data['temperature'] / 100)
+
     try:
+        logger.debug("processing payload")
         data = rf.Varint.decode_varint(payload.data)
-        # time.sleep(1)
         if radio.driver.error:
             logger.info(radio.driver.error)
         radio.driver.error = None
 
         logger.debug(f" RF69 ({hex(payload.rssi)}) "
-                     f"[{payload.addr} -> {payload.to}] {data}")
+                     f"[{payload.addr} -> {payload.to}] {payload.flags} {data}")
 
-        sensor[data[0]](data)
+        locals()[f'sensor_{data[0]}'](data)
     except Exception as e:
         try:
             logger.error(f"Failed to process message: {payload._data}: {e}")
