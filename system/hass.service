@@ -1,14 +1,13 @@
 [Unit]
 Description=Home Assistant
-After=network.target
+After=network-online.target
 
 [Service]
 Type=simple
-# User=homeassistant
 User=ghost
 WorkingDirectory=/home/ghost/homeassistant
-#ExecStart=/srv/homeassistant/bin/hass -v -c "/home/homeassistant/.homeassistant"
-ExecStart=/home/ghost/homeassistant/conf/system/sbin/homeassistant.sh
+ExecStart=/home/ghost/homeassistant/bin/hass -c /home/ghost/homeassistant/conf
+RestartForceExitStatus=100
 
 [Install]
 WantedBy=multi-user.target

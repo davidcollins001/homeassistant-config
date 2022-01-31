@@ -1,6 +1,6 @@
 # https://www.home-assistant.io/integrations/braviatv/
 
-# switch to netflix or youtube
+# switch to netflix/youtube
   - alias: netflix_youtube
     mode: restart
     trigger:
@@ -18,20 +18,97 @@
               target:
                 entity_id: media_player.sony_bravia_tv
             - delay:
+                seconds: 0.5
+
+      - choose:
+        - conditions: >
+            {% set source_list = state_attr('media_player.sony_bravia_tv', 'source_list') %}
+            {{ state_attr(trigger.entity_id, 'friendly_name') in source_list }}
+          sequence:
+            # - repeat:
+                # while: "{{ state_attr('media.player.sony_bravia_tv', 'source') != None }}"
+                # sequence:
+            - service: media_player.select_source
+              target:
+                entity_id: media_player.sony_bravia_tv
+              data:
+                source: >
+                  {% set source = {'input_boolean.netflix': 'Netflix',
+                                   'input_boolean.youtube': 'YouTube'} %}
+                  {{ source[trigger.entity_id] }}
+            - delay:
                 seconds: 1
-      # - repeat:
-          # while: "{{ state_attr('media.player.sony_bravia_tv', 'source') != None }}"
-          # sequence:
-      - service: media_player.select_source
-        target:
-          entity_id: media_player.sony_bravia_tv
-        data:
-          source: >
-            {% set source = {'input_boolean.netflix': 'Netflix',
-                             'input_boolean.youtube': 'YouTube'} %}
-            {{ source[trigger.entity_id] }}
-      - delay:
-          seconds: 1
+
+        # netflix/youtube missing from source list
+        - conditions: >
+            {% set source_list = state_attr('media_player.sony_bravia_tv', 'source_list') %}
+            {{ state_attr(trigger.entity_id, 'friendly_name') not in source_list }}
+          sequence:
+            - service: remote.send_command
+              target:
+                entity_id: remote.sony_bravia_tv
+              data:
+                command: Home
+            - delay:
+                seconds: 0.5
+            # move to top of home screen menu
+            - repeat:
+                count: 5
+                sequence:
+                  - service: remote.send_command
+                    target:
+                      entity_id: remote.sony_bravia_tv
+                    data:
+                      command: Up
+                  - delay:
+                      seconds: 0.5
+
+            # move to application menu
+            - repeat:
+                count: 2
+                sequence:
+                  - service: remote.send_command
+                    target:
+                      entity_id: remote.sony_bravia_tv
+                    data:
+                      command: Down
+                  - delay:
+                      seconds: 0.5
+
+            # move to full left of applications menu
+            - repeat:
+                count: 5
+                sequence:
+                  - service: remote.send_command
+                    target:
+                      entity_id: remote.sony_bravia_tv
+                    data:
+                      command: Left
+                  - delay:
+                      seconds: 0.5
+
+            # move to netflix/youtube
+            - repeat:
+                count: >
+                  {% set count = {'input_boolean.netflix': 1,
+                                  'input_boolean.youtube': 2} %}
+                  {{ count[trigger.entity_id] }}
+                sequence:
+                  - service: remote.send_command
+                    target:
+                      entity_id: remote.sony_bravia_tv
+                    data:
+                      command: Right
+                  - delay:
+                      seconds: 0.5
+            - service: remote.send_command
+              target:
+                entity_id: remote.sony_bravia_tv
+              data:
+                command: Confirm
+            - delay:
+                seconds: 0.5
+
       - choose:
         # wait and select user profile for netflix
         - conditions: "{{ trigger.entity_id == 'input_boolean.netflix' }}"
@@ -43,9 +120,11 @@
               entity_id: remote.sony_bravia_tv
             data:
               command: Confirm
+
       - service: input_boolean.turn_off
         target:
           entity_id: "{{ trigger.entity_id }}"
+
 
 # press button needed to recover from a youtube crash
   - alias: fix_youtube
