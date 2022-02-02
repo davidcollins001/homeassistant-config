@@ -373,6 +373,13 @@ sensor:
     file_paths:
       - /home/ghost/homeassistant/conf/home-assistant_v2.db
 
+  # enabled via integration
+  # - platform: version
+    # source: pypi
+
+  # - platform: version
+    # source: local
+
 
 input_boolean:
   # enable holiday mode

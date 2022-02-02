@@ -2,9 +2,26 @@ title: System info
 path: sysinfo
 cards:
   - type: entities
-    title: Binary sensor
+    title:
     entities:
-        - binary_sensor.updater
+      - binary_sensor.updater
+      - type: weblink
+        name: Release notes
+        url: https://www.home-assistant.io/latest-release-notes/
+        icon: mdi:home-assistant
+
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.ha_outdated
+        state: 'on'
+    card:
+      type: horizontal-stack
+      show_header_toggle: false
+      cards:
+        - type: entity
+          entity: sensor.current_version
+        - type: entity
+          entity: sensor.python_package_index_pypi
 
   - type: horizontal-stack
     show_header_toggle: false
@@ -19,6 +36,11 @@ cards:
         name: System uptime
         unit: days
 
+      - type: entity
+        entity: sensor.home_assistant_v2_db
+        name: DB size
+        unit: Mb
+
   - type: history-graph
     title: System info
     hours_to_show: 24
@@ -29,4 +51,3 @@ cards:
         - entity: sensor.load_1m
         - entity: sensor.load_5m
         - entity: sensor.load_15m
-        - entity: sensor.home_assistant_v2_db
