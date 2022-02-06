@@ -29,11 +29,6 @@ sensor i_debug:
     # {% set entity = "input_number.{}_timer".format("heating_boost") %}
     # {{ states(entity) | int }}
 
-switch test_s:
-  platform: mqtt
-  name: test1
-  command_topic: "stat/sensor/t1"
-
 switch test2:
   - platform: mqtt
     name: test2

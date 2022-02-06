@@ -29,11 +29,9 @@ cards:
     show_header_toggle: false
     cards:
       - type: light
-        name: Hue 1
         entity: light.hue_lamp_1
         icon: hue:bulb-candle
       - type: light
-        name: Hue 2
         entity: light.hue_lamp_2
         icon: hue:bulb-candle
 

@@ -1,8 +1,4 @@
-
 # TODO:
-#       - start using this instead of openhab
-#       - influx
-#           https://community.home-assistant.io/t/home-assistant-community-add-on-influxdb/54491
 #       - duck dns
 #       - youtube
 #           https://community.home-assistant.io/t/play-youtube-on-smart-tv/101407/43
@@ -14,11 +10,10 @@
 #           https://github.com/geekofweek/homeassistant
 #       - upgrade
 #           python -m pip install --upgrade homeassistant homeassistant-cli
-#               check following is merge
-#               https://github.com/home-assistant-ecosystem/home-assistant-cli/issues/332
 #       - on battery - 794296394
 #           480mAh - 2021-11-20T15:38 -> 2021-12-20T16:57
-#           400mAh - 2021-12-20T18:43 ->
+#           400mAh - 2021-12-20T18:43 -> 2022-01-13T09:02
+#           480mAh - 2022-01-14T12:58 ->
 
 # BACKUP:
 #   create backup:
@@ -30,7 +25,7 @@
 
 # dependencies:
 #   apt:
-#       - mosquitto-clients, mosquitto, python3-rpi.gpio, python3-spidev,
+#       - mosquitto-clients, mosquitto, python3-rpi.gpio, python3-spidev, python3-pip
 #       - python3-paho-mqtt, python3-dbus, python3-gi, letsencrypt, libsqlite3-dev, git
 #       - nginx (reverse proxy)
 #           https://iotechonline.com/home-assistant-access-with-nginx-proxy-and-lets-encrypt/?cn-reloaded=1
@@ -68,7 +63,7 @@ homeassistant:
   latitude: !secret home_latitude
   longitude: !secret home_longitude
 
-  # customize: !include customize.yaml
+  customize: !include customise.yaml
   # external_url: !secret external_url
   # internal_url: !secret internal_url
   packages: !include_dir_named packages/
@@ -92,6 +87,7 @@ homeassistant:
           # Sara
           -  ebe476cf675d4efc8dbcd66bae1a9114
     - type: homeassistant
+
 
 # http:
   # # api_password: !secret http:password
@@ -332,12 +328,6 @@ sensor:
         identifiers: "1985242708"
         name: "1985242708"
 
-  # sensors used for displaying input values to prevent changing in ui
-  - platform: template
-    sensors:
-      sensor_1985242708:
-        value_template: 'Kitchen'
-
   - platform: systemmonitor
     resources:
       - type: processor_use
@@ -351,34 +341,32 @@ sensor:
   - platform: uptime
     scan_interval: 600
 
-  - platform: template
-    sensors:
-      uptime_ha:
-        friendly_name: HA Uptime
-        value_template: >
-          {{ "%0.1f" | format(
-            (as_timestamp(now()) - as_timestamp(states('sensor.uptime')))
-            / 3600 / 24) }}
-
-  - platform: template
-    sensors:
-      uptime_sys:
-        friendly_name: Uptime
-        value_template: >
-          {{ "%0.1f" | format(
-             (as_timestamp(now()) - as_timestamp(states('sensor.last_boot')))
-             / 3600 / 24) }}
-
   - platform: filesize
     file_paths:
       - /home/ghost/homeassistant/conf/home-assistant_v2.db
 
-  # enabled via integration
-  # - platform: version
-    # source: pypi
 
-  # - platform: version
-    # source: local
+template:
+  - sensor:
+    - name: uptime_ha
+      unit_of_measurement: "d"
+      state: >
+        {{ "%0.1f" | format((as_timestamp(now()) -
+                             as_timestamp(states('sensor.uptime')))
+        / 3600 / 24) }}
+
+  - sensor:
+    - name: uptime_sys
+      unit_of_measurement: "d"
+      state: >
+        {{ "%0.1f" | format((as_timestamp(now()) -
+                             as_timestamp(states('sensor.last_boot')))
+        / 3600 / 24) }}
+
+  - sensor:
+    # sensors used for displaying input values to prevent changing in ui
+    - name: sensor_1985242708
+      state: Kitchen
 
 
 input_boolean:

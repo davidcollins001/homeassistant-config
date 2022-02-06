@@ -11,23 +11,22 @@ switch:
     payload_off: 0
 
 
-sensor:
+template:
   # sensors used for displaying input values to prevent changing in ui
-  - platform: template
-    sensors:
-      i_heating_temp_set:
-        friendly_name: Heating Temp Set
-        value_template: '{{ states("input_number.heating_temp_set") }}'
-        # unit: ""  # degrees
-      i_heating:
-        friendly_name: Heating
-        value_template: '{{ states("group.g_heating") }}'
-      # abstract sensors to sensor location
-      heating_temperature:
-        friendly_name: Temperature
-        value_template: '{{ states("sensor.794296394_temperature") }}'
-      sensor_794296394:
-        value_template: 'Living Room'
+  - sensor:
+    - name: i_heating_temp_set
+      state: '{{ states("input_number.heating_temp_set") }}'
+      unit: ""  # degrees
+  - sensor:
+    - name: i_heating
+      state: '{{ states("group.g_heating") }}'
+    - name: heating_temperature
+      state: '{{ states("sensor.794296394_temperature") }}'
+
+  # abstract sensors name to sensor location
+  - sensor:
+    - name: sensor_794296394
+      state: 'Living Room'
 
 
 group:

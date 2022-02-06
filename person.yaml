@@ -1,8 +1,8 @@
-  # - name: "david"
-    # user_id: "f1e8f033c38d4bb99d532ca1f59cf205"
-    # device_trackers:
-      # - device_tracker.android_1f459967274325dc
-    # id: "david"
+  - name: "David"
+    user_id: f566f23f959541a7b8060b9a6d842e93
+    device_trackers:
+      - device_tracker.android_1f459967274325dc
+    id: "david"
   - name: "Sara"
     device_trackers:
       - device_tracker.sarasapplewatch
