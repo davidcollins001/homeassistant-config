@@ -13,6 +13,7 @@ build/obj
 
 .storage
 secrets.yaml
+secrets.py
 .HA_VERSION
 __pycache__
 

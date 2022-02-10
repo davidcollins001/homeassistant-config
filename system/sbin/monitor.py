@@ -7,6 +7,7 @@ import telebot
 
 # TODO: this should be imported automatically from __init__
 import setup_log  # noqa
+from secrets import BOT_TOKEN
 
 logger = logging.getLogger("monitor")
 logger.setLevel(logging.INFO)
@@ -17,10 +18,6 @@ MONITOR_QUEUES = [
     "state/sensor/794296394",
     # "state/sensor/1985242708"
 ]
-# Viper bot
-# BOT_TOKEN = ""
-# Alert bot
-BOT_TOKEN = ""
 CHAT_ID = "1620310931"
 # 4x longest update time
 TIMEOUT = 4 * 15 * MINS
