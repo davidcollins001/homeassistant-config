@@ -1,6 +1,6 @@
 
 # switch off lamp and TV button/not home
-  - alias: switch_off_lr
+  - alias: switch_off_lr_away
     mode: restart
     trigger:
       - platform: state
@@ -12,12 +12,6 @@
         from: "off"
         to: "on"
     action:
-      # switch hall light temporarily
-      - service: homeassistant.turn_on
-        target:
-            entity_id: group.hallway_light
-        data:
-            brightness: 180
       # switch off living room devices
       - service: homeassistant.turn_off
         target:
@@ -28,6 +22,21 @@
         target:
             entity_id: input_boolean.switch_off_lr
 
+# switch off lamp and TV button/not home
+  - alias: switch_off_lr
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_boolean.switch_off_lr
+        from: "off"
+        to: "on"
+    action:
+      # switch hall light temporarily
+      - service: homeassistant.turn_on
+        target:
+            entity_id: group.hallway_light
+        data:
+            brightness: 180
       # wait 5 mins and turn hall light off
       - delay:
           seconds: 300
