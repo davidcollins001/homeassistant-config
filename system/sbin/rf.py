@@ -23,6 +23,8 @@ gpio.setmode(gpio.BCM)
 RST_PIN_BCM = 24  # 18
 IRQ_PIN_BCM = 25  # 22
 
+ACK_FLAG = 0x1
+
 MAXDATA = 66
 
 RETRIES = 3
@@ -62,10 +64,11 @@ class Packet(object):
         self._data = data
         self.rssi = rssi
         if len(data) > 4:
-            self.to = data[0]
-            self.addr = data[1]
-            self.no_ack = bool(data[2] & 0x80)
+            self.to, self.addr = data[0:2]
             self.flags = data[2] >> 4
+            self.ack = bool(self.flags & ACK_FLAG)
+            # TODO: update opposite flag after updating jz4
+            self.ack = not self.ack
             self.seq = int(data[2]) & 0xF
             self.data = data[3:]
 
@@ -303,7 +306,7 @@ class RFM69(object):
     def dump_regs(self):
         """Dump radio register"""
         # display header
-        logger.debug('     ', end='')
+        print('     ', end='')
         for i in range(16):
             print(f'{i:X}', end='  ')
 
@@ -421,7 +424,7 @@ class DataGram(object):
 
         # received message ack it
         try:
-            if not self.payload.no_ack:
+            if self.payload.ack:
                 self.ack(self.payload.addr)
         except Exception as e:
             logger.error(e)

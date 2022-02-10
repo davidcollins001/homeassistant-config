@@ -25,6 +25,8 @@ logger.setLevel(logging.WARNING)
 
 RF_FREQ = 86926
 BOILER_FREQ = 86826
+RF_GROUP = 0xB6
+RF_NODE = 0xB
 
 radio = None
 boiler = None
@@ -50,7 +52,7 @@ def parse_args(args=sys.argv):
 
 def radio_setup(rf_freq=RF_FREQ):
     radio = rf.DataGram(driver=rf.RFM69())
-    radio.init(rf_freq, nodeid=0xB, group=0xB6, modem=rf.GFSK_Rb250Fd250)
+    radio.init(rf_freq, nodeid=RF_NODE, group=RF_GROUP, modem=rf.GFSK_Rb250Fd250)
     return radio
 
 
