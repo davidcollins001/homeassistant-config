@@ -114,15 +114,18 @@ def dispatch_message(devices, message, c):
     req = devices.get(device)
     # ignore mqtt messages for other lights
     if req:
-        try:
-            req.update(command, message)
-        except KeyError:
-            logger.error("failed to write, reconnecting: {command}")
-            req.connect()
-            # self.write_value(data)
-            req.update(command, message)
-        except Exception as e:
-            logger.exception(f"failed to process data: {p}: {e}")
+        for _ in range(5):
+            try:
+                return req.update(command, message)
+            except KeyError:
+                logger.error(f"failed to write, reconnecting: {command}")
+                import time
+                time.sleep(0.5)
+                req.connect()
+                # self.write_value(data)
+                # req.update(command, message)
+            except Exception as e:
+                logger.exception(f"failed to process data: {p}: {e}")
 
 
 def manager(devices, device="hci0", queue=DEFAULT_CMD_QUEUE):
