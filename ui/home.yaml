@@ -13,12 +13,10 @@ cards:
         tap_action:
             action: toggle
       - type: light
-        name: Corner lamp
         entity: light.led_strip
         icon: hue:signe-gradient-table
       - type: button
         entity: input_boolean.switch_off_lr
-        name: Switch off
         icon: 'hass:television-off'
         icon_height: 50px
         tap_action:
