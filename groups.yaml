@@ -14,12 +14,14 @@
           - person.sara
           - person.luke
 
+
   g_living_room:
       name: Living room Group
       entities:
           - light.led_strip
           - switch.plug3
           - media_player.sony_bravia_tv
+
 
   hallway_light:
     name: hallway light

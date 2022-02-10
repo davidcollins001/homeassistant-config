@@ -210,124 +210,6 @@ binary_sensor:
 
 
 sensor:
-  - platform: mqtt
-    name: "794296394_temperature"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.temperature }}"
-    unit_of_measurement: "°C"
-    device_class: temperature
-    force_update: true
-    # unique_id: "794296394_temperature"
-    device:
-        identifiers: "794296394"
-        name: "jeenode zero 794296394"
-
-  - platform: mqtt
-    name: "794296394_adc_temperature"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.adc_temp }}"
-    unit_of_measurement: "°C"
-    device_class: temperature
-    force_update: true
-    # unique_id: "794296394_adc_temperature"
-    device:
-        identifiers: "794296394"
-        name: "794296394"
-
-  - platform: mqtt
-    name: "794296394_humidity"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.humidity / 1000 | round }}"
-    unit_of_measurement: "%"
-    device_class: humidity
-    force_update: true
-    device:
-        identifiers: "794296394"
-        name: "794296394"
-
-  - platform: mqtt
-    name: "794296394_pressure"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.pressure | float / 100 | int }}"
-    unit_of_measurement: "hPa"
-    device_class: pressure
-    force_update: true
-    device:
-        identifiers: "794296394"
-        name: "794296394"
-
-  - platform: mqtt
-    name: "794296394_gas_resistance"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.gas_res }}"
-    unit_of_measurement: "Ohm"
-    force_update: true
-    device:
-        identifiers: "794296394"
-        name: "794296394"
-
-  - platform: mqtt
-    name: "794296394_air_quality"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.iaq }}"
-    unit_of_measurement: "."
-    device_class: aqi
-    force_update: true
-    device:
-        identifiers: "794296394"
-        name: "794296394"
-
-  - platform: mqtt
-    name: "794296394_air_quality_2"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.iaq2 }}"
-    unit_of_measurement: "."
-    device_class: aqi
-    force_update: true
-    device:
-        identifiers: "794296394"
-        name: "794296394"
-
-  - platform: mqtt
-    name: "794296394_last_updated"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.timestamp | timestamp_custom('%d-%m-%y %H:%M:%S') }}"
-    device:
-        identifiers: "794296394"
-        name: "794296394"
-
-  - platform: mqtt
-    name: "1985242708_temperature"
-    state_topic: "state/sensor/1985242708"
-    value_template: "{{ value_json.temperature }}"
-    unit_of_measurement: "°C"
-    device_class: temperature
-    force_update: true
-    # unique_id: "1985242708_temperature"
-    device:
-      identifiers: "1985242708"
-      name: "bpx 1985242708"
-
-  - platform: mqtt
-    name: "1985242708_humidity"
-    state_topic: "state/sensor/1985242708"
-    value_template: "{{ value_json.humidity / 100 | round }}"
-    unit_of_measurement: "%"
-    device_class: humidity
-    force_update: true
-    # unique_id: "1985242708_humidity"
-    device:
-      identifiers: "1985242708"
-      name: "bpx 1985242708"
-
-  - platform: mqtt
-    name: "1985242708_last_updated"
-    state_topic: "state/sensor/1985242708"
-    value_template: "{{ value_json.timestamp | timestamp_custom('%d-%m-%y %H:%M:%S') }}"
-    device:
-        identifiers: "1985242708"
-        name: "1985242708"
-
   - platform: systemmonitor
     resources:
       - type: processor_use
@@ -362,6 +244,11 @@ template:
         {{ "%0.1f" | format((as_timestamp(now()) -
                              as_timestamp(states('sensor.last_boot')))
         / 3600 / 24) }}
+
+  # abstract sensors name to sensor location
+  - sensor:
+    - name: sensor_794296394
+      state: 'Living Room'
 
   - sensor:
     # sensors used for displaying input values to prevent changing in ui

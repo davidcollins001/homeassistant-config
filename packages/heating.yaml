@@ -16,17 +16,12 @@ template:
   - sensor:
     - name: i_heating_temp_set
       state: '{{ states("input_number.heating_temp_set") }}'
-      unit: ""  # degrees
   - sensor:
     - name: i_heating
       state: '{{ states("group.g_heating") }}'
+  - sensor:
     - name: heating_temperature
       state: '{{ states("sensor.794296394_temperature") }}'
-
-  # abstract sensors name to sensor location
-  - sensor:
-    - name: sensor_794296394
-      state: 'Living Room'
 
 
 group:
