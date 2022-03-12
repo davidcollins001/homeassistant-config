@@ -1,5 +1,5 @@
 
-# switch off lamp and TV button/not home
+# switch off "living room" when away
   - alias: switch_off_lr_away
     mode: restart
     trigger:
@@ -22,14 +22,31 @@
         target:
             entity_id: input_boolean.switch_off_lr
 
-# switch off lamp and TV button/not home
-  - alias: switch_off_lr
+# switch off hallway light when away
+  - alias: switch_off_hw_away
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: group.g_present
+        from: "home"
+        to: "not_home"
+    action:
+      - service: homeassistant.turn_off
+        target:
+            entity_id: group.hallway_light
+
+# switch on hallway light
+  - alias: switch_off_hw_night
     mode: restart
     trigger:
       - platform: state
         entity_id: input_boolean.switch_off_lr
         from: "off"
         to: "on"
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: below_horizon
     action:
       # switch hall light temporarily
       - service: homeassistant.turn_on

@@ -12,19 +12,22 @@
         entity_id: input_boolean.holiday_mode
         state: "on"
     action:
-      - delay:
-          minutes: "00:{{ range(60) | random }}:00"
+      - delay: "00:{{ range(60) | random }}:00"
       - service: switch.turn_on
         entity_id: switch.plug3
-      - delay:
-          minutes: "00:{{ range(20) | random }}:00"
+      - delay: "00:{{ range(20) | random }}:00"
       - service: media_player.turn_on
         entity_id: media_player.sony_bravia_tv
       - service: media_player.select_source
         target:
           entity_id: media_player.sony_bravia_tv
         data:
-          source: "BBC ONE HD"
+          source: BBC ONE Lon
+      - service: homeassistant.turn_on
+        target:
+            entity_id: group.hallway_light
+        data:
+            brightness: 180
 
 
   - alias: holiday_mode_off
@@ -46,9 +49,6 @@
         entity_id: input_boolean.holiday_mode
         state: "on"
     action:
-      - delay:
-          minutes: "00:{{ range(60) | random }}:00"
-      - service: switch.turn_off
-        entity_id: switch.plug3
-      - service: media_player.turn_off
-        entity_id: media_player.sony_bravia_tv
+      - delay: "00:{{ range(60) | random }}:00"
+      - service: switch.turn_on
+        entity_id: switch.switch_off_lr

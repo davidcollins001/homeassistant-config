@@ -12,3 +12,4 @@ cards:
         - input_number.heating_pwm_duty_cycle
         - input_number.heating_pwm_period
         - input_boolean.heating_sched_enable
+        - input_boolean.holiday_mode
