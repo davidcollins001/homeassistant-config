@@ -4,24 +4,20 @@ cards:
   - type: entities
     title:
     entities:
-      - binary_sensor.updater
-      - type: weblink
-        name: Release notes
-        url: https://www.home-assistant.io/latest-release-notes/
-        icon: mdi:home-assistant
+      - sensor.current_version
 
   - type: conditional
     conditions:
-      - entity: binary_sensor.ha_outdated
+      - entity: binary_sensor.home_assistant_website_update_available
         state: 'on'
     card:
-      type: horizontal-stack
-      show_header_toggle: false
-      cards:
-        - type: entity
-          entity: sensor.current_version
-        - type: entity
-          entity: sensor.python_package_index_pypi
+      type: entities
+      entities:
+        - sensor.home_assistant_website
+        - type: weblink
+          name: Release notes
+          url: https://www.home-assistant.io/latest-release-notes/
+          icon: mdi:home-assistant
 
   - type: horizontal-stack
     show_header_toggle: false

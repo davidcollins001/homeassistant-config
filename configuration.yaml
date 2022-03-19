@@ -13,13 +13,16 @@
 #       - on battery - 794296394
 #           480mAh - 2021-11-20T15:38 -> 2021-12-20T16:57
 #           400mAh - 2021-12-20T18:43 -> 2022-01-13T09:02
-#           480mAh - 2022-01-14T12:58 ->
+#           480mAh - 2022-01-14T12:58 -> 2022-07-02T19:12
+#           480mAh - 2022-07-02T21:12 -> 2022-08-02T23:07
+#           480mAh - 2022-08-02T23:07 ->
 
 # BACKUP:
 #   create backup:
 #       backup_file=/tmp/hass_`date +"%FT%T"`.bundle
-#       git bundle create <backup_file> <branch>
-#       scp backup_file <user>@<host>:backup/hass-backup
+#       git bundle create $backup_file <branch>
+#       scp $backup_file <user>@<host>:backup/hass-backup
+#       OR rsync -avzl --exclude {*db,*shm,*wal,*fault,*~} ~/homeassistant/conf <user>@<host>:backup/hass_backup
 #   recreate from bundle
 #       git clone `bundle` repo
 
@@ -53,7 +56,7 @@ input_select:
 mobile_app:
 sun:
 system_health:
-updater:
+# updater:
 zone:
 
 homeassistant:
@@ -143,38 +146,38 @@ utility_meter:
     cycle: yearly
 
 
-mqtt:
-    broker: homeassistant
-    port: 1883
+# mqtt:
+    # broker: homeassistant
+    # port: 1883
 
 
-# https://www.dummylabs.com/post/2019-01-13-influxdb-part1/
-influxdb:
-    api_version: 1
-    ssl: false
-    host: 192.168.1.99
-    port: 8086
-    username: openhab
-    password: openhab
-    database: openhab_db
-    # exclude:
-    # entity_globs: '*'
-    include:
-        entities:
-            - switch.heating_switch
-            - input_number.heating_temp_set
-              # TODO: should include via group.g_heating
-            - switch.heating_boost
-            - switch.heating_sched
-            - switch.heating_pwm
+# # https://www.dummylabs.com/post/2019-01-13-influxdb-part1/
+# influxdb:
+    # api_version: 1
+    # ssl: false
+    # host: 192.168.1.99
+    # port: 8086
+    # username: openhab
+    # password: openhab
+    # database: openhab_db
+    # # exclude:
+    # # entity_globs: '*'
+    # include:
+        # entities:
+            # - switch.heating_switch
+            # - input_number.heating_temp_set
+              # # TODO: should include via group.g_heating
+            # - switch.heating_boost
+            # - switch.heating_sched
+            # - switch.heating_pwm
 
-            - group.g_present
-        entity_globs:
-            - switch.plug*
-            - sensor.794296394_*
-    # domains:
-      # - group.g_plugs
-      # - switch
+            # - group.g_present
+        # entity_globs:
+            # - switch.plug*
+            # - sensor.794296394_*
+    # # domains:
+      # # - group.g_plugs
+      # # - switch
 
 
 # setup via ui
@@ -203,7 +206,7 @@ switch:
 
 binary_sensor:
   - platform: workday
-    country: UK
+    country: GB
 
 
 sensor:
