@@ -1,156 +1,153 @@
 import sys
 import time
+import pydbus
 import argparse
-import gatt
 import logging
 import datetime as dt
 import paho.mqtt.client as mqtt
 
 import setup_log  # noqa
 
+# To recover from the following error reset the bulb and connect/pair in
+# bluetoothctl:
+#   object does not export any interfaces; you might need to pass object path as
+#   the 2nd argument for get()
+
+
+# notifications:
+#
+#    import threading as th
+#    from gi.repository import GLib
+#
+#    loop=GLib.MainLoop()
+#    th.Thread(targe=loop.run)
+#    t=th.Thread(target=loop.run)
+#    char.onPropertiesChanged = callback
+#    char.StartNotify()
+#    t.start()
+
+
 logger = logging.getLogger("bt_backend")
 logger.setLevel(logging.WARN)
 
 DEFAULT_CMD_QUEUE = 'cmnd/lights/#'
 
-
-def use_socket(mac, port):
-    # doesn't work
-    import socket
-    s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-    s.connect((mac, port))
-    s.send(bytes(text, 'UTF-8'))
+# DBus object paths
+BLUEZ_SERVICE = 'org.bluez'
+ADAPTER_PATH = '/org/bluez/hci0'
 
 
-class Manager(gatt.DeviceManager):
-    def device_discovered(self, device):
-        if "Hue Lamp" in device.alias():
-            if not device.is_connected():
-                logging.info(f"{dt.datetime.now()} [{device.mac_address}] "
-                             f"reconnect: {device.alias()}")
-                device.connect()
+def hue_lamp_update(device, command, message):
+    connection = device.get("connection")[command]
 
-class BTDevice(gatt.Device):
-    def __init__(self, mac_address, manager, uuids=None, auto_reconnect=False,
-                 **kwargs):
-        super().__init__(mac_address=mac_address, manager=manager, **kwargs)
-        self.auto_reconnect = auto_reconnect
-        self.uuids = uuids or self.UUIDS
-        self.control = {}
+    def power(state):
+        connection.WriteValue([state], None)
 
-    def connect_failed(self, error):
-        super().connect_failed(error)
-        logger.error(f"[self.mac_address] Connection failed: {error}")
-
-    def services_resolved(self):
-        super().services_resolved()
-
-        for service in self.services:
-            for characteristic in service.characteristics:
-                cmd_uuid = self.uuids.get(characteristic.uuid)
-                if cmd_uuid:
-                    self.control[cmd_uuid] = characteristic
-                    # TODO: needed to make write commands work
-                    characteristic.read_value()
-
-
-class HueDevice(BTDevice):
-    UUIDS = {"932c32bd-0002-47a2-835a-a8d455b859dd": "power",
-             "932c32bd-0003-47a2-835a-a8d455b859dd": "dimmer"}
-
-    def update(self, command, message):
-        p = int(message.payload)
-        cmds = {'POWER': self.power,
-                'Dimmer': self.dimmer}
-        cmds.get(command)(p)
-
-    def power(self, state):
-        self.control['power'].write_value([state])
-
-    def dimmer(self, state):
+    def dimmer(state):
         msg = f"Invalid dimmer value: {state} must be > 0 and < 256"
         assert (state > 0) and (state < 256), msg
-        self.control['dimmer'].write_value([state])
+        connection.WriteValue([state], None)
+
+    cmds = {'POWER': power, 'Dimmer': dimmer}
+    cmds.get(command)(int(message.payload))
 
 
-class LedStripDevice(BTDevice):
-    UUIDS = {"0000fff3-0000-1000-8000-00805f9b34fb": "command"}
+hue_lamp_1_update = hue_lamp_update
+hue_lamp_2_update = hue_lamp_update
 
-    def write_value(self, data):
-        self.control["command"].write_value(data)
 
-    def update(self, command, message):
-        if command == 'POWER':
-            p = int(message.payload)
-            data = [0x7E, 4, 4, p, 0, p, 0xFF, 0, 0xEF]
-        elif command == 'Dimmer':
-            p = int(message.payload)
-            data = [0x7E, 4, 1, p, 1, 0xFF, 0xFF, 0, 0xEF]
-        elif command == 'white':
-            p = int(message.payload)
-            # data = [0x7E, 5, 5, 1, p, 0xFF, 0xFF, 16, 0xEF]
-            # This sets white, but breaks other things
+def led_strip_update(device, command, message):
+    if command == 'POWER':
+        p = int(message.payload)
+        data = [0x7E, 4, 4, p, 0, p, 0xFF, 0, 0xEF]
+    elif command == 'Dimmer':
+        p = int(message.payload)
+        data = [0x7E, 4, 1, p, 1, 0xFF, 0xFF, 0, 0xEF]
+    elif command == 'white':
+        p = int(message.payload)
+        # data = [0x7E, 5, 5, 1, p, 0xFF, 0xFF, 16, 0xEF]
+        # This sets white, but breaks other things
+        return
+    elif command == 'Color':
+        r, g, b = message.payload.decode().split(',')
+        data = [0x7E, 7, 5, 3, int(g), int(b), int(r), 16, 0xEF]
+    elif command == 'effect':
+        # payload matches `effect_list` in light definition
+        p = int(message.payload)
+        data = [0x7E, 5, 3, p, 6, 0xFF, 0xFF, 0, 0xEF]
+    elif command == 'command':
+        # pass data through to bt device
+        data = list(map(lambda n: int(n), message.payload))
+
+    connection = device.get("connection")
+    connection.WriteValue(bytes(data), None)
+
+
+def dbus_connect(peripheral_address, uuids):
+    def get_characteristic(bus, dev_path, uuid):
+        """Look up DBus path for characteristic UUID"""
+        mngr = bus.get(BLUEZ_SERVICE, '/')
+        mng_objs = mngr.GetManagedObjects()
+        for path in mng_objs:
+            chr_uuid = mng_objs[path].get('org.bluez.GattCharacteristic1', {}).get('UUID')
+            if path.startswith(dev_path) and chr_uuid == uuid.casefold():
+                return bus.get(BLUEZ_SERVICE, path)
+
+    bus = pydbus.SystemBus()
+    # adapter = bus.get(BLUEZ_SERVICE, ADAPTER_PATH)
+    device_path = f"{ADAPTER_PATH}/dev_{peripheral_address.replace(':', '_')}"
+    device = bus.get(BLUEZ_SERVICE, device_path)
+
+    device.Connect()
+    if not device.Connected:
+        raise Exception("Connection failed")
+
+    if isinstance(uuids, dict):
+        chars = {uuid_name: get_characteristic(bus, device_path, uuid)
+                 for uuid_name, uuid in uuids.items()}
+    else:
+        chars = get_characteristic(bus, device_path, uuids)
+
+    return chars
+
+
+def ble_connect(fn):
+    def inner(devices, message, c):
+        *base_topic, dev_name, command = message.topic.split('/')
+        # ignore mqtt messages for other lights
+        if not devices.get(dev_name):
             return
-        elif command == 'Color':
-            r, g, b = message.payload.decode().split(',')
-            data = [0x7E, 7, 5, 3, int(g), int(b), int(r), 16, 0xEF]
-        elif command == 'effect':
-            # payload matches `effect_list` in light definition
-            p = int(message.payload)
-            data = [0x7E, 5, 3, p, 6, 0xFF, 0xFF, 0, 0xEF]
-        elif command == 'command':
-            # pass data through to bt device
-            data = list(map(lambda n: int(n), message.payload))
 
-        try:
-            self.write_value(data)
-        except Exception as e:
-            logger.exception(f"failed to process data: {data}: {e}")
-
-
-def dispatch_message(devices, message, c):
-    logger.info(f"received payload on {message.topic}: {message.payload}")
-    *base_topic, device, command = message.topic.split('/')
-    req = devices.get(device)
-    # ignore mqtt messages for other lights
-    if req:
         for _ in range(5):
             try:
-                return req.update(command, message)
-            except KeyError:
-                logger.error(f"failed to write, reconnecting: {command}")
-                import time
-                time.sleep(0.5)
-                req.connect()
-                # self.write_value(data)
-                # req.update(command, message)
+                if not devices[dev_name].get("connection"):
+                    mac = devices[dev_name]['mac']
+                    uuids = devices[dev_name]['uuids']
+                    devices[dev_name]["connection"] = dbus_connect(mac, uuids)
+
+                return fn(devices, message, c)
             except Exception as e:
-                logger.exception(f"failed to process data: {p}: {e}")
+                logger.error(f"failed to write ({e}), reconnecting: {dev_name}")
+                time.sleep(0.5)
+                # if conn:
+                    # conn.disconnect()
+                if "connection" in devices[dev_name]:
+                    del devices[dev_name]["connection"]
+                devices[dev_name]["connection"] = None
+
+    return inner
+
+
+@ble_connect
+def dispatch_message(devices, message, c):
+    logger.info(f"received payload on {message.topic}: {message.payload}")
+    *base_topic, dev_name, command = message.topic.split('/')
+    device = devices.get(dev_name)
+    update = globals()[f"{dev_name}_update"]
+    return update(device, command, message)
 
 
 def manager(devices, device="hci0", queue=DEFAULT_CMD_QUEUE):
-    # dev_man = gatt.DeviceManager(device)
-    dev_man = Manager(device)
-
-    # connect to led floor lamp
-    led = LedStripDevice(devices['led_strip'], dev_man, auto_reconnect=True)
-    led.connect()
-    logger.info(f"connected to led strip device")
-
-    # connect to hue lamp
-    hue1 = HueDevice(devices['hue_lamp_1'], dev_man, auto_reconnect=True)
-    hue1.connect()
-    logger.info(f"connected to hue 1 device")
-
-    # connect to hue lamp
-    hue2 = HueDevice(devices['hue_lamp_2'], dev_man, auto_reconnect=True)
-    hue2.connect()
-    logger.info(f"connected to hue 2 device")
-
-    devices = {'led_strip': led,
-               'hue_lamp_1': hue1,
-               'hue_lamp_2': hue2}
-
     # on reconnect subscriptions will be renewed
     client = mqtt.Client()
     client.on_connect = lambda c, d, f, rc: c.subscribe(queue)
@@ -159,15 +156,58 @@ def manager(devices, device="hci0", queue=DEFAULT_CMD_QUEUE):
     logger.info(f"connected to {queue}")
 
     # block and process network traffic, callbacks and reconnecting
-    # client.loop_forever()
-    client.loop_start()
+    client.loop_forever()
+    # client.loop_start()
     # client.loop_stop()
 
-    # watch for broadcast to reconnect if necessary
-    dev_man.start_discovery()
-    dev_man.run()
-
     return client
+
+
+def notify():
+    import sys
+    import time
+    import pydbus
+    import argparse
+    import logging
+    import datetime as dt
+    import paho.mqtt.client as mqtt
+    import threading as th
+    from gi.repository import GLib
+    BLUEZ_SERVICE = 'org.bluez'
+    ADAPTER_PATH = '/org/bluez/hci0'
+
+    def get_characteristic(bus, dev_path, uuid):
+        """Look up DBus path for characteristic UUID"""
+        mngr = bus.get(BLUEZ_SERVICE, '/')
+        mng_objs = mngr.GetManagedObjects()
+        for path in mng_objs:
+            chr_uuid = mng_objs[path].get('org.bluez.GattCharacteristic1', {}).get('UUID')
+            if path.startswith(dev_path) and chr_uuid == uuid.casefold():
+                return bus.get(BLUEZ_SERVICE, path)
+
+    def notify(*a, **k):
+      print(a, k)
+
+    loop=GLib.MainLoop()
+    t = th.Thread(target=loop.run)
+
+    bus = pydbus.SystemBus()
+    addr="FE:BF:DA:ED:C2:50"
+    device_path = f"{ADAPTER_PATH}/dev_{addr.replace(':', '_')}"
+    char_p = get_characteristic(bus, device_path, "932c32bd-0002-47a2-835a-a8d455b859dd")
+    char_d = get_characteristic(bus, device_path, "932c32bd-0003-47a2-835a-a8d455b859dd")
+    addr="21:04:77:64:04:AA"
+    device_path = f"{ADAPTER_PATH}/dev_{addr.replace(':', '_')}"
+    # char_l = get_characteristic(bus, device_path, "0000fff3-0000-1000-8000-00805f9b34fb")
+    char_l = get_characteristic(bus, device_path, "0000fff4-0000-1000-8000-00805f9b34fb")
+
+    char_p.onPropertiesChanged = notify
+    char_d.onPropertiesChanged = notify
+    char_l.onPropertiesChanged = notify
+    char_p.StartNotify()
+    char_d.StartNotify()
+    char_l.StartNotify()
+    t.start()
 
 
 def parse_args(args=sys.argv):
@@ -181,51 +221,22 @@ def parse_args(args=sys.argv):
     return args
 
 
-def _test_command():
-    # TODO: test data;
-    # (126, 4, 4, (240|224|16|0), 3, (1|0), -1, 0, -17)
-    # for f in '\x04\x04\xf0\x03\x01\xff\x00'
-    #           '\x04\x04\xf0\x03\x00\xff\x00'
-    #           '\x04\x04\xe0\x03\x01\xff\x00'
-    #           '\x04\x04\xe0\x03\x00\xff\x00'
-    #           '\x04\x04\x10\x03\x01\xff\x00'
-    #           '\x04\x04\x10\x03\x00\xff\x00'
-    #           '\x04\x04\x00\x03\x01\xff\x00'
-    #           '\x04\x04\x00\x03\x00\xff\x00' ; do
-    #   echo $f; echo -ne $f | mosquitto_pub -h homeassistant -t \
-            #       cmnd/lights/led_strip/command -s; sleep 60; done
-
-    # pin_seq = [6, 0x81, (s >> 16 & 0xFF), (s >> 8 & 0xFF), (s & 0xFF), 255, 0]
-    # brightness/mode
-    b, mode = 1, 1
-    mr_mo = [4, 1, b, mode, 0xFF, 0xFF, 0]
-    # speed
-    s = 0x10
-    speed = [4, 2, s, 255, 255, 255, 0]
-
-     # s = intent.getIntExtra("wl.extra.bluetoothle.timing.hour.minute.second", 0);
-     # m = intent.getIntExtra("wl.extra.bluetoothle.timing.mode", 0);
-     # w = intent.getIntExtra("wl.extra.bluetoothle.timing.weeks", 0);
-     # data = [8; 0x82; int(g); int(b); int(r); m; w]
-
-    client = mqtt.Client()
-    client.connect("homeassistant", 1883, 60)
-    logger.info(f"connected to {queue}")
-    client.publish("cmnd/lights/led_strip/command", data)
-
-
 if __name__ == "__main__":
     args = parse_args()
 
-    # hue mac = "CE:96:CB:60:81:74"
-    # led mac = "FC:4F:22:91:4D:23",
-    macs = {"led_strip": "21:04:77:64:04:AA",
-            "hue_lamp_1": "CB:80:F1:7D:0A:34",
-            "hue_lamp_2": "D1:DC:DF:EA:C4:D3"}
-    queue= DEFAULT_CMD_QUEUE
+    devices = {
+        "led_strip": {"mac": "21:04:77:64:04:AA",
+                      "uuids": "0000fff3-0000-1000-8000-00805f9b34fb"},
+        "hue_lamp_1": {"mac": "FE:BF:DA:ED:C2:50",
+                       "uuids": {"POWER": "932c32bd-0002-47a2-835a-a8d455b859dd",
+                                 "Dimmer": "932c32bd-0003-47a2-835a-a8d455b859dd"}},
+        "hue_lamp_2": {"mac": "D1:DC:DF:EA:C4:D3",
+                       "uuids": {"POWER": "932c32bd-0002-47a2-835a-a8d455b859dd",
+                                 "Dimmer": "932c32bd-0003-47a2-835a-a8d455b859dd"}},
+    }
 
     if args.manager:
-        manager(macs, queue=queue)
+        manager(devices, queue=DEFAULT_CMD_QUEUE)
     elif args.command is not None:
         p = args.power
         _test_command()
