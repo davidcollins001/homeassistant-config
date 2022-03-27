@@ -1,6 +1,6 @@
 
   g_plugs:
-      name: Plugs Group
+      name: Plugs
       entities:
           - switch.plug1
           - switch.plug2
@@ -8,7 +8,7 @@
 
 
   g_present:
-      name: Present Group
+      name: Present
       entities:
           - person.david
           - person.sara
@@ -16,7 +16,7 @@
 
 
   g_living_room:
-      name: Living room Group
+      name: Living room
       entities:
           - light.led_strip
           - switch.plug3
