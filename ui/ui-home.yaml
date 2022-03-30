@@ -5,6 +5,4 @@ views:
     - !include sensors.yaml
     - !include weather.yaml
     - !include tv.yaml
-    - !include lukes_tv.yaml
     - !include plugs.yaml
-    - !include north_wing.yaml
