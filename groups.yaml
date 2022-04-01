@@ -10,7 +10,7 @@
   g_present:
       name: Present
       entities:
-          - person.david
+          - binary_sensor.presence_david
           - person.sara
           - person.luke
 

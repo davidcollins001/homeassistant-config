@@ -9,7 +9,7 @@
     condition:
       - condition: state
         entity_id: group.g_present
-        state: home
+        state: "on"
     action:
       - service: switch.turn_on
         target:

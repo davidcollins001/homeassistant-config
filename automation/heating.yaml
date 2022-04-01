@@ -9,7 +9,7 @@
       # # prevent heating coming on if away, but leave enabled on return
       # - condition: state
         # entity_id: group.g_present
-        # state: home
+        # state: "on"
     action:
       - service: input_number.set_value
         data:
@@ -36,7 +36,7 @@
     condition:
       - condition: state
         entity_id: group.g_present
-        state: home
+        state: "on"
       - condition: template
         value_template: >
           {% set ext_temp = states("sensor.openweathermap_temperature") | float %}
@@ -72,7 +72,7 @@
     condition:
       - condition: state
         entity_id: group.g_present
-        state: home
+        state: "on"
       - condition: template
         value_template: >
           {% set ext_temp = states("sensor.openweathermap_temperature") | float %}
@@ -121,7 +121,7 @@
         conditions:
         - condition: state
           entity_id: group.g_present
-          state: not_home
+          state: "off"
         - condition: template
           value_template: >
             {% set members = expand(['group.g_heating']) | selectattr('state', 'eq', 'on') %}
@@ -226,8 +226,8 @@
     trigger:
       - platform: state
         entity_id: group.g_present
-        from: "home"
-        to: "not_home"
+        from: "on"
+        to: "off"
     condition:
       - condition: state
         entity_id: group.g_heating
@@ -246,8 +246,8 @@
     trigger:
       - platform: state
         entity_id: group.g_present
-        from: "not_home"
-        to: "home"
+        from: "off"
+        to: "on"
     condition:
       - condition: state
         entity_id: group.g_heating

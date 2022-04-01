@@ -5,8 +5,8 @@
     # trigger:
       # - platform: state
         # entity_id: group.g_present
-        # from: "home"
-        # to: "not_home"
+        # from: "on"
+        # to: "off"
     # action:
       # - service: switch.turn_off
         # target:
@@ -19,8 +19,8 @@
     # trigger:
       # - platform: state
         # entity_id: group.g_present
-        # from: "not_home"
-        # to:  "home"
+        # from: "off"
+        # to:  "on"
     # condition:
       # - condition: state
         # entity_id: sun.sun

@@ -5,8 +5,8 @@
     trigger:
       - platform: state
         entity_id: group.g_present
-        from: "home"
-        to: "not_home"
+        from: "on"
+        to: "off"
       - platform: state
         entity_id: input_boolean.switch_off_lr
         from: "off"
@@ -28,8 +28,8 @@
     trigger:
       - platform: state
         entity_id: group.g_present
-        from: "home"
-        to: "not_home"
+        from: "on"
+        to: "off"
     action:
       - service: homeassistant.turn_off
         target:

@@ -108,7 +108,7 @@
     condition:
       - condition: state
         entity_id: group.g_present
-        state: home
+        state: "on"
       - condition: state
         entity_id: input_boolean.heating_sched_enable
         state: "on"
