@@ -127,6 +127,14 @@ def publish(client, payload):
         client.publish(sensor_queue, json.dumps(data))
         # client.publish(sensor_queue, data['temperature'] / 100)
 
+    def sensor_1985242708(raw_data):
+        sensor_queue = "state/sensor/1985242708"
+        sensor_keys = ['hwid', 'door_event']
+        # publish temp
+        data = dict(zip(sensor_keys, raw_data))
+        data['timestamp'] = int(time.time())
+        client.publish(sensor_queue, json.dumps(data))
+
     try:
         logger.debug("processing payload")
         data = rf.Varint.decode_varint(payload.data)

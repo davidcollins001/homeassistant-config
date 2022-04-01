@@ -39,8 +39,8 @@ cards:
     - type: entities
       title: Heating
       entities:
-            - sensor.i_heating
-            - sensor.i_heating_temp_set
+            - sensor.heating_ro
+            - sensor.heating_temp_set_ro
       show_header_toggle: false
 
     - type: horizontal-stack

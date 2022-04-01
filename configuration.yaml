@@ -250,16 +250,6 @@ template:
                              as_timestamp(states('sensor.last_boot')))
         / 3600 / 24) }}
 
-  # abstract sensors name to sensor location
-  - sensor:
-    - name: sensor_794296394
-      state: 'Living Room'
-
-  - sensor:
-    # sensors used for displaying input values to prevent changing in ui
-    - name: sensor_1985242708
-      state: Kitchen
-
 
 input_boolean:
   # enable holiday mode

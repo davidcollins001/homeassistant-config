@@ -1,4 +1,10 @@
 
+template:
+  # abstract sensors name to sensor location
+  - sensor:
+    - name: sensor_794296394
+      state: 'Living Room'
+
 sensor:
   - platform: mqtt
     name: "794296394_temperature"
@@ -85,35 +91,3 @@ sensor:
     device:
         identifiers: "794296394"
         name: "794296394"
-
-  - platform: mqtt
-    name: "1985242708_temperature"
-    state_topic: "state/sensor/1985242708"
-    value_template: "{{ value_json.temperature }}"
-    unit_of_measurement: "°C"
-    device_class: temperature
-    force_update: true
-    # unique_id: "1985242708_temperature"
-    device:
-      identifiers: "1985242708"
-      name: "bpx 1985242708"
-
-  - platform: mqtt
-    name: "1985242708_humidity"
-    state_topic: "state/sensor/1985242708"
-    value_template: "{{ value_json.humidity / 100 | round }}"
-    unit_of_measurement: "%"
-    device_class: humidity
-    force_update: true
-    # unique_id: "1985242708_humidity"
-    device:
-      identifiers: "1985242708"
-      name: "bpx 1985242708"
-
-  - platform: mqtt
-    name: "1985242708_last_updated"
-    state_topic: "state/sensor/1985242708"
-    value_template: "{{ value_json.timestamp | timestamp_custom('%d-%m-%y %H:%M:%S') }}"
-    device:
-        identifiers: "1985242708"
-        name: "1985242708"

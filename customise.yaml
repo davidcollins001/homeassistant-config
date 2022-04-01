@@ -13,10 +13,10 @@
   sensor.uptime_sys:
     friendly_name: Uptime
 
-  sensor.i_heating_temp_set:
+  sensor.heating_temp_set_ro:
     friendly_name: Heating Temp Set
 
-  sensor.i_heating:
+  sensor.heating_ro:
     friendly_name: Heating
 
   sensor.heating_temperature:

@@ -1,0 +1,28 @@
+
+template:
+  # abstract sensors name to sensor location
+  - sensor:
+    - name: sensor_1985242708
+      state: 'Door'
+
+sensor:
+  - platform: mqtt
+    name: "1985242708_door_event"
+    state_topic: "state/sensor/1985242708"
+    value_template: "{{ value_json.door_event }}"
+    force_update: true
+    device:
+      identifiers: "1985242708"
+      name: "bpx 1985242708"
+
+  - platform: mqtt
+    name: "1985242708_last_updated"
+    state_topic: "state/sensor/1985242708"
+    value_template: "{{ value_json.timestamp | timestamp_custom('%d-%m-%y %H:%M:%S') }}"
+    device:
+        identifiers: "1985242708"
+        name: "1985242708"
+
+# input_boolean:
+  # 1985242708_door_state:
+    # name: Front Door

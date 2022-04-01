@@ -14,10 +14,10 @@ switch:
 template:
   # sensors used for displaying input values to prevent changing in ui
   - sensor:
-    - name: i_heating_temp_set
+    - name: heating_temp_set_ro
       state: '{{ states("input_number.heating_temp_set") }}'
   - sensor:
-    - name: i_heating
+    - name: heating_ro
       state: '{{ states("group.g_heating") }}'
   - sensor:
     - name: heating_temperature

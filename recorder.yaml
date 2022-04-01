@@ -10,7 +10,7 @@
       - sensor.last_boot
     entity_globs:
       - device_tracker.*
-      - sensor.i_*
+      - sensor.*_ro
       - sensor.openweathermap_*
       - sensor.pixel_*
       - sensor.saras_*
