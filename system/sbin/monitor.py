@@ -14,53 +14,56 @@ logger.setLevel(logging.INFO)
 
 
 MINS = 60
-MONITOR_QUEUES = [
-    "state/sensor/794296394",
-    # "state/sensor/1985242708"
-]
+HOURS = 60 * MINS
+MONITOR_QUEUES = {
+    "state/sensor/794296394": 60 * MINS,  # 4x longest update time
+    "state/sensor/1985242708": 24 * HOURS,
+}
 CHAT_ID = "1620310931"
-# 4x longest update time
-TIMEOUT = 4 * 15 * MINS
-
-WAITERS = {}
 
 
-def alert(queue=None, bot_token=BOT_TOKEN, chat_id=CHAT_ID):
-    message = f"ALERT: no messages for {TIMEOUT//60} mins for \"{queue}\""
-    logger.info(f"{message}")
-    set_timer(queue)
+def alert(queue, timeout, bot_token=BOT_TOKEN, chat_id=CHAT_ID):
+    message = (f"ALERT: no messages for {timeout} mins for \"{queue}\"")
+    logger.info(message)
+    set_timer(queue, timeout)
     bot = telebot.TeleBot(bot_token)
-    bot.config['api_key'] =bot_token
+    bot.config['api_key'] = bot_token
     res = bot.send_message(chat_id, message)
     if not res['ok']:
         logger.error(res['error'])
 
 
-def set_timer(queue):
-    WAITERS[queue] = w = th.Timer(TIMEOUT, partial(alert, queue=queue))
-    w.start()
+def setup_set_timer():
+    queues = {}
+
+    def set_timer(queue, timeout):
+        w = queues.get(queue)
+        if w:
+            w.cancel()
+        queues[queue] = th.Timer(timeout, partial(alert, queue, timeout))
+        queues[queue].start()
+    return set_timer
 
 
-def subscribe(client, queue):
-    set_timer(queue)
-    return client.subscribe(queue)
+set_timer = setup_set_timer()
 
 
-def on_message(c, d, m):
+def subscribe(c, d, f, rc, queues):
+    for q, t in queues.items():
+        set_timer(q, t)
+        c.subscribe(q)
+
+
+def on_message(c, d, m, queues):
     logger.debug(f"received on {m.topic}")
-    wait = WAITERS.get(m.topic)
-    if wait:
-        wait.cancel()
-
-    set_timer(m.topic)
+    set_timer(m.topic, queues[m.topic])
 
 
 def connect(queues):
     client = mqtt.Client()
 
-    client.on_connect = lambda c, d, f, rc: {q: subscribe(client, q)
-                                             for q in queues}
-    client.on_message = lambda c, d, m: on_message(c, d, m)
+    client.on_connect = lambda c, d, f, rc: subscribe(c, d, f, rc, queues)
+    client.on_message = lambda c, d, m: on_message(c, d, m, queues)
 
     client.connect("homeassistant", 1883, 60)
     logger.info(f"connected to {queues}")
