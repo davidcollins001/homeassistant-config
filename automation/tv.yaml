@@ -32,10 +32,7 @@
               target:
                 entity_id: media_player.sony_bravia_tv
               data:
-                source: >
-                  {% set source = {'input_boolean.netflix': 'Netflix',
-                                   'input_boolean.youtube': 'YouTube'} %}
-                  {{ source[trigger.entity_id] }}
+                source: " {{ state_attr(trigger.entity_id, 'friendly_name') }}"
             - delay:
                 seconds: 1
 
@@ -128,6 +125,7 @@
 
 # press button needed to recover from a youtube crash
   - alias: fix_youtube
+    mode: restart
     trigger:
       - platform: state
         entity_id:
