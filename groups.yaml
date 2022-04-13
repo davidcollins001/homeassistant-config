@@ -7,14 +7,6 @@
           - switch.plug3
 
 
-  g_present:
-      name: Present
-      entities:
-          - binary_sensor.presence_david
-          - person.sara
-          - person.luke
-
-
   g_living_room:
       name: Living room
       entities:

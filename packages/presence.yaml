@@ -1,0 +1,41 @@
+
+group:
+  g_present:
+      name: Present
+      entities:
+          - binary_sensor.presence_david
+          - person.sara
+          - person.luke
+
+
+binary_sensor:
+  # https://community.home-assistant.io/t/how-bayes-sensors-work-from-a-statistics-professor-with-working-google-sheets/143177
+  - platform: bayesian
+    name: 'presence_david'
+    device_class: presence
+    prior: 0.7
+    probability_threshold: 0.85
+    observations:
+      # prob of device home GIVEN house occupied
+      - entity_id: device_tracker.android_1f459967274325dc
+        # 100% chance I'm in if state = home
+        prob_given_true: 1.0
+        prob_given_false: 0.0
+        platform: state
+        to_state: 'home'
+      - entity_id: device_tracker.android_1f459967274325dc
+        # 90% chance I'm out if state = not home
+        prob_given_true: 0.9
+        prob_given_false: 0.1
+        platform: state
+        to_state: 'not home'
+      - entity_id: device_tracker.hawk
+        prob_given_true: 1.0
+        prob_given_false: 0.0
+        platform: state
+        to_state: 'home'
+      - entity_id: device_tracker.android_1f459967274325dc
+        prob_given_true: 0.9
+        prob_given_false: 0.1
+        platform: state
+        to_state: 'not home'
