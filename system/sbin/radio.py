@@ -10,7 +10,7 @@ import logging
 import queue
 import paho.mqtt.client as mqtt
 import json
-import time
+import datetime as dt
 
 import rf
 import boiler as rf_boiler
@@ -113,7 +113,7 @@ def publish(client, payload):
         # publish temp
         data = dict(zip(sensor_keys, raw_data))
         data['temperature'] /= 100
-        data['timestamp'] = int(time.time())
+        data['timestamp'] = dt.datetime.now().timestamp()
         client.publish(sensor_queue, json.dumps(data))
         # client.publish(sensor_queue, data['temperature'] / 100)
 
@@ -123,7 +123,7 @@ def publish(client, payload):
         # publish temp
         data = dict(zip(sensor_keys, raw_data))
         data['temperature'] /= 100
-        data['timestamp'] = int(time.time())
+        data['timestamp'] = dt.datetime.now().timestamp()
         client.publish(sensor_queue, json.dumps(data))
         # client.publish(sensor_queue, data['temperature'] / 100)
 
@@ -132,7 +132,7 @@ def publish(client, payload):
         sensor_keys = ['hwid', 'door_event']
         # publish temp
         data = dict(zip(sensor_keys, raw_data))
-        data['timestamp'] = int(time.time())
+        data['timestamp'] = dt.datetime.now().timestamp()
         client.publish(sensor_queue, json.dumps(data))
 
     try:
