@@ -209,48 +209,6 @@ binary_sensor:
     country: GB
 
 
-sensor:
-  - platform: systemmonitor
-    resources:
-      - type: processor_use
-      - type: memory_use_percent
-      - type: swap_use_percent
-      - type: load_1m
-      - type: load_5m
-      - type: load_15m
-      - type: last_boot
-
-  - platform: uptime
-    scan_interval: 600
-
-  # calculate file size of HA db
-  - platform: sql
-    scan_interval: 300
-    queries:
-      - name: Home Assistant V2 db
-        query: 'SELECT ROUND(page_count * page_size / 1024 / 1024, 1) as size FROM pragma_page_count(), pragma_page_size();'
-        column: 'size'
-        unit_of_measurement: 'MiB'
-
-
-template:
-  - sensor:
-    - name: uptime_ha
-      unit_of_measurement: "d"
-      state: >
-        {{ "%0.1f" | format((as_timestamp(now()) -
-                             as_timestamp(states('sensor.uptime')))
-        / 3600 / 24) }}
-
-  - sensor:
-    - name: uptime_sys
-      unit_of_measurement: "d"
-      state: >
-        {{ "%0.1f" | format((as_timestamp(now()) -
-                             as_timestamp(states('sensor.last_boot')))
-        / 3600 / 24) }}
-
-
 input_boolean:
   # enable holiday mode
   holiday_mode:
