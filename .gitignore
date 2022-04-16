@@ -11,6 +11,7 @@ build/obj
 .metadata
 .settings
 
+backups
 .storage
 secrets.yaml
 secrets.py
