@@ -9,8 +9,6 @@ import argparse
 import logging
 import queue
 import paho.mqtt.client as mqtt
-import json
-import datetime as dt
 
 import rf
 import boiler as rf_boiler
@@ -106,51 +104,26 @@ def boiler_cmd(radio, cmd):
 
 
 def publish(client, payload):
-    def sensor_794296394(raw_data):
-        sensor_queue = "state/sensor/794296394"
-        sensor_keys = ['hwid', 'iaq2', 'iaq', 'adc_temp', 'temperature',
-                       'pressure', 'humidity', 'gas_res']
-        # publish temp
-        data = dict(zip(sensor_keys, raw_data))
-        data['temperature'] /= 100
-        data['timestamp'] = dt.datetime.now().timestamp()
-        client.publish(sensor_queue, json.dumps(data))
-        # client.publish(sensor_queue, data['temperature'] / 100)
-
-    def sensor_1985242708(raw_data):
-        sensor_queue = "state/sensor/1985242708"
-        sensor_keys = ['hwid', 'temperature', 'humidity']
-        # publish temp
-        data = dict(zip(sensor_keys, raw_data))
-        data['temperature'] /= 100
-        data['timestamp'] = dt.datetime.now().timestamp()
-        client.publish(sensor_queue, json.dumps(data))
-        # client.publish(sensor_queue, data['temperature'] / 100)
-
-    def sensor_1985242708(raw_data):
-        sensor_queue = "state/sensor/1985242708"
-        sensor_keys = ['hwid', 'door_event']
-        # publish temp
-        data = dict(zip(sensor_keys, raw_data))
-        data['timestamp'] = dt.datetime.now().timestamp()
-        client.publish(sensor_queue, json.dumps(data))
+    import sensor_pub
 
     try:
         logger.debug("processing payload")
         data = rf.Varint.decode_varint(payload.data)
         if radio.driver.error:
             logger.info(radio.driver.error)
-        radio.driver.error = None
+            radio.driver.error = None
 
+        logger.debug(payload._data)
         logger.debug(f" RF69 ({hex(payload.rssi)}) "
                      f"[{payload.addr} -> {payload.to}] {payload.flags} {data}")
 
-        locals()[f'sensor_{data[0]}'](data)
+        getattr(sensor_pub, f'sensor_{data[0]}')(client, data)
     except Exception as e:
         try:
-            logger.error(f"Failed to process message: {payload._data}: {e}")
-        except Exception as e:
-            logger.error(f"Failed to process message: {payload}: {e}")
+            data = payload._data
+        except Exception:
+            data = payload
+        logger.error(f"Failed to process message: {data}: {e}")
 
 
 def manager():
