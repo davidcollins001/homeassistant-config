@@ -8,6 +8,7 @@ template:
     - name: 1985242708_last_updated
       state: >
         {% set last_updated = states.sensor["1985242708_door_event"].last_updated %}
+        {% set last_updated = as_timestamp(last_updated, now()) %}
         {{ last_updated | timestamp_custom("%d-%m-%y %H:%M:%S") }}
 
 sensor:
