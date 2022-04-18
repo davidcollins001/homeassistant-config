@@ -4,6 +4,12 @@ template:
   - sensor:
     - name: sensor_794296394
       state: 'Living Room'
+  - sensor:
+    - name: 794296394_last_updated
+      state: >
+        {% set last_updated = states.sensor["794296394_temperature"].last_updated %}
+        {% set last_updated = as_timestamp(last_updated, now()) %}
+        {{ last_updated | timestamp_custom("%d-%m-%y %H:%M:%S") }}
 
 sensor:
   - platform: mqtt
@@ -56,7 +62,7 @@ sensor:
     name: "794296394_gas_resistance"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.gas_res }}"
-    unit_of_measurement: "Ohm"
+    unit_of_measurement: "Ω"
     force_update: true
     device:
         identifiers: "794296394"
@@ -66,7 +72,7 @@ sensor:
     name: "794296394_air_quality"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.iaq }}"
-    unit_of_measurement: "."
+    unit_of_measurement: " "
     device_class: aqi
     force_update: true
     device:
@@ -77,17 +83,9 @@ sensor:
     name: "794296394_air_quality_2"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.iaq2 }}"
-    unit_of_measurement: "."
+    unit_of_measurement: " "
     device_class: aqi
     force_update: true
-    device:
-        identifiers: "794296394"
-        name: "794296394"
-
-  - platform: mqtt
-    name: "794296394_last_updated"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.timestamp | timestamp_custom('%d-%m-%y %H:%M:%S') }}"
     device:
         identifiers: "794296394"
         name: "794296394"

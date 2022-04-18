@@ -4,6 +4,11 @@ template:
   - sensor:
     - name: sensor_1985242708
       state: 'Door'
+  - sensor:
+    - name: 1985242708_last_updated
+      state: >
+        {% set last_updated = states.sensor["1985242708_door_event"].last_updated %}
+        {{ last_updated | timestamp_custom("%d-%m-%y %H:%M:%S") }}
 
 sensor:
   - platform: mqtt
@@ -14,15 +19,3 @@ sensor:
     device:
       identifiers: "1985242708"
       name: "bpx 1985242708"
-
-  - platform: mqtt
-    name: "1985242708_last_updated"
-    state_topic: "state/sensor/1985242708"
-    value_template: "{{ value_json.timestamp | timestamp_custom('%d-%m-%y %H:%M:%S') }}"
-    device:
-        identifiers: "1985242708"
-        name: "1985242708"
-
-# input_boolean:
-  # 1985242708_door_state:
-    # name: Front Door
