@@ -21,3 +21,5 @@ __pycache__
 known_devices.yaml
 home-assistant.log*
 home-assistant_v2.db*
+
+debug.yaml

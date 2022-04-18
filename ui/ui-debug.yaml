@@ -1,4 +1,0 @@
-title: Home
-icon: mdi:home
-views:
-    - !include debug.yaml
