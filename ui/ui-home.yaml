@@ -2,7 +2,7 @@
 title: Home
 views:
     - !include home.yaml
+    - !include tv.yaml
     - !include sensors.yaml
     - !include weather.yaml
-    - !include tv.yaml
     - !include plugs.yaml
