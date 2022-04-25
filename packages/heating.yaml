@@ -35,25 +35,25 @@ group:
 
 input_number:
   heating_on_temp:
-    name: Heating On Temp (C)
+    name: Heating On Temp (°C)
     initial: 20
     min: 5
     max: 35
 
   heating_off_temp:
-    name: Heating Off Temp (C)
+    name: Heating Off Temp (°C)
     initial: 10
     min: 5
     max: 35
 
   max_ext_temp:
-    name: Max External Temperature (C)
+    name: Max External Temperature (°C)
     initial: 12
     min: 5
     max: 20
 
   heating_temp_set:
-    name: Heating Temperature (C)
+    name: "Heating Temperature (°C)"
     # value: "{{ states(input_number.heating_off_temp) }}"
     min: 0
     max: 100
