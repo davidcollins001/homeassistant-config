@@ -162,3 +162,142 @@
       - service: input_boolean.turn_off
         target:
           entity_id: input_boolean.fix_youtube
+
+
+# type input from search box into on screen keyboard
+  - alias: osk_keyboard_input
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: input_boolean.yt_search_go
+        from: "off"
+        to: "on"
+    action:
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.yt_search_rest
+        data:
+          value: '{{ states("input_text.yt_search") | lower }}'
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.yt_search_last
+        data:
+          value: 'a'
+
+      - repeat:
+          count: "{{ states('input_text.yt_search') | length }}"
+          sequence:
+            - service: input_text.set_value
+              target:
+                entity_id: input_text.yt_search_current
+              data:
+                value: '{{ states("input_text.yt_search_rest")[0] }}'
+
+            # get position (col, row)
+            # (ord(current) % 8, (ord(current) - 97) // 7)
+            # get position from current
+            # (ord(last) % 8, (ord(last) - 97) // 7)
+            # {% set x, y = (want_coord[0] - last_coord[0], want_coord[1] - last_coord[1])
+
+            - service: input_number.set_value
+              target:
+                entity_id: input_number.yt_search_x
+              data:
+                # yt kb_width = 7
+                # netflix kb_width = 6
+                value: |
+                  {% set kb_width = states('input_select.tv_source_search') %}
+                  {% set last = states('input_text.yt_search_last') | ord %}
+                  {% set current = states('input_text.yt_search_current') | ord %}
+                  {% set want_coord = ((current - 97) % kb_width, (current - 97) // kb_width) %}
+                  {% set last_coord = ((last - 97) % kb_width, (last - 97) // kb_width) %}
+                  {{ want_coord[0] - last_coord[0] }}
+
+            - service: input_number.set_value
+              target:
+                entity_id: input_number.yt_search_y
+              data:
+                value: |
+                  {% set kb_width = states('input_select.tv_source_search') %}
+                  {% set last = states('input_text.yt_search_last') | ord %}
+                  {% set current = states('input_text.yt_search_current') | ord %}
+                  {% set want_coord = ((current - 97) % kb_width, (current - 97) // kb_width) %}
+                  {% set last_coord = ((last - 97) % kb_width, (last - 97) // kb_width) %}
+                  {{ want_coord[1] - last_coord[1] }}
+
+            # move in x direction
+            - repeat:
+                count: "{{ states('input_number.yt_search_x') | int | abs }}"
+                sequence:
+                  - choose:
+                    - conditions: "{{ states('input_number.yt_search_x') | int > 0 }}"
+                      sequence:
+                        - service: remote.send_command
+                          target:
+                            entity_id: remote.sony_bravia_tv
+                          data:
+                            command: Right
+                        - delay:
+                            seconds: 0.5
+                    - conditions: "{{ states('input_number.yt_search_x') | int < 0 }}"
+                      sequence:
+                        - service: remote.send_command
+                          target:
+                            entity_id: remote.sony_bravia_tv
+                          data:
+                            command: Left
+                        - delay:
+                            seconds: 0.5
+
+            # move in y direction
+            - repeat:
+                count: "{{ states('input_number.yt_search_y') | int | abs }}"
+                sequence:
+                  - choose:
+                    - conditions: "{{ states('input_number.yt_search_y') | int > 0 }}"
+                      sequence:
+                        - service: remote.send_command
+                          target:
+                            entity_id: remote.sony_bravia_tv
+                          data:
+                            command: Down
+                        - delay:
+                            seconds: 0.5
+                    - conditions: "{{ states('input_number.yt_search_y') | int < 0 }}"
+                      sequence:
+                        - service: remote.send_command
+                          target:
+                            entity_id: remote.sony_bravia_tv
+                          data:
+                            command: Up
+                        - delay:
+                            seconds: 0.5
+
+            - service: remote.send_command
+              target:
+                entity_id: remote.sony_bravia_tv
+              data:
+                command: Confirm
+            - delay:
+                seconds: 0.5
+
+            - service: input_text.set_value
+              target:
+                entity_id: input_text.yt_search_last
+              data:
+                value: '{{ states("input_text.yt_search_current") }}'
+
+            - service: input_text.set_value
+              target:
+                entity_id: input_text.yt_search_rest
+              data:
+                value: '{{ states("input_text.yt_search_rest")[1:] }}'
+
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.yt_search
+        data:
+          value: ''
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.yt_search_go

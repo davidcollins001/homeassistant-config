@@ -22,3 +22,38 @@ input_boolean:
     name:  YouTube
   fix_youtube:
     name: Fix YouTube
+
+  yt_search_go:
+    name: YouTube Search
+
+
+# fields to track input and letters at each step
+input_text:
+  yt_search:
+    initial: ""
+  yt_search_current:
+    initial: ""
+  yt_search_last:
+    initial: ""
+  yt_search_rest:
+    initial: ""
+
+
+input_select:
+  tv_source_search:
+    options:
+      - Netflix
+      - YouTube
+    initial: YouTube
+
+
+# coords for youtube on screen keyboard
+input_number:
+  yt_search_x:
+    initial: 0
+    min: -6
+    max: 6
+  yt_search_y:
+    initial: 0
+    min: -4
+    max: 4

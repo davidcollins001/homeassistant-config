@@ -133,3 +133,26 @@ cards:
       service_data:
         entity_id: remote.sony_bravia_tv
         command: TvInput
+
+  - type: vertical-stack
+    show_header_toggle: false
+    cards:
+      - type: entities
+        entities:
+          - entity: input_text.yt_search
+            name: Enter search string
+
+      - type: horizontal-stack
+        # title: TV
+        show_header_toggle: false
+        cards:
+          - type: button
+            name: Source
+            # icon: mdi:youtube
+            entity: input_select.tv_source_search
+
+          - type: button
+            name: " "
+            icon: mdi:magnify
+            icon_height: 50px
+            entity: input_boolean.yt_search_go
