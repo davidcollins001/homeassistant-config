@@ -25,18 +25,6 @@ sensor:
         name: "jeenode zero 794296394"
 
   - platform: mqtt
-    name: "794296394_adc_temperature"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.adc_temp }}"
-    unit_of_measurement: "°C"
-    device_class: temperature
-    force_update: true
-    # unique_id: "794296394_adc_temperature"
-    device:
-        identifiers: "794296394"
-        name: "794296394"
-
-  - platform: mqtt
     name: "794296394_humidity"
     state_topic: "state/sensor/794296394"
     value_template: "{{ value_json.humidity / 1000 | round }}"

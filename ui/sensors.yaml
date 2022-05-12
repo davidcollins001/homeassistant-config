@@ -11,8 +11,6 @@ cards:
         entities:
             - entity: sensor.794296394_temperature
               name: Temperature
-            # - entity: sensor.794296394_adc_temperature
-              # name: ADC Temperature
             - entity: sensor.794296394_humidity
               name: Humidity
             - entity: sensor.794296394_pressure

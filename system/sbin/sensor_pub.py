@@ -3,8 +3,8 @@ import json
 
 def sensor_794296394(client, raw_data):
     sensor_queue = "state/sensor/794296394"
-    sensor_keys = ['hwid', 'iaq2', 'iaq', 'adc_temp', 'temperature',
-                   'pressure', 'humidity', 'gas_res']
+    sensor_keys = ['hwid', 'iaq2', 'iaq', 'temperature', 'pressure', 'humidity',
+                   'gas_res']
     # publish temp
     data = dict(zip(sensor_keys, raw_data))
     data['temperature'] /= 100
