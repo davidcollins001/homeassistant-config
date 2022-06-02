@@ -1,8 +1,0 @@
-
-!include_dir_merge_named automation
-
-# service: media_player.select_source
-# data:
-  # source: YouTube
-# target:
-  # device_id: "1ff72be921293d069ab1138cc925fbe8"
