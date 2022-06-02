@@ -100,7 +100,6 @@ homeassistant:
 
 automation: !include_dir_merge_list automation/
 group: !include groups.yaml
-light: !include lights.yaml
 lovelace: !include ui/lovelace.yaml
 person: !include person.yaml
 recorder: !include recorder.yaml
@@ -146,11 +145,6 @@ utility_meter:
     cycle: yearly
 
 
-# mqtt:
-    # broker: homeassistant
-    # port: 1883
-
-
 # # https://www.dummylabs.com/post/2019-01-13-influxdb-part1/
 # influxdb:
     # api_version: 1
@@ -186,22 +180,24 @@ utility_meter:
     # api_key: !secret openweathermap_key
 
 
-switch:
-  - platform: mqtt
-    state_topic: "stat/plugs/plug1/POWER"
-    command_topic: "cmnd/plugs/plug1/POWER"
-    name: plug1
+mqtt:
+  # broker: homeassistant
+  # port: 1883
+  light: !include lights.yaml
 
-  - platform: mqtt
-    state_topic: "stat/plugs/plug2/POWER"
-    command_topic: "cmnd/plugs/plug2/POWER"
-    name: plug2
+  switch:
+    - state_topic: "stat/plugs/plug1/POWER"
+      command_topic: "cmnd/plugs/plug1/POWER"
+      name: plug1
 
-  - platform: mqtt
-    state_topic: "stat/plugs/plug3/POWER"
-    command_topic: "cmnd/plugs/plug3/POWER"
-    name: plug3
-    retain: true
+    - state_topic: "stat/plugs/plug2/POWER"
+      command_topic: "cmnd/plugs/plug2/POWER"
+      name: plug2
+
+    - state_topic: "stat/plugs/plug3/POWER"
+      command_topic: "cmnd/plugs/plug3/POWER"
+      name: plug3
+      retain: true
 
 
 binary_sensor:

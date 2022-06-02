@@ -227,10 +227,10 @@
 
             # move in x direction
             - repeat:
-                count: "{{ states('input_number.yt_search_x') | int | abs }}"
+                count: "{{ states('input_number.yt_search_x') | int(0) | abs }}"
                 sequence:
                   - choose:
-                    - conditions: "{{ states('input_number.yt_search_x') | int > 0 }}"
+                    - conditions: "{{ states('input_number.yt_search_x') | int(0) > 0 }}"
                       sequence:
                         - service: remote.send_command
                           target:
@@ -239,7 +239,7 @@
                             command: Right
                         - delay:
                             seconds: 0.5
-                    - conditions: "{{ states('input_number.yt_search_x') | int < 0 }}"
+                    - conditions: "{{ states('input_number.yt_search_x') | int(0) < 0 }}"
                       sequence:
                         - service: remote.send_command
                           target:
@@ -251,10 +251,10 @@
 
             # move in y direction
             - repeat:
-                count: "{{ states('input_number.yt_search_y') | int | abs }}"
+                count: "{{ states('input_number.yt_search_y') | int(0) | abs }}"
                 sequence:
                   - choose:
-                    - conditions: "{{ states('input_number.yt_search_y') | int > 0 }}"
+                    - conditions: "{{ states('input_number.yt_search_y') | int(0) > 0 }}"
                       sequence:
                         - service: remote.send_command
                           target:
@@ -263,7 +263,7 @@
                             command: Down
                         - delay:
                             seconds: 0.5
-                    - conditions: "{{ states('input_number.yt_search_y') | int < 0 }}"
+                    - conditions: "{{ states('input_number.yt_search_y') | int(0) < 0 }}"
                       sequence:
                         - service: remote.send_command
                           target:

@@ -114,8 +114,8 @@
         state: "on"
       - condition: template
         value_template: >
-          {% set ext_temp = states("sensor.openweathermap_temperature") | int %}
-          {% set max_ext_temp = states("input_number.max_ext_temp") | int %}
+          {% set ext_temp = states("sensor.openweathermap_temperature") | int(0) %}
+          {% set max_ext_temp = states("input_number.max_ext_temp") | int(0) %}
           {{ ext_temp < max_ext_temp }}
     action:
       - service: input_boolean.turn_on

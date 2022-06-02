@@ -39,13 +39,13 @@
         state: "on"
       - condition: template
         value_template: >
-          {% set ext_temp = states("sensor.openweathermap_temperature") | float %}
-          {% set max_ext_temp = states("input_number.max_ext_temp") | int %}
+          {% set ext_temp = states("sensor.openweathermap_temperature") | float(0) %}
+          {% set max_ext_temp = states("input_number.max_ext_temp") | int(0) %}
           {{ ext_temp < max_ext_temp }}
       - condition: template
         value_template: >
           {% set members = expand(["group.g_heating"]) | selectattr("state", "eq", "on") %}
-          {{ members | list | count | int == 1 }}
+          {{ members | list | count | int(0) == 1 }}
     action:
     - service: input_boolean.turn_on
       target:
@@ -54,7 +54,7 @@
         minutes: >
           {% set entity = trigger.entity_id %}
           {% set ent_str = entity | replace("boolean", "number") + "_timer" %}
-          {{ states(ent_str) | int }}
+          {{ states(ent_str) | int(0) }}
     - service: input_boolean.turn_off
       target:
         entity_id: "{{ trigger.entity_id }}"
@@ -75,16 +75,16 @@
         state: "on"
       - condition: template
         value_template: >
-          {% set ext_temp = states("sensor.openweathermap_temperature") | float %}
-          {% set max_ext_temp = states("input_number.max_ext_temp") | int %}
+          {% set ext_temp = states("sensor.openweathermap_temperature") | float(0) %}
+          {% set max_ext_temp = states("input_number.max_ext_temp") | int(0) %}
           {{ ext_temp < max_ext_temp }}
       - condition: template
         value_template: >
           {% set members = expand(["group.g_heating"]) | selectattr("state", "eq", "on") %}
-          {{ members | list | count | int == 1 }}
+          {{ members | list | count | int(0) == 1 }}
     variables:
-      period: '{{ states("input_number.heating_pwm_period") | int }}'
-      duty_cycle: '{{ states("input_number.heating_pwm_duty_cycle") | int }}'
+      period: '{{ states("input_number.heating_pwm_period") | int(0) }}'
+      duty_cycle: '{{ states("input_number.heating_pwm_duty_cycle") | int(0) }}'
       on_cycle: '{{ period * duty_cycle / 100}}'
       off_cycle: '{{ period * (100 - duty_cycle) / 100}}'
     action:
@@ -125,16 +125,16 @@
         - condition: template
           value_template: >
             {% set members = expand(['group.g_heating']) | selectattr('state', 'eq', 'on') %}
-            {{ members | list | count | int > 1 }}
+            {{ members | list | count | int(0) > 1 }}
         - condition: template
           value_template: >
-            {% set current = states("sensor.heating_temperature") | float %}
-            {% set target = states("input_number.heating_temp_set") | int %}
+            {% set current = states("sensor.heating_temperature") | float(0) %}
+            {% set target = states("input_number.heating_temp_set") | int(0) %}
             {{ current > target }}
         - condition: template
           value_template: >
-            {% set ext_temp = states("sensor.openweathermap_temperature") | float %}
-            {% set max_ext_temp = states("input_number.max_ext_temp") | int %}
+            {% set ext_temp = states("sensor.openweathermap_temperature") | float(0) %}
+            {% set max_ext_temp = states("input_number.max_ext_temp") | int(0) %}
             {{ ext_temp >= max_ext_temp }}
     action:
     - service: input_boolean.turn_off
@@ -156,7 +156,7 @@
       - condition: template
         value_template: >
           {% set members = expand(["group.g_heating"]) | selectattr("state", "eq", "on") %}
-          {{ members | list | count | int == 0 }}
+          {{ members | list | count | int(0) == 0 }}
     action:
     - service: input_boolean.turn_off
       target:
@@ -172,7 +172,7 @@
     action:
       - service_template: >
           {% set current = states("sensor.heating_temperature") | float(0) %}
-          {% set target = states("input_number.heating_temp_set") | int %}
+          {% set target = states("input_number.heating_temp_set") | int(0) %}
           {% if current > target %}
               switch.turn_off
           {% elif current < target %}
@@ -193,13 +193,13 @@
         entity_id: group.g_heating
         state: "on"
     variables:
-      # period: '{{ states("input_number.heating_pwm_period") | int }}'
-      _current: '{{ states("sensor.heating_temperature") | float }}'
+      # period: '{{ states("input_number.heating_pwm_period") | int(0) }}'
+      _current: '{{ states("sensor.heating_temperature") | float(0) }}'
     action:
       - choose:
         - conditions: >
-            {% set current = states("sensor.heating_temperature") | float %}
-            {% set target = states("input_number.heating_temp_set") | int %}
+            {% set current = states("sensor.heating_temperature") | float(0) %}
+            {% set target = states("input_number.heating_temp_set") | int(0) %}
             {% set heating_switch = states("switch.heating_switch") %}
             {{ heating_switch == "on" and current > target }}
           sequence:
@@ -207,8 +207,8 @@
               target:
                 entity_id: switch.heating_switch
         - conditions: >
-            {% set current = states("sensor.heating_temperature") | float %}
-            {% set target = states("input_number.heating_temp_set") | int %}
+            {% set current = states("sensor.heating_temperature") | float(0) %}
+            {% set target = states("input_number.heating_temp_set") | int(0) %}
             {% set heating_switch = states("switch.heating_switch") %}
             {{ heating_switch == "off" and current < target }}
           sequence:

@@ -11,12 +11,12 @@ template:
         {% set last_updated = as_timestamp(last_updated, now()) %}
         {{ last_updated | timestamp_custom("%d-%m-%y %H:%M:%S") }}
 
-sensor:
-  - platform: mqtt
-    name: "1985242708_door_event"
-    state_topic: "state/sensor/1985242708"
-    value_template: "{{ value_json.door_event }}"
-    force_update: true
-    device:
-      identifiers: "1985242708"
-      name: "bpx 1985242708"
+mqtt:
+  sensor:
+    - name: "1985242708_door_event"
+      state_topic: "state/sensor/1985242708"
+      value_template: "{{ value_json.door_event }}"
+      force_update: true
+      device:
+        identifiers: "1985242708"
+        name: "bpx 1985242708"

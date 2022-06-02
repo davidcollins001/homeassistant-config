@@ -13,14 +13,14 @@ sensor:
   - platform: uptime
     scan_interval: 600
 
-  # calculate file size of HA db
-  - platform: sql
-    scan_interval: 300
-    queries:
-      - name: Home Assistant V2 db
-        query: 'SELECT ROUND(page_count * page_size / 1024 / 1024, 1) as size FROM pragma_page_count(), pragma_page_size();'
-        column: 'size'
-        unit_of_measurement: 'MiB'
+  # # calculate file size of HA db
+  # - platform: sql
+    # scan_interval: 300
+    # queries:
+      # - name: Home Assistant V2 db
+        # query: 'SELECT ROUND(page_count * page_size / 1024 / 1024, 1) as size FROM pragma_page_count(), pragma_page_size();'
+        # column: 'size'
+        # unit_of_measurement: 'MiB'
 
 
 template:

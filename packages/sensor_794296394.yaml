@@ -11,69 +11,64 @@ template:
         {% set last_updated = as_timestamp(last_updated, now()) %}
         {{ last_updated | timestamp_custom("%d-%m-%y %H:%M:%S") }}
 
-sensor:
-  - platform: mqtt
-    name: "794296394_temperature"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.temperature }}"
-    unit_of_measurement: "°C"
-    device_class: temperature
-    force_update: true
-    # unique_id: "794296394_temperature"
-    device:
-        identifiers: "794296394"
-        name: "jeenode zero 794296394"
+mqtt:
+  sensor:
+    - name: "794296394_temperature"
+      state_topic: "state/sensor/794296394"
+      value_template: "{{ value_json.temperature }}"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      force_update: true
+      # unique_id: "794296394_temperature"
+      device:
+          identifiers: "794296394"
+          name: "jeenode zero 794296394"
 
-  - platform: mqtt
-    name: "794296394_humidity"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.humidity / 1000 | round }}"
-    unit_of_measurement: "%"
-    device_class: humidity
-    force_update: true
-    device:
-        identifiers: "794296394"
-        name: "794296394"
+    - name: "794296394_humidity"
+      state_topic: "state/sensor/794296394"
+      value_template: "{{ value_json.humidity / 1000 | round }}"
+      unit_of_measurement: "%"
+      device_class: humidity
+      force_update: true
+      device:
+          identifiers: "794296394"
+          name: "794296394"
 
-  - platform: mqtt
-    name: "794296394_pressure"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.pressure | float / 100 | int }}"
-    unit_of_measurement: "hPa"
-    device_class: pressure
-    force_update: true
-    device:
-        identifiers: "794296394"
-        name: "794296394"
+    - name: "794296394_pressure"
+      state_topic: "state/sensor/794296394"
+      value_template: "{{ value_json.pressure | float / 100 | int }}"
+      unit_of_measurement: "hPa"
+      device_class: pressure
+      force_update: true
+      device:
+          identifiers: "794296394"
+          name: "794296394"
 
-  - platform: mqtt
-    name: "794296394_gas_resistance"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.gas_res }}"
-    unit_of_measurement: "Ω"
-    force_update: true
-    device:
-        identifiers: "794296394"
-        name: "794296394"
+    - name: "794296394_gas_resistance"
+      state_topic: "state/sensor/794296394"
+      value_template: "{{ value_json.gas_res }}"
+      unit_of_measurement: "Ω"
+      force_update: true
+      device:
+          identifiers: "794296394"
+          name: "794296394"
 
-  - platform: mqtt
-    name: "794296394_air_quality"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.iaq }}"
-    unit_of_measurement: " "
-    device_class: aqi
-    force_update: true
-    device:
-        identifiers: "794296394"
-        name: "794296394"
+    - name: "794296394_air_quality"
+      state_topic: "state/sensor/794296394"
+      value_template: "{{ value_json.iaq }}"
+      unit_of_measurement: " "
+      device_class: aqi
+      force_update: true
+      device:
+          identifiers: "794296394"
+          name: "794296394"
 
-  - platform: mqtt
-    name: "794296394_air_quality_2"
-    state_topic: "state/sensor/794296394"
-    value_template: "{{ value_json.iaq2 }}"
-    unit_of_measurement: " "
-    device_class: aqi
-    force_update: true
-    device:
-        identifiers: "794296394"
-        name: "794296394"
+    - name: "794296394_air_quality_2"
+      state_topic: "state/sensor/794296394"
+      value_template: "{{ value_json.iaq2 }}"
+      unit_of_measurement: " "
+      device_class: aqi
+      force_update: true
+      device:
+          identifiers: "794296394"
+          name: "794296394"

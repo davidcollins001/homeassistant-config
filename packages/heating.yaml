@@ -1,14 +1,14 @@
 
-switch:
-  # send singnal to switch boiler on/off
-  - platform: mqtt
-    # state_topic: "state/sensor/heating"
-    command_topic: "cmnd/sensor/heating"
-    name: Heating Switch
-    unique_id: heating_switch
-    retain: true
-    payload_on: 1
-    payload_off: 0
+mqtt:
+  switch:
+    # send singnal to switch boiler on/off
+    - name: Heating Switch
+      # state_topic: "state/sensor/heating"
+      command_topic: "cmnd/sensor/heating"
+      unique_id: heating_switch
+      retain: true
+      payload_on: 1
+      payload_off: 0
 
 
 template:
