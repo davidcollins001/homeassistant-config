@@ -199,6 +199,7 @@
             # (ord(last) % 8, (ord(last) - 97) // 7)
             # {% set x, y = (want_coord[0] - last_coord[0], want_coord[1] - last_coord[1])
 
+            # TODO: ignore non alpha chars - they make required coord too large and fails
             - service: input_number.set_value
               target:
                 entity_id: input_number.yt_search_x
@@ -206,7 +207,8 @@
                 # yt kb_width = 7
                 # netflix kb_width = 6
                 value: |
-                  {% set kb_width = states('input_select.tv_source_search') %}
+                  {% set width_m = {"YouTube": 7, "Netflix": 6} %}
+                  {% set kb_width = width_m[states('input_select.tv_source_search')] %}
                   {% set last = states('input_text.yt_search_last') | ord %}
                   {% set current = states('input_text.yt_search_current') | ord %}
                   {% set want_coord = ((current - 97) % kb_width, (current - 97) // kb_width) %}
@@ -218,7 +220,8 @@
                 entity_id: input_number.yt_search_y
               data:
                 value: |
-                  {% set kb_width = states('input_select.tv_source_search') %}
+                  {% set width_m = {"YouTube": 7, "Netflix": 6} %}
+                  {% set kb_width = width_m[states('input_select.tv_source_search')] %}
                   {% set last = states('input_text.yt_search_last') | ord %}
                   {% set current = states('input_text.yt_search_current') | ord %}
                   {% set want_coord = ((current - 97) % kb_width, (current - 97) // kb_width) %}
