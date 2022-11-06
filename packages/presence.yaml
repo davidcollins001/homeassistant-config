@@ -7,6 +7,13 @@ group:
           - person.sara
           - person.luke
 
+template:
+  - binary_sensor:
+    - name: t_present
+      device_class: presence
+      state: >
+        {{ states('group.g_present') }}
+
 
 binary_sensor:
   # https://community.home-assistant.io/t/how-bayes-sensors-work-from-a-statistics-professor-with-working-google-sheets/143177

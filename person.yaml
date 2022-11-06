@@ -2,6 +2,7 @@
     user_id: f566f23f959541a7b8060b9a6d842e93
     device_trackers:
       - device_tracker.android_1f459967274325dc
+      - device_tracker.hawk
     id: "david"
   - name: "Sara"
     device_trackers:

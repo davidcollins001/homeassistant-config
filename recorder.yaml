@@ -4,6 +4,10 @@
     entities:
       - sensor.openweathermap_temperature
       - sensor.openweathermap_rain
+      - binary_sensor.presence_david
+      - binary_sensor.t_present
+      - device_tracker.android_1f459967274325dc
+      - device_tracker.hawk
   exclude:
     entities:
       - input_boolean.holiday_mode
