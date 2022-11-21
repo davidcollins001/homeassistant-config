@@ -1,8 +1,9 @@
 import sys
-import time
 import pydbus
 import argparse
 import logging
+import functools as ft
+from gi.repository import GLib
 import paho.mqtt.client as mqtt
 
 import setup_log  # noqa
@@ -12,6 +13,8 @@ import setup_log  # noqa
 #   object does not export any interfaces; you might need to pass object path as
 #   the 2nd argument for get()
 
+# busctl tree org.bluez
+# busctl introspect org.bluez /org/bluez/hci0/dev_D1_DC_DF_EA_C4_D3
 
 logger = logging.getLogger("bt_backend")
 logger.setLevel(logging.WARN)
@@ -24,9 +27,7 @@ BLUEZ_SERVICE = 'org.bluez'
 ADAPTER_PATH = '/org/bluez/hci0'
 
 
-def hue_lamp_update(device, command, message):
-    connection = device.get("connection")[command]
-
+def hue_lamp_update(connection, command, message):
     valid_ranges = {
         'POWER': (0, 1),
         'Dimmer': (0, 255),
@@ -44,7 +45,7 @@ hue_lamp_1_update = hue_lamp_update
 hue_lamp_2_update = hue_lamp_update
 
 
-def led_strip_update(device, command, message):
+def led_strip_update(connection, command, message):
     if command == 'POWER':
         p = int(message.payload)
         data = [0x7E, 4, 4, p, 0, p, 0xFF, 0, 0xEF]
@@ -67,110 +68,115 @@ def led_strip_update(device, command, message):
         # pass data through to bt device
         data = list(map(int, message.payload))
 
-    connection = device.get("connection")
+    # p = lambda x: int(x)
+    # rgb = lambda x: message.payload.decode().split(',')
+    # {
+        # 'POWER': (p, [0x7E, 4, 4, p, 0, p, 0xFF, 0, 0xEF]),
+        # 'Dimmer': (p, [0x7E, 4, 1, p, 1, 0xFF, 0xFF, 0, 0xEF]),
+        # # This sets white, but breaks other things
+        # # 'white': (p, [0x7E, 5, 5, 1, p, 0xFF, 0xFF, 16, 0xEF]),
+        # # return
+        # 'Color': (rgb, [0x7E, 7, 5, 3, int(g), int(b), int(r), 16, 0xEF]),
+        # # payload matches `effect_list` in light definition
+        # 'effect': (p, [0x7E, 5, 3, p, 6, 0xFF, 0xFF, 0, 0xEF]),
+        # # pass data through to bt device
+        # 'command': (lambda x: x, list(map(int, message.payload)))
+    # }
+
     connection.WriteValue(bytes(data), None)
 
 
-def dbus_connect(peripheral_address, uuids, callback=None):
-    def get_characteristic(bus, dev_path, uuid_name, uuid):
-        """Look up DBus path for characteristic UUID"""
-        mngr = bus.get(BLUEZ_SERVICE, '/')
-        mng_objs = mngr.GetManagedObjects()
-        for path in mng_objs:
-            chr_uuid = mng_objs[path].get('org.bluez.GattCharacteristic1',
-                                          {}).get('UUID')
-            if path.startswith(dev_path) and chr_uuid == uuid.casefold():
-                char = bus.get(BLUEZ_SERVICE, path)
-                if callback:
-                    # import pdb; pdb.set_trace()  # noqa
-                    fn, mqtt, dev_name = callback
-                    char.onPropertiesChanged = fn(
-                        STATE_QUEUE.format(dev_name, uuid_name), mqtt
-                    )
-                    char.StartNotify()
-                return char
-
+def get_characteristic(dev_name, uuid_name, uuid):
+    """Look up DBus path for characteristic UUID"""
     bus = pydbus.SystemBus()
-    # adapter = bus.get(BLUEZ_SERVICE, ADAPTER_PATH)
-    device_path = f"{ADAPTER_PATH}/dev_{peripheral_address.replace(':', '_')}"
-    device = bus.get(BLUEZ_SERVICE, device_path)
+    mngr = bus.get(BLUEZ_SERVICE, '/')
+    mng_objs = mngr.GetManagedObjects()
+    for path in mng_objs:
+        chr_uuid = mng_objs[path].get('org.bluez.GattCharacteristic1', {}).get('UUID')
+        dev_name = dev_name.replace(":", "_")
+        if dev_name in path and chr_uuid == uuid.casefold():
+            return bus.get(BLUEZ_SERVICE, path)
 
-    device.Connect()
-    if not device.Connected:
-        raise Exception("Connection failed")
 
-    if isinstance(uuids, dict):
-        chars = {uuid_name: get_characteristic(bus, device_path, uuid_name, uuid)
-                 for uuid_name, uuid in uuids.items()}
-    else:
-        chars = get_characteristic(bus, device_path, uuids)
-
-    return chars
+def add_notify_cb(char, dev_name, uuid_name, callback):
+    char.onPropertiesChanged = ft.partial(
+        callback, STATE_QUEUE.format(dev_name, uuid_name),
+    )
+    char.StartNotify()
+    return char
 
 
 def ble_connect(fn):
-    def inner(devices, message, callback):
+    connections = {}
+
+    def dbus_connect(devices, dev_name, callback):
+        device = connections.get(dev_name)
+        if device:
+            return device
+
+        logger.debug(f"connecting to {dev_name}")
+        address = devices[dev_name]['mac']
+        uuids = devices[dev_name]['uuids']
+
+        bus = pydbus.SystemBus()
+        device_path = f"{ADAPTER_PATH}/dev_{address.replace(':', '_')}"
+        device = bus.get(BLUEZ_SERVICE, device_path)
+
+        if not device.Connected:
+            device.Connect()
+
+        for uuid_name, uuid in uuids.items():
+            connections.setdefault(dev_name, {})[uuid_name] = add_notify_cb(
+                get_characteristic(address, uuid_name, uuid),
+                dev_name, uuid_name, callback,
+            )
+        return connections.get(dev_name)
+
+    def execute(client, userdata, message):
         *base_topic, dev_name, command = message.topic.split('/')
+        callback = userdata["callback"]
+        devices = userdata["devices"]
         # ignore mqtt messages for other lights
         if not devices.get(dev_name):
             return
 
-        for _ in range(5):
-            try:
-                if not devices[dev_name].get("connection"):
-                    mac = devices[dev_name]['mac']
-                    uuids = devices[dev_name]['uuids']
-                    devices[dev_name]["connection"] = dbus_connect(mac, uuids,
-                                                                   callback +
-                                                                   (dev_name,))
-                return fn(devices, message)
-            except Exception as e:
-                logger.error(f"failed to write ({e}), reconnecting: {dev_name}")
-                time.sleep(0.2)
-                # if conn:
-                    # conn.disconnect()
-                if "connection" in devices[dev_name]:
-                    del devices[dev_name]["connection"]
-                devices[dev_name]["connection"] = None
-
-        logger.warning("failed to switch")
-
-    return inner
+        try:
+            device = dbus_connect(devices, dev_name, callback)
+            if device:
+                return fn(device, message)
+        except Exception as e:
+            logger.error(f"failed to write: {e}")
+            if dev_name in connections:
+                del connections[dev_name]
+    return execute
 
 
 @ble_connect
-def dispatch_message(devices, message):
-    logger.info(f"received payload on {message.topic}: {message.payload}")
+def mqtt_message_cb(device, message):
+    # received a message on MQTT to process, send message to bluetoth dev
+    logger.debug(f"received payload on {message.topic}: {message.payload}")
     *base_topic, dev_name, command = message.topic.split('/')
-    # import pdb; pdb.set_trace()  # noqa
-    device = devices.get(dev_name)
+    connection = device[command]
     update = globals()[f"{dev_name}_update"]
-    return update(device, command, message)
+    return update(connection, command, message)
 
 
-# def update_cb(m, c):
-def update_cb(topic, c):
-    print("setup callback: ", topic)
-
-    def inner(char, data, *args):
-        # org.bluez.GattCharacteristic1 {'Notifying': True} []
-        print(char, type(char))
-        print(topic, char, data, *args)
-        # TODO: what is characteristic to get notification value update
-        value = data.get("Value", None)
-        if value:
-            # c.publish(m.topic.replace('cmnd', 'state'), value[0])
-            c.publish(topic, value[0])
-    return inner
+def bt_notify_cb(client, topic, char, data, *args):
+    # received data from DBUS/bluetooth, publish to state topic
+    logger.debug(f"received bt update {topic}, {char}, {data}")
+    value = data.get("Value", None)
+    if value:
+        client.publish(topic, value[0])
 
 
 def manager(devices, device="hci0", queue=DEFAULT_CMD_QUEUE):
     # on reconnect subscriptions will be renewed
     client = mqtt.Client()
+    client.user_data_set(userdata=dict(callback=ft.partial(bt_notify_cb,
+                                                           client),
+                                       devices=devices))
     client.on_connect = lambda c, d, f, rc: c.subscribe(queue)
-    client.on_message = lambda c, d, m: dispatch_message(devices, m,
-                                                         (update_cb, c))
-    # import pdb; pdb.set_trace()  # noqa
+    client.on_message = mqtt_message_cb
     client.connect("homeassistant", 1883, 60)
     logger.info(f"connected to {queue}")
 
@@ -179,7 +185,6 @@ def manager(devices, device="hci0", queue=DEFAULT_CMD_QUEUE):
     client.loop_start()
     # client.loop_stop()
 
-    from gi.repository import GLib
     mainloop = GLib.MainLoop()
     mainloop.run()
 
@@ -197,7 +202,7 @@ def parse_args(args=sys.argv):
     return args
 
 
-if __name__ == "__main__":
+def main():
     args = parse_args()
 
     devices = {
@@ -216,5 +221,7 @@ if __name__ == "__main__":
     # elif args.command is not None:
         # p = args.power
         # _test_command()
-    elif args.notify:
-        notify()
+
+
+if __name__ == "__main__":
+    main()

@@ -29,8 +29,8 @@
   - name: "Led strip"
     unique_id: led_strip
     icon: hass:floor-lamp
-    optimistic: true
     command_topic: "cmnd/lights/led_strip/POWER"
+    state_topic: "state/lights/led_strip/POWER"
     on_command_type: "first"
     payload_on: 1
     payload_off: 0
@@ -320,8 +320,11 @@
     unique_id: hue_lamp_1
     optimistic: true
     command_topic: "cmnd/lights/hue_lamp_1/POWER"
+    state_topic: "state/lights/hue_lamp_1/POWER"
     on_command_type: "first"
+    # on_command_type: "brightness"
     brightness_command_topic: "cmnd/lights/hue_lamp_1/Dimmer"
+    brightness_state_topic: "state/lights/hue_lamp_1/Dimmer"
     brightness_scale: 254
     payload_on: 1
     payload_off: 0
@@ -330,8 +333,11 @@
     unique_id: hue_lamp_2
     optimistic: true
     command_topic: "cmnd/lights/hue_lamp_2/POWER"
+    state_topic: "state/lights/hue_lamp_2/POWER"
     on_command_type: "first"
+    # on_command_type: "brightness"
     brightness_command_topic: "cmnd/lights/hue_lamp_2/Dimmer"
+    brightness_state_topic: "state/lights/hue_lamp_2/Dimmer"
     brightness_scale: 254
     payload_on: 1
     payload_off: 0
