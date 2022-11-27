@@ -110,10 +110,6 @@ def ble_connect(fn):
     connections = {}
 
     def dbus_connect(devices, dev_name, callback):
-        device = connections.get(dev_name)
-        if device:
-            return device
-
         logger.debug(f"connecting to {dev_name}")
         address = devices[dev_name]['mac']
         uuids = devices[dev_name]['uuids']
@@ -125,12 +121,10 @@ def ble_connect(fn):
         if not device.Connected:
             device.Connect()
 
-        for uuid_name, uuid in uuids.items():
-            connections.setdefault(dev_name, {})[uuid_name] = add_notify_cb(
-                get_characteristic(address, uuid_name, uuid),
-                dev_name, uuid_name, callback,
-            )
-        return connections.get(dev_name)
+        return {uuid_name: add_notify_cb(
+            get_characteristic(address, uuid_name, uuid),
+            dev_name, uuid_name, callback
+        ) for uuid_name, uuid in uuids.items()}
 
     def execute(client, userdata, message):
         *base_topic, dev_name, command = message.topic.split('/')
@@ -140,14 +134,18 @@ def ble_connect(fn):
         if not devices.get(dev_name):
             return
 
-        try:
-            device = dbus_connect(devices, dev_name, callback)
-            if device:
-                return fn(device, message)
-        except Exception as e:
-            logger.error(f"failed to write: {e}")
-            if dev_name in connections:
-                del connections[dev_name]
+        for i in range(2):
+            try:
+                device = connections.get(dev_name)
+                if not device:
+                    device = dbus_connect(devices, dev_name, callback)
+                    connections[dev_name] = device
+                if device:
+                    return fn(device, message)
+            except Exception as e:
+                logger.error(f"failed to write: {e}")
+                if dev_name in connections:
+                    del connections[dev_name]
     return execute
 
 
