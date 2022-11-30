@@ -5,6 +5,7 @@
           - switch.plug1
           - switch.plug2
           - switch.plug3
+          # - switch.plug4
 
 
   g_living_room:

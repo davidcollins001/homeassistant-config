@@ -144,6 +144,10 @@ utility_meter:
     source: sensor.gas_consumption_year
     cycle: yearly
 
+  daily_plug_elec:
+    source: sensor.plug4_power
+    cycle: daily
+
 
 # # https://www.dummylabs.com/post/2019-01-13-influxdb-part1/
 # influxdb:
@@ -197,6 +201,11 @@ mqtt:
     - state_topic: "stat/plugs/plug3/POWER"
       command_topic: "cmnd/plugs/plug3/POWER"
       name: plug3
+      retain: true
+
+    - state_topic: "stat/plugs/plug4/POWER"
+      command_topic: "cmnd/plugs/plug4/POWER"
+      name: plug4
       retain: true
 
 

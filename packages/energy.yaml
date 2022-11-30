@@ -1,0 +1,28 @@
+
+input_number:
+  electric_tariff_rate:
+    initial: 0
+    min: 0
+    max: 1000
+  gas_tariff_rate:
+    initial: 0
+    min: 0
+    max: 1000
+
+
+mqtt:
+  sensor:
+    - name: plug4_power
+      unit_of_measurement: kWh
+      state_topic: tele/plugs/plug4/SENSOR
+      device_class: energy
+      state_class: total_increasing
+      value_template: "{{ value_json.ENERGY['Today'] }}"
+
+    - name: plug4_power_total
+      unit_of_measurement: kWh
+      state_topic: tele/plugs/plug4/SENSOR
+      device_class: energy
+      state_class: total_increasing
+      value_template: "{{ value_json.ENERGY['Total'] }}"
+

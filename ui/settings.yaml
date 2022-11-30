@@ -19,3 +19,10 @@ cards:
     show_header_toggle: false
     entities:
         - input_boolean.holiday_mode
+
+  - type: entities
+    title: Energy tariffs
+    show_header_toggle: false
+    entities:
+        - input_number.gas_tariff_rate
+        - input_number.electric_tariff_rate
