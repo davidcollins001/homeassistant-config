@@ -6,8 +6,7 @@ cards:
     show_header_toggle: false
     cards:
       - type: button
-        entity: switch.plug3
-        name: Floor lamp
+        entity: light.floor_lamp
         icon: hue:floor-shade
         icon_height: 50px
         tap_action:

@@ -62,6 +62,7 @@ zone:
 homeassistant:
   name: Home
   unit_system: metric
+  currency: GBP
   time_zone: Europe/London
   latitude: !secret home_latitude
   longitude: !secret home_longitude
@@ -147,8 +148,8 @@ utility_meter:
   daily_plug4_elec:
     source: sensor.plug4_energy
     cycle: daily
-  daily_plug3_elec:
-    source: sensor.plug3_energy
+  daily_floor_lamp_elec:
+    source: sensor.floor_lamp_energy
     cycle: daily
   daily_hue_lamp1_elec:
     source: sensor.hue_lamp1_energy

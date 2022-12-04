@@ -12,7 +12,7 @@
       name: Living room
       entities:
           - light.led_strip
-          - switch.plug3
+          - light.floor_lamp
           - media_player.sony_bravia_tv
 
 

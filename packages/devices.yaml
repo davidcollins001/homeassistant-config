@@ -1,0 +1,44 @@
+# abstract generic named devices to locations
+# eg, floor lamp is really plug3
+
+light:
+  - platform: template
+    lights:
+      floor_lamp:
+        friendly_name: Floor lamp
+        turn_on:
+          service: homeassistant.turn_on
+          target:
+            entity_id: switch.plug3
+        turn_off:
+          service: homeassistant.turn_off
+          target:
+            entity_id: switch.plug3
+
+      hallway_light:
+        friendly_name: Hallway light
+        turn_on:
+          service: homeassistant.turn_on
+          target:
+            entity_id: light.hue_lamp_1
+        turn_off:
+          service: homeassistant.turn_off
+          target:
+            entity_id: light.hue_lamp_1
+        level_template: "{{ state_attr('light.hue_lamp_1', 'brightness') }}"
+        set_level:
+          service: homeassistant.turn_on
+          data_template:
+            entity_id: light.hue_lamp_1
+            brightness: "{{ brightness }}"
+
+      bedroom_light:
+        friendly_name: Hallway light
+        turn_on:
+          service: homeassistant.turn_on
+          target:
+            entity_id: light.hue_lamp_2
+        turn_off:
+          service: homeassistant.turn_off
+          target:
+            entity_id: light.hue_lamp_2

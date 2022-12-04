@@ -10,7 +10,7 @@
     # action:
       # - service: switch.turn_off
         # target:
-          # entity_id: switch.plug3
+          # entity_id: light.floor_lamp
 
 
 # # presence rules
@@ -28,5 +28,5 @@
     # action:
       # - service: switch.turn_on
         # target:
-          # entity_id: switch.plug3
+          # entity_id: light.floor_lamp
 

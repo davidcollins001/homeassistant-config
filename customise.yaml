@@ -25,7 +25,7 @@
   input_boolean.switch_off_lr:
     friendly_name: Switch off
 
-  sensor.daily_plug3_elec:
+  sensor.daily_floor_lamp_elec:
     friendly_name: Floor Lamp
   sensor.daily_plug4_elec:
     friendly_name: Fridge
