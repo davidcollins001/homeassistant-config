@@ -47,7 +47,7 @@ template:
         {{ power_states[states("light.floor_lamp")] }}
 
   - sensor:
-    - name: hue_lamp1_power
+    - name: hue_lamp_1_power
       device_class: power
       state_class: total_increasing
       unit_of_measurement: W
@@ -56,7 +56,7 @@ template:
         {% set power_states = {"off": 0, "on": 5.5 * brightness} %}
         {{ power_states[states("light.hue_lamp_1")] }}
   - sensor:
-    - name: hue_lamp2_power
+    - name: hue_lamp_2_power
       device_class: power
       state_class: total_increasing
       unit_of_measurement: W
@@ -75,12 +75,12 @@ sensor:
     round: 2
 
   - platform: integration
-    name: hue_lamp1_energy
-    source: sensor.hue_lamp1_power
+    name: hue_lamp_1_energy
+    source: sensor.hue_lamp_1_power
     unit_prefix: k
     round: 2
   - platform: integration
-    name: hue_lamp2_energy
-    source: sensor.hue_lamp2_power
+    name: hue_lamp_2_energy
+    source: sensor.hue_lamp_2_power
     unit_prefix: k
     round: 2

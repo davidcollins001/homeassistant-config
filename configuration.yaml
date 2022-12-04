@@ -151,11 +151,11 @@ utility_meter:
   daily_floor_lamp_elec:
     source: sensor.floor_lamp_energy
     cycle: daily
-  daily_hue_lamp1_elec:
-    source: sensor.hue_lamp1_energy
+  daily_hue_lamp_1_elec:
+    source: sensor.hue_lamp_1_energy
     cycle: daily
-  daily_hue_lamp2_elec:
-    source: sensor.hue_lamp2_energy
+  daily_hue_lamp_2_elec:
+    source: sensor.hue_lamp_2_energy
     cycle: daily
 
 

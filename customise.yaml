@@ -29,7 +29,7 @@
     friendly_name: Floor Lamp
   sensor.daily_plug4_elec:
     friendly_name: Fridge
-  sensor.daily_hue_lamp1_elec:
+  sensor.daily_hue_lamp_1_elec:
     friendly_name: Hallway light
-  sensor.daily_hue_lamp2_elec:
+  sensor.daily_hue_lamp_2_elec:
     friendly_name: Bedroom light
