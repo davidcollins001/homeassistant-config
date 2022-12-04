@@ -12,17 +12,75 @@ input_number:
 
 mqtt:
   sensor:
-    - name: plug4_power
+    - name: plug4_energy
       unit_of_measurement: kWh
       state_topic: tele/plugs/plug4/SENSOR
       device_class: energy
       state_class: total_increasing
       value_template: "{{ value_json.ENERGY['Today'] }}"
 
-    - name: plug4_power_total
+    - name: plug4_power
+      unit_of_measurement: W
+      state_topic: tele/plugs/plug4/SENSOR
+      device_class: power
+      state_class: total
+      value_template: "{{ value_json.ENERGY['Power'] }}"
+
+    - name: plug4_energy_total
       unit_of_measurement: kWh
       state_topic: tele/plugs/plug4/SENSOR
       device_class: energy
       state_class: total_increasing
       value_template: "{{ value_json.ENERGY['Total'] }}"
 
+
+# track plug on/off duration with template/sensor to track power usage
+# plug has fixed power, energy = power * time
+template:
+  - sensor:
+    - name: plug3_power
+      device_class: power
+      state_class: total_increasing
+      unit_of_measurement: W
+      state: >
+        {% set power_states = {"on": 14, "off": 0} %}
+        {{ power_states[states("switch.plug3")] }}
+
+  - sensor:
+    - name: hue_lamp1_power
+      device_class: power
+      state_class: total_increasing
+      unit_of_measurement: W
+      state: >
+        {% set brightness = state_attr("light.hue_lamp_1", "brightness") / 255 %}
+        {% set power_states = {"off": 0, "on": 5.5 * brightness} %}
+        {{ power_states[states("light.hue_lamp_1")] }}
+  - sensor:
+    - name: hue_lamp2_power
+      device_class: power
+      state_class: total_increasing
+      unit_of_measurement: W
+      state: >
+        {% set brightness = state_attr("light.hue_lamp_1", "brightness") / 255 %}
+        {% set power_states = {"off": 0, "on": 5.5 * brightness} %}
+        {{ power_states[states("light.hue_lamp_2")] }}
+
+
+sensor:
+  - platform: integration
+    name: plug3_energy
+    source: sensor.plug3_power
+    unit_prefix: k
+    method: left
+    round: 2
+
+  - platform: integration
+    name: hue_lamp1_energy
+    source: sensor.hue_lamp1_power
+    unit_prefix: k
+    round: 2
+  - platform: integration
+    name: hue_lamp2_energy
+    source: sensor.hue_lamp2_power
+    unit_prefix: k
+    round: 2

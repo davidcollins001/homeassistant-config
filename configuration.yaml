@@ -144,8 +144,17 @@ utility_meter:
     source: sensor.gas_consumption_year
     cycle: yearly
 
-  daily_plug_elec:
-    source: sensor.plug4_power
+  daily_plug4_elec:
+    source: sensor.plug4_energy
+    cycle: daily
+  daily_plug3_elec:
+    source: sensor.plug3_energy
+    cycle: daily
+  daily_hue_lamp1_elec:
+    source: sensor.hue_lamp1_energy
+    cycle: daily
+  daily_hue_lamp2_elec:
+    source: sensor.hue_lamp2_energy
     cycle: daily
 
 
