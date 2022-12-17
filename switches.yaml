@@ -1,0 +1,36 @@
+# platform - switch.mqtt, switch
+    - state_topic: "stat/plugs/plug1/POWER"
+      command_topic: "cmnd/plugs/plug1/POWER"
+      name: plug1
+
+    - state_topic: "stat/plugs/plug2/POWER"
+      command_topic: "cmnd/plugs/plug2/POWER"
+      name: plug2
+
+    - state_topic: "stat/plugs/plug3/POWER"
+      command_topic: "cmnd/plugs/plug3/POWER"
+      name: plug3
+      retain: true
+
+    # this is used for fridge so set always on and disable relay
+    # PowerOnState 4
+    # https://tasmota.github.io/docs/PowerOnState/#poweronstate-functionality
+    - state_topic: "stat/plugs/plug4/POWER"
+      command_topic: "cmnd/plugs/plug4/POWER"
+      name: plug4
+      retain: true
+
+    - state_topic: "stat/plugs/plug5/POWER"
+      command_topic: "cmnd/plugs/plug5/POWER"
+      name: plug5
+      retain: true
+
+    - state_topic: "stat/plugs/plug6/POWER"
+      command_topic: "cmnd/plugs/plug6/POWER"
+      name: plug6
+      retain: true
+
+    - state_topic: "stat/plugs/plug7/POWER"
+      command_topic: "cmnd/plugs/plug7/POWER"
+      name: plug7
+      retain: true

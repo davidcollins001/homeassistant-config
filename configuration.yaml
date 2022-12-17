@@ -148,6 +148,29 @@ utility_meter:
   daily_plug4_elec:
     source: sensor.plug4_energy
     cycle: daily
+  monthly_plug4_elec:
+    source: sensor.plug4_energy
+    cycle: monthly
+  daily_plug5_elec:
+    source: sensor.plug5_energy
+    cycle: daily
+  monthly_plug5_elec:
+    source: sensor.plug5_energy
+    cycle: monthly
+  daily_plug6_elec:
+    source: sensor.plug6_energy
+    cycle: daily
+  monthly_plug6_elec:
+    source: sensor.plug6_energy
+    cycle: monthly
+  daily_plug7_elec:
+    source: sensor.plug7_energy
+    cycle: daily
+  monthly_plug7_elec:
+    source: sensor.plug7_energy
+    cycle: monthly
+
+  # virtual energy devices
   daily_floor_lamp_elec:
     source: sensor.floor_lamp_energy
     cycle: daily
@@ -198,40 +221,7 @@ mqtt:
   # broker: homeassistant
   # port: 1883
   light: !include lights.yaml
-
-  switch:
-    - state_topic: "stat/plugs/plug1/POWER"
-      command_topic: "cmnd/plugs/plug1/POWER"
-      name: plug1
-
-    - state_topic: "stat/plugs/plug2/POWER"
-      command_topic: "cmnd/plugs/plug2/POWER"
-      name: plug2
-
-    - state_topic: "stat/plugs/plug3/POWER"
-      command_topic: "cmnd/plugs/plug3/POWER"
-      name: plug3
-      retain: true
-
-    - state_topic: "stat/plugs/plug4/POWER"
-      command_topic: "cmnd/plugs/plug4/POWER"
-      name: plug4
-      retain: true
-
-    - state_topic: "stat/plugs/plug5/POWER"
-      command_topic: "cmnd/plugs/plug5/POWER"
-      name: plug5
-      retain: true
-
-    - state_topic: "stat/plugs/plug6/POWER"
-      command_topic: "cmnd/plugs/plug6/POWER"
-      name: plug6
-      retain: true
-
-    - state_topic: "stat/plugs/plug7/POWER"
-      command_topic: "cmnd/plugs/plug7/POWER"
-      name: plug7
-      retain: true
+  switch: !include switches.yaml
 
 
 binary_sensor:
