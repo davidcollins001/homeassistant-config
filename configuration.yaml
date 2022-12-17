@@ -218,6 +218,21 @@ mqtt:
       name: plug4
       retain: true
 
+    - state_topic: "stat/plugs/plug5/POWER"
+      command_topic: "cmnd/plugs/plug5/POWER"
+      name: plug5
+      retain: true
+
+    - state_topic: "stat/plugs/plug6/POWER"
+      command_topic: "cmnd/plugs/plug6/POWER"
+      name: plug6
+      retain: true
+
+    - state_topic: "stat/plugs/plug7/POWER"
+      command_topic: "cmnd/plugs/plug7/POWER"
+      name: plug7
+      retain: true
+
 
 binary_sensor:
   - platform: workday

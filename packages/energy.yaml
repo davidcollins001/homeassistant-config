@@ -18,17 +18,72 @@ mqtt:
       device_class: energy
       state_class: total_increasing
       value_template: "{{ value_json.ENERGY['Today'] }}"
-
     - name: plug4_power
       unit_of_measurement: W
       state_topic: tele/plugs/plug4/SENSOR
       device_class: power
       state_class: total
       value_template: "{{ value_json.ENERGY['Power'] }}"
-
     - name: plug4_energy_total
       unit_of_measurement: kWh
       state_topic: tele/plugs/plug4/SENSOR
+      device_class: energy
+      state_class: total_increasing
+      value_template: "{{ value_json.ENERGY['Total'] }}"
+
+    - name: plug5_energy
+      unit_of_measurement: kWh
+      state_topic: tele/plugs/plug5/SENSOR
+      device_class: energy
+      state_class: total_increasing
+      value_template: "{{ value_json.ENERGY['Today'] }}"
+    - name: plug5_power
+      unit_of_measurement: W
+      state_topic: tele/plugs/plug5/SENSOR
+      device_class: power
+      state_class: total
+      value_template: "{{ value_json.ENERGY['Power'] }}"
+    - name: plug5_energy_total
+      unit_of_measurement: kWh
+      state_topic: tele/plugs/plug5/SENSOR
+      device_class: energy
+      state_class: total_increasing
+      value_template: "{{ value_json.ENERGY['Total'] }}"
+
+    - name: plug6_energy
+      unit_of_measurement: kWh
+      state_topic: tele/plugs/plug6/SENSOR
+      device_class: energy
+      state_class: total_increasing
+      value_template: "{{ value_json.ENERGY['Today'] }}"
+    - name: plug6_power
+      unit_of_measurement: W
+      state_topic: tele/plugs/plug6/SENSOR
+      device_class: power
+      state_class: total
+      value_template: "{{ value_json.ENERGY['Power'] }}"
+    - name: plug6_energy_total
+      unit_of_measurement: kWh
+      state_topic: tele/plugs/plug6/SENSOR
+      device_class: energy
+      state_class: total_increasing
+      value_template: "{{ value_json.ENERGY['Total'] }}"
+
+    - name: plug7_energy
+      unit_of_measurement: kWh
+      state_topic: tele/plugs/plug7/SENSOR
+      device_class: energy
+      state_class: total_increasing
+      value_template: "{{ value_json.ENERGY['Today'] }}"
+    - name: plug7_power
+      unit_of_measurement: W
+      state_topic: tele/plugs/plug7/SENSOR
+      device_class: power
+      state_class: total
+      value_template: "{{ value_json.ENERGY['Power'] }}"
+    - name: plug7_energy_total
+      unit_of_measurement: kWh
+      state_topic: tele/plugs/plug7/SENSOR
       device_class: energy
       state_class: total_increasing
       value_template: "{{ value_json.ENERGY['Total'] }}"
