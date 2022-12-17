@@ -14,8 +14,3 @@
           - light.led_strip
           - light.floor_lamp
           - media_player.sony_bravia_tv
-
-
-  hallway_light:
-    name: hallway light
-    entities: light.hue_lamp_1

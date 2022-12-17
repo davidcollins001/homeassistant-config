@@ -15,7 +15,7 @@
       # switch hall light on temporarily
       - service: homeassistant.turn_on
         target:
-            entity_id: group.hallway_light
+            entity_id: light.hallway_light
         data:
             brightness: 180
       # wait 5 mins and turn hall light off
@@ -23,7 +23,7 @@
           seconds: 300
       - service: homeassistant.turn_off
         target:
-            entity_id: group.hallway_light
+            entity_id: light.hallway_light
 
 # switch off "living room" when away
   - alias: switch_off_lr_away
@@ -59,4 +59,4 @@
     action:
       - service: homeassistant.turn_off
         target:
-            entity_id: group.hallway_light
+            entity_id: light.hallway_light

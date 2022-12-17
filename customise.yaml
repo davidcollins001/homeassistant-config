@@ -1,24 +1,15 @@
   light.led_strip:
     friendly_name: Corner lamp
 
-  light.hue_lamp_1:
-    friendly_name: Hallway light
-
-  light.hue_lamp_2:
-    friendly_name: Bedroom light
-
   sensor.uptime_ha:
     friendly_name: HA Uptime
-
   sensor.uptime_sys:
     friendly_name: Uptime
 
   sensor.heating_temp_set_ro:
     friendly_name: Heating Temp Set
-
   sensor.heating_ro:
     friendly_name: Heating
-
   sensor.heating_temperature:
     friendly_name: Temperature
 

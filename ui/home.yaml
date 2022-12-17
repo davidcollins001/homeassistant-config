@@ -26,7 +26,7 @@ cards:
     show_header_toggle: false
     cards:
       - type: light
-        entity: light.hue_lamp_1
+        entity: light.hallway_light
         icon: hue:bulb-candle
       - type: light
         entity: light.hue_lamp_2

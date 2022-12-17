@@ -11,6 +11,6 @@
         entity_id: group.g_present
         state: "on"
     action:
-      - service: switch.turn_on
+      - service: homeassistant.turn_on
         target:
           entity_id: light.floor_lamp

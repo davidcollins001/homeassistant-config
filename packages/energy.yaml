@@ -52,18 +52,18 @@ template:
       state_class: total_increasing
       unit_of_measurement: W
       state: >
-        {% set brightness = state_attr("light.hue_lamp_1", "brightness") / 255 %}
-        {% set power_states = {"off": 0, "on": 5.5 * brightness} %}
-        {{ power_states[states("light.hue_lamp_1")] }}
+        {% set brightness = state_attr("light.hue_lamp_1", "brightness") or 0 %}
+        {% set power_states = {"off": 0, "on": 5.5, "unknown": 0 } %}
+        {{ power_states.get(states("light.hue_lamp_1"), 0) * brightness / 255 }}
   - sensor:
     - name: hue_lamp_2_power
       device_class: power
       state_class: total_increasing
       unit_of_measurement: W
       state: >
-        {% set brightness = state_attr("light.hue_lamp_1", "brightness") / 255 %}
-        {% set power_states = {"off": 0, "on": 5.5 * brightness} %}
-        {{ power_states[states("light.hue_lamp_2")] }}
+        {% set brightness = state_attr("light.hue_lamp_2", "brightness") or 0 %}
+        {% set power_states = {"off": 0, "on": 5.5, "unknown": 0 } %}
+        {{ power_states.get(states("light.hue_lamp_2"), 0) * brightness / 255 }}
 
 
 sensor:
