@@ -1,0 +1,60 @@
+  hourly_electricity:
+    source: sensor.electric_cost_today
+    cycle: hourly
+  daily_electricity:
+    source: sensor.electric_cost_today
+    cycle: daily
+  monthly_electricity:
+    source: sensor.electric_cost_today
+    cycle: monthly
+  annual_electricity:
+    source: sensor.electric_consumption_year
+    cycle: yearly
+  hourly_gas:
+    source: sensor.gas_cost_today
+    cycle: hourly
+  daily_gas:
+    source: sensor.gas_cost_today
+    cycle: daily
+  monthly_gas:
+    source: sensor.gas_cost_today
+    cycle: monthly
+  annual_gas:
+    source: sensor.gas_consumption_year
+    cycle: yearly
+
+  daily_plug4_elec:
+    source: sensor.plug4_energy
+    cycle: daily
+  monthly_plug4_elec:
+    source: sensor.plug4_energy
+    cycle: monthly
+  daily_plug5_elec:
+    source: sensor.plug5_energy
+    cycle: daily
+  monthly_plug5_elec:
+    source: sensor.plug5_energy
+    cycle: monthly
+  daily_plug6_elec:
+    source: sensor.plug6_energy
+    cycle: daily
+  monthly_plug6_elec:
+    source: sensor.plug6_energy
+    cycle: monthly
+  daily_plug7_elec:
+    source: sensor.plug7_energy
+    cycle: daily
+  monthly_plug7_elec:
+    source: sensor.plug7_energy
+    cycle: monthly
+
+  # virtual energy devices
+  daily_floor_lamp_elec:
+    source: sensor.floor_lamp_energy
+    cycle: daily
+  daily_hue_lamp_1_elec:
+    source: sensor.hue_lamp_1_energy
+    cycle: daily
+  daily_hue_lamp_2_elec:
+    source: sensor.hue_lamp_2_energy
+    cycle: daily
