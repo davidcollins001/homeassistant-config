@@ -17,3 +17,12 @@
     friendly_name: Server
   sensor.daily_plug7_elec:
     friendly_name: Misc
+
+  sensor.plug4_power:
+    friendly_name: Fridge power
+  sensor.plug5_power:
+    friendly_name: TV power
+  sensor.plug6_power:
+    friendly_name: Server power
+  sensor.plug7_power:
+    friendly_name: Misc power
