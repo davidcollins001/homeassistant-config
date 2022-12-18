@@ -38,8 +38,10 @@ cards:
     - type: entities
       title: Heating
       entities:
-            - sensor.heating_ro
-            - sensor.heating_temp_set_ro
+            - entity: sensor.heating_ro
+              name: Heating
+            - entity: sensor.heating_temp_set_ro
+              name: Heating Temp Set
       show_header_toggle: false
 
     - type: horizontal-stack
@@ -62,7 +64,8 @@ cards:
   - type: entities
     title: Person
     entities:
-        - group.g_present
+        - entity: binary_sensor.t_present
+          name: Present
         - person.david
         - person.sara
         - person.luke
@@ -95,5 +98,5 @@ cards:
     entities:
         - entity: switch.heating_switch
           name: Heating
-        - entity: group.g_present
+        - entity: binary_sensor.t_present
           name: Present
