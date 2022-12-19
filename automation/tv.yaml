@@ -3,6 +3,10 @@
 # switch to netflix/youtube
   - alias: netflix_youtube
     mode: restart
+    variables:
+      menu_count:
+        input_boolean.netflix: 1
+        input_boolean.youtube: 2
     trigger:
       - platform: state
         entity_id:
@@ -11,6 +15,8 @@
         from: "off"
         to: "on"
     action:
+      - variables:
+          source_list: "{{ state_attr('media_player.sony_bravia_tv', 'source_list') }}"
       - repeat:
           while: "{{ states('media_player.sony_bravia_tv') == 'off' }}"
           sequence:
@@ -22,7 +28,6 @@
 
       - choose:
         - conditions: >
-            {% set source_list = state_attr('media_player.sony_bravia_tv', 'source_list') %}
             {{ state_attr(trigger.entity_id, 'friendly_name') in source_list }}
           sequence:
             # - repeat:
@@ -38,7 +43,6 @@
 
         # netflix/youtube missing from source list
         - conditions: >
-            {% set source_list = state_attr('media_player.sony_bravia_tv', 'source_list') %}
             {{ state_attr(trigger.entity_id, 'friendly_name') not in source_list }}
           sequence:
             - service: remote.send_command
@@ -84,12 +88,10 @@
                   - delay:
                       seconds: 0.5
 
-            # move to netflix/youtube
+            # select netflix (and profile)/youtube from menu
             - repeat:
                 count: >
-                  {% set count = {'input_boolean.netflix': 1,
-                                  'input_boolean.youtube': 2} %}
-                  {{ count[trigger.entity_id] }}
+                  {{ menu_count[trigger.entity_id] }}
                 sequence:
                   - service: remote.send_command
                     target:
@@ -167,12 +169,18 @@
 # type input from search box into on screen keyboard
   - alias: osk_keyboard_input
     mode: restart
+    variables:
+      osk_width:
+        YouTube: 7
+        Netflix: 6
     trigger:
       - platform: state
         entity_id: input_boolean.yt_search_go
         from: "off"
         to: "on"
     action:
+      - variables:
+          kb_width: "{{ osk_width[states('input_select.tv_source_search')] }}"
       - service: input_text.set_value
         target:
           entity_id: input_text.yt_search_rest
@@ -182,6 +190,7 @@
         target:
           entity_id: input_text.yt_search_last
         data:
+          # set initial osk location to 'a'
           value: 'a'
 
       - repeat:
@@ -204,11 +213,7 @@
               target:
                 entity_id: input_number.yt_search_x
               data:
-                # yt kb_width = 7
-                # netflix kb_width = 6
                 value: |
-                  {% set width_m = {"YouTube": 7, "Netflix": 6} %}
-                  {% set kb_width = width_m[states('input_select.tv_source_search')] %}
                   {% set last = states('input_text.yt_search_last') | ord %}
                   {% set current = states('input_text.yt_search_current') | ord %}
                   {% set want_coord = ((current - 97) % kb_width, (current - 97) // kb_width) %}
@@ -220,8 +225,6 @@
                 entity_id: input_number.yt_search_y
               data:
                 value: |
-                  {% set width_m = {"YouTube": 7, "Netflix": 6} %}
-                  {% set kb_width = width_m[states('input_select.tv_source_search')] %}
                   {% set last = states('input_text.yt_search_last') | ord %}
                   {% set current = states('input_text.yt_search_current') | ord %}
                   {% set want_coord = ((current - 97) % kb_width, (current - 97) // kb_width) %}
